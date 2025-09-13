@@ -6,6 +6,7 @@ DISTDIR := dist
 .PHONY: build clean run
 
 build:
+	pipreqs . --force
 	$(PYTHON) -m PyInstaller --onefile --noconsole --noconfirm --add-data "locales:locales" $(APP)
 
 clean:
