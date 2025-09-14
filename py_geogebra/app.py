@@ -7,7 +7,8 @@ from .tools.widgets import Widgets
 from .ui.menu_bar import menu
 from .ui.sidebar import sidebar
 from .config import __version__
-from .tools.offsets import Offsets
+from .tools.objects import Objects
+from .ui.axes import Axes
 from py_geogebra.motions import motions
 
 
@@ -15,18 +16,28 @@ def run_app():
     global widgets
     set_language("sk")
     widgets = Widgets()
+    
 
     root = tk.Tk()
     root.geometry("1280x720")  # TODO: make it dynamic ?
     widgets.register(lambda: root.title(_("Geogebra ale lepsia") + f" v{__version__}"))
 
     menu_bar = menu(root, widgets)
+    
+
+    
     root.config(menu=menu_bar)
 
     side_bar = sidebar(root, widgets)
     canvas = Canvas(root, background="white")
     canvas.pack(fill="both", expand=True)
-    offsets = Offsets(root, canvas)
-    motions.bind_all(canvas, offsets)
+    objects = Objects()
+    axes = Axes(root, canvas)
+    objects.register(axes)
+    motions.bind_all(canvas, objects)
 
     root.mainloop()
+    
+    
+    
+

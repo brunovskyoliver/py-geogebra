@@ -1,15 +1,15 @@
 from .. import state
 
 
-def dragging(canvas, offsets):
+def dragging(canvas, objects):
     def left_click_drag(e):
         if state.selected_tool == "arrow":
             dx = e.x - state.start_pos["x"]
             dy = e.y - state.start_pos["y"]
 
-            offsets.objects.offset_x += dx
-            offsets.objects.offset_y += dy
-            offsets.objects.refresh()
+            objects.offset_x += dx
+            objects.offset_y += dy
+            objects.refresh()
 
             state.start_pos["x"] = e.x
             state.start_pos["y"] = e.y
