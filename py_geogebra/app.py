@@ -16,16 +16,13 @@ def run_app():
     global widgets
     set_language("sk")
     widgets = Widgets()
-    
 
     root = tk.Tk()
     root.geometry("1280x720")  # TODO: make it dynamic ?
     widgets.register(lambda: root.title(_("Geogebra ale lepsia") + f" v{__version__}"))
 
     menu_bar = menu(root, widgets)
-    
 
-    
     root.config(menu=menu_bar)
 
     side_bar = sidebar(root, widgets)
@@ -34,10 +31,6 @@ def run_app():
     objects = Objects()
     axes = Axes(root, canvas)
     objects.register(axes)
-    motions.bind_all(canvas, objects)
+    motions.bind_all(root, canvas, objects)
 
     root.mainloop()
-    
-    
-    
-

@@ -1,11 +1,13 @@
 from typing import List, Protocol
 
+
 class Drawable(Protocol):
     offset_x: float
     offset_y: float
     scale: float
-    def update(self) -> None:
-        ...
+
+    def update(self) -> None: ...
+
 
 class Objects:
     def __init__(self):
@@ -20,8 +22,11 @@ class Objects:
     def register(self, obj: Drawable):
         if obj not in self._objects:
             self._objects.append(obj)
-            print (self._objects)
-            obj.update()  # draw immediately
+            obj.offset_x = self.offset_x
+            obj.offset_y = self.offset_y
+            if hasattr(obj, "scale"):
+                obj.scale = self.scale
+            obj.update()  # draw immediately with correct offset
 
     def unregister(self, obj: Drawable):
         if obj in self._objects:
@@ -31,8 +36,7 @@ class Objects:
         for obj in self._objects:
             obj.offset_x = self.offset_x
             obj.offset_y = self.offset_y
-            
+
             if hasattr(obj, "scale"):
                 obj.scale = self.scale
             obj.update()
-
