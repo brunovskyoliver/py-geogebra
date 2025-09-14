@@ -2,8 +2,8 @@ name: Build
 
 on:
   push:
-    branches:
-      - main
+    # branches:
+    #   - main
     tags:
       - 'v*'
 
@@ -66,7 +66,7 @@ jobs:
 
       - name: Read version
         run: |
-          echo "version=$(python -c 'import py_geogebra.version as v; print(v.__version__)')" >> $GITHUB_ENV
+          echo "version=$(python -c 'import py_geogebra.tools.version as v; print(v.__version__)')" >> $GITHUB_ENV
 
       - name: Upload
         uses: softprops/action-gh-release@v2
