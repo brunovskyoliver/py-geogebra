@@ -14,3 +14,9 @@ def no_need_to_update():
     messagebox.showinfo(
         title=_("Žiadna dostupná aktualizácia"), message=_("Si na najnovšej verzii")
     )
+
+
+def ran_from_python(filepath):
+    messagebox.showinfo(
+        title=_("Nespustil si binary"), message=_(f"Binary nájdeš v {filepath}")
+    )
