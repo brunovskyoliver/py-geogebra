@@ -28,9 +28,7 @@ jobs:
 
       - name: Build
         run: |
-          python -m PyInstaller --onefile --noconsole --noconfirm \
-            --add-data "locales${{ runner.os == 'Windows' && ';' || ':' }}locales" \
-            --name py-geogebra main.py
+          python -m PyInstaller --onefile --noconsole --noconfirm --add-data "locales${{ runner.os == 'Windows' && ';' || ':' }}locales" --name py-geogebra main.py
 
       - name: Build artifact
         uses: actions/upload-artifact@v4
