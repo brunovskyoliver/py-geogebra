@@ -62,17 +62,108 @@ def unpack_tarball(tar_file):
     raise RuntimeError(f"Nenasli sme binary v dir {tmp_dir}")
 
 
+def get_dir():
+    if platform.system() == "Darwin":
+        return os.path.expanduser("~/Library/Application Support/PyGeogebra")
+    elif platform.system() == "Linux":
+        return os.path.expanduser("~/.local/share/pygeogebra")
+    else:
+        return os.path.join(os.getenv("LOCALAPPDATA"), "PyGeogebra")
+
+
+def find_dir():
+    app_dir = get_dir()
+    os.makedirs(app_dir, exist_ok=True)
+    return app_dir
+
+
+def curr_loc():
+    if getattr(sys, "frozen", False):
+        return sys.executable
+    return None
+
+
+def init(binary_path, version):
+    app_dir = find_dir()
+    version_dir = os.path.join(app_dir, f"v{version}")
+    os.makedirs(version_dir, exist_ok=True)
+
+    bin_name = os.path.basename(binary_path)
+    new_bin_path = os.path.join(version_dir, bin_name)
+
+    if not os.path.exists(new_bin_path):
+        shutil.copy2(binary_path, new_bin_path)
+        os.chmod(new_bin_path, 0o755)
+
+    return new_bin_path
+
+
+def install_new(bin_path):
+    app_dir = find_dir()
+    version = check_version()
+
+    version_dir = os.path.join(app_dir, f"v{version}")
+    os.makedirs(version_dir, exist_ok=True)
+
+    bin_name = os.path.basename(bin_path)
+    new_bin_path = os.path.join(version_dir, bin_name)
+    shutil.copy2(bin_path, new_bin_path)
+    os.chmod(new_bin_path, 0o755)
+
+    return new_bin_path
+
+
+def create_launcher(replace_original=False):
+    app_dir = get_dir()
+    current_location = curr_loc()
+
+    if current_location:
+        launcher_path = current_location
+        if not launcher_path.endswith(".sh"):
+            launcher_path = launcher_path + ".sh"
+    else:
+        launcher_path = os.path.expanduser("~/Applications/pygeogebra")
+
+    with open(launcher_path, "w") as f:
+        f.write(
+            f"""#!/bin/bash
+APP_DIR="{app_dir}"
+LATEST=$(ls -v "$APP_DIR" | grep "^v" | tail -n 1)
+if [ -z "$LATEST" ]; then
+    exit 1
+fi
+BINARY=$(ls "$APP_DIR/$LATEST" | grep "py-geogebra")
+exec "$APP_DIR/$LATEST/$BINARY" "$@"
+"""
+        )
+
+    os.chmod(launcher_path, 0o755)
+
+    if replace_original and current_location and os.path.exists(current_location):
+        original_backup = current_location + ".bak"
+        shutil.move(current_location, original_backup)
+        shutil.copy2(launcher_path, current_location)
+        os.chmod(current_location, 0o755)
+
+    return launcher_path
+
+
 def restart_process(binary_path):
-    current_binary = sys.executable
-    backup = current_binary + ".bak"
-    shutil.move(current_binary, backup)
-    shutil.copy2(binary_path, current_binary)
-    os.chmod(current_binary, 0o755)
-    subprocess.Popen([current_binary])
+    current_location = curr_loc()
+    if current_location and not os.path.exists(get_dir()):
+        init(current_location, __version__)
+    new_binary_path = install_new(binary_path)
+    launcher_path = create_launcher(replace_original=True)
+    subprocess.Popen([launcher_path])
     sys.exit(0)
 
 
 def handle_version(root, widgets, ask_for_update):
+    current_location = curr_loc()
+    if current_location and not os.path.exists(get_dir()):
+        init(current_location, __version__)
+        launcher_path = create_launcher(replace_original=True)
+
     local_version = __version__
     servers_version = check_version()
     is_tar = False
@@ -94,10 +185,8 @@ def handle_version(root, widgets, ask_for_update):
             tmp_file = download_latest(filename)
             if is_tar:
                 unpacked_binary = unpack_tarball(tmp_file)
-                print(f"Stiahli sme binary do {unpacked_binary}")
             else:
                 unpacked_binary = tmp_file
-                print(f"Stiahli sme binary do {tmp_file}")
 
             if getattr(sys, "frozen", False):
                 restart_process(unpacked_binary)
