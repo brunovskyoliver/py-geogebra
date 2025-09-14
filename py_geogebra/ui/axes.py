@@ -1,4 +1,5 @@
 import tkinter as tk
+import math
 
 
 class Axes:
@@ -10,10 +11,22 @@ class Axes:
         self.offset_y = 0.0
         self.scale = 1.0      
         self.unit_size = 40    
-        self.val_increase = 1.0
-        self.scale_decrease = 0.0
 
-        self.canvas.bind("<Configure>", lambda e: self.update())
+
+    def nice_step(self, min_px=50):
+        raw_step = min_px / (self.unit_size * self.scale) 
+        power = math.floor(math.log10(raw_step))   
+        base = raw_step / (10**power)
+
+
+        if base < 1.5:
+            nice = 1
+        elif base < 3.5:
+            nice = 2
+        else:
+            nice = 5
+
+        return nice * (10**power)
 
     def update(self):
         self.canvas.delete("axes")
@@ -22,51 +35,40 @@ class Axes:
         height = self.canvas.winfo_height()
 
         cx = width // 2 + self.offset_x
-        cy = height // 2 + self.offset_y
+        cy = height // 2 + self.offset_y 
 
-        # draw axes
+        # main axes
         self.canvas.create_line(0, cy, width, cy, fill="black", width=2, tags="axes")
         self.canvas.create_line(cx, 0, cx, height, fill="black", width=2, tags="axes")
-        self.canvas.create_line(cx +100 * self.scale, 0, cx +100 * self.scale, height, fill="black", width=2, tags="axes")
 
 
+        step_world = self.nice_step()
+        step_px = step_world * self.unit_size * self.scale
 
-        step = max(1, int(self.unit_size * (self.scale - self.scale_decrease)))
-        width_int = int(width)
-       
-        
-        if step > 80:
-            step = 40
-            self.val_increase /= 2
-            self.scale_decrease = self.scale - 1
-        elif step < 20:
-            step = 40
-            self.val_increase *= 2
-            self.scale_decrease = -(1 - self.scale)
-            
-        print (step, self.val_increase, self.scale_decrease, self.scale)
-            
-            
+        # X
+        start_val = -math.ceil(cx / step_px) * step_world
+        end_val   = math.ceil((width - cx) / step_px) * step_world
+        val = start_val
+        while val <= end_val:
+            x = cx + val * self.unit_size * self.scale
+            if 0 <= x <= width:
+                self.canvas.create_line(x, 0, x, height, fill="lightgray", width=1, tags="axes")
 
-        # X axis
-        val = 0.0
-        for x in range(cx, width_int, step):
-            val += self.val_increase
-            self.canvas.create_text(x, cy + 10, text=round(val, 4), font=("Arial", 10), tags="axes", fill="black")
-        val = 0.0
-        for x in range(cx, -1, -step):
-            val -= self.val_increase
-            self.canvas.create_text(x, cy + 10, text=round(val, 4), font=("Arial", 10), tags="axes", fill="black")
+                if abs(val) > 1e-9: 
+                    self.canvas.create_text(x, cy + 12, text=f"{val:.2f}", font=("Arial", 10),
+                                            tags="axes", fill="black")
+            val += step_world
+        # Y
+        start_val = -math.ceil(cy / step_px) * step_world
+        end_val   = math.ceil((height - cy) / step_px) * step_world
+        val = start_val
+        while val <= end_val:
+            y = cy + val * self.unit_size * self.scale
+            if 0 <= y <= height:
 
-        # Y axis
-        val = 0.0
-        cy_int = int(cy)
-        height_int = int(height)
-        for y in range(cy, height_int, step):
-            val += self.val_increase
-            self.canvas.create_text(cx + 15, y, text=round(val, 4), font=("Arial", 10), tags="axes", fill="black")
-        val = 0.0
-        for y in range(cy, -1, -step):
-            val -= self.val_increase
-            self.canvas.create_text(cx + 15, y, text=round(val, 4), font=("Arial", 10), tags="axes", fill="black")
+                self.canvas.create_line(0, y, width, y, fill="lightgray", width=1, tags="axes")
 
+                if abs(val) > 1e-9: 
+                    self.canvas.create_text(cx + 15, y, text=f"{val:.2f}", font=("Arial", 10),
+                                            tags="axes", fill="black")
+            val += step_world
