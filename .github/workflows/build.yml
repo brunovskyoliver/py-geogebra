@@ -27,9 +27,10 @@ jobs:
           pip install pyinstaller -r requirements.txt
 
       - name: Build
+        env:
+          NAME_SUFFIX: ${{ matrix.os == 'windows-latest' && '-windows' || (matrix.os == 'macos-latest' && '-darwin' || '-linux') }}
         run: |
-          NAME_SUFFIX=${{ matrix.os == 'windows-latest' && '-windows' || (matrix.os == 'macos-latest' && '-darwin' || '-linux') }}
-          python -m PyInstaller --onefile --noconsole --noconfirm --add-data "locales${{ runner.os == 'Windows' && ';' || ':' }}locales" --name py-geogebra${NAME_SUFFIX} main.py
+          python -m PyInstaller --onefile --noconsole --noconfirm --add-data "locales${{ runner.os == 'Windows' && ';' || ':' }}locales" --name py-geogebra${{ env.NAME_SUFFIX }} main.py
 
 
       - name: Build artifact
