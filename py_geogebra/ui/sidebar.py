@@ -1,5 +1,5 @@
 import tkinter as tk
-from ..tools.load_svg import load_icon
+from ..tools.load_image import load_icon
 
 
 def show_menu(e, menu):
