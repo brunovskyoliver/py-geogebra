@@ -7,7 +7,7 @@ import tarfile
 import subprocess
 import sys
 from ..tools.version import __version__
-from ..ui.dialogs import ask_for_update, no_need_to_update
+from ..ui.dialogs import ask_for_update, no_need_to_update, ran_from_python
 
 
 url = "https://api.github.com/repos/brunovskyoliver/py-geogebra/releases/latest"
@@ -63,8 +63,12 @@ def unpack_tarball(tar_file):
 
 
 def restart_process(binary_path):
-    os.chmod(binary_path, 0o755)
-    subprocess.Popen([binary_path])
+    current_binary = sys.executable
+    backup = current_binary + ".bak"
+    shutil.move(current_binary, backup)
+    shutil.copy2(binary_path, current_binary)
+    os.chmod(current_binary, 0o755)
+    subprocess.Popen([current_binary])
     sys.exit(0)
 
 
@@ -94,7 +98,11 @@ def handle_version(root, widgets, ask_for_update):
             else:
                 unpacked_binary = tmp_file
                 print(f"Stiahli sme binary do {tmp_file}")
-            restart_process(unpacked_binary)
+
+            if getattr(sys, "frozen", False):
+                restart_process(unpacked_binary)
+            else:
+                ran_from_python(unpacked_binary)
 
         else:
             pass
