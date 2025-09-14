@@ -1,7 +1,6 @@
 dist/
 build/
 .DS_Store
-main.spec
 py_geogebra/__pycache__/
 __pycache__/
 *.py[cod]
