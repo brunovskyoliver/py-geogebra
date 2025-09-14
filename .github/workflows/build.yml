@@ -64,7 +64,7 @@ jobs:
 
       - name: Read version
         run: |
-          echo "version=$(python -c 'import py_geogebra.tools.version as v; print(v.__version__)')" >> $GITHUB_ENV
+          echo "version=$(python -c 'import py_geogebra.config as v; print(v.__version__)')" >> $GITHUB_ENV
 
       - name: Chmod it
         run: chmod +x dist/**/py-geogebra*-linux dist/**/py-geogebra*-darwin || true
