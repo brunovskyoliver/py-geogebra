@@ -11,8 +11,18 @@ jobs:
   build:
     strategy:
       matrix:
-        os: [ubuntu-latest, macos-latest, windows-latest]
+        include:
+          - os: ubuntu-latest
+            suffix: -linux
+            ext: ''
+          - os: macos-latest
+            suffix: -darwin
+            ext: ''
+          - os: windows-latest
+            suffix: -windows
+            ext: '.exe'
     runs-on: ${{ matrix.os }}
+
     steps:
       - uses: actions/checkout@v4
 
@@ -21,23 +31,21 @@ jobs:
         with:
           python-version: '3.12'
 
-      - name: Install deps
+      - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
           pip install pyinstaller -r requirements.txt
 
-      - name: Build
-        env:
-          NAME_SUFFIX: ${{ matrix.os == 'windows-latest' && '-windows' || (matrix.os == 'macos-latest' && '-darwin' || '-linux') }}
+      - name: Build binary
         run: |
-          python -m PyInstaller --onefile --noconsole --noconfirm --add-data "locales${{ runner.os == 'Windows' && ';' || ':' }}locales" --name py-geogebra${{ env.NAME_SUFFIX }} main.py
+          python -m PyInstaller --onefile --noconsole --noconfirm --add-data "locales${{ runner.os == 'Windows' && ';' || ':' }}locales" --name py-geogebra${{ matrix.suffix }} main.py
 
-
-      - name: Build artifact
+      - name: Upload build artifact
         uses: actions/upload-artifact@v4
         with:
-          name: py-geogebra-${{ matrix.os }}
-          path: dist/py-geogebra${{ matrix.os == 'windows-latest' && '.exe' || '' }}
+          name: py-geogebra${{ matrix.suffix }}
+          path: dist/py-geogebra${{ matrix.suffix }}${{ matrix.ext }}
+          if-no-files-found: error
 
   release:
     needs: build
@@ -52,15 +60,13 @@ jobs:
         run: |
           echo "version=$(python -c 'import py_geogebra.version as v; print(v.__version__)')" >> $GITHUB_ENV
 
-      - name: Upload
+      - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
         with:
           tag_name: v${{ env.version }}
-          make_latest: true
           name: "PyGeoGebra v${{ env.version }}"
-          files: dist/py-geogebra${{ env.NAME_SUFFIX }}${{ matrix.os == 'windows-latest' && '.exe' || '' }}
+          make_latest: true
+          files: dist/**/*
         env:
-          NAME_SUFFIX: ${{ matrix.os == 'windows-latest' && '-windows' || (matrix.os == 'macos-latest' && '-darwin' || '-linux') }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
 
