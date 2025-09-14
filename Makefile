@@ -7,7 +7,7 @@ DISTDIR := dist
 
 build:
 	pipreqs . --force
-	$(PYTHON) -m PyInstaller --onefile --noconsole --noconfirm --add-data "locales:locales" --hidden-import=requests --hidden-import=_struct $(APP)
+	$(PYTHON) -m PyInstaller --onefile --noconsole --noconfirm --add-data "locales:locales" --hidden-import=requests --hidden-import=_struct --hidden-import=struct $(APP)
 
 clean:
 	rm -rf build $(DISTDIR) *.spec
