@@ -1,32 +1,21 @@
 import tkinter as tk
 from tkinter import ttk
 from .tools.language import set_language
+from .tools.language import change_lang
 from .tools.widgets import Widgets
-
-
-def change_lang(lang: str):
-    global _
-    assert _ != None
-    _ = set_language(lang)
-    widgets.refresh()
+from .ui.menu_bar import menu
 
 
 def run_app():
-    global _, widgets
-    _ = set_language(
-        "sk"
-    )  # musi to byt _ - dont ask questions you dont want answers to
+    global widgets
+    set_language("sk")
     widgets = Widgets()
 
     root = tk.Tk()
     root.geometry("1280x720")  # TODO: make it dynamic ?
     widgets.register(lambda: root.title(_("Geogebra ale lepsia")))
 
-    menu_bar = tk.Menu(root)
-    language_selection = tk.Menu(menu_bar, tearoff=0)
-    menu_bar.add_cascade(label=_("Language"), menu=language_selection)
-    language_selection.add_command(label="Slovenský", command=lambda: change_lang("sk"))
-    language_selection.add_command(label="Anglický", command=lambda: change_lang("en"))
+    menu_bar = menu(root, widgets)
 
     root.config(menu=menu_bar)
     root.mainloop()
