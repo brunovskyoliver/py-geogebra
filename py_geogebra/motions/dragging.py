@@ -1,7 +1,7 @@
 from .. import state
 
 
-def dragging(canvas, objects):
+def dragging(root, canvas, objects):
     def left_click_drag(e):
         if state.selected_tool == "arrow":
             dx = e.x - state.start_pos["x"]

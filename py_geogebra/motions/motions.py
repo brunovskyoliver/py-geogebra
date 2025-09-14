@@ -2,6 +2,6 @@ from .pressing import pressing
 from .dragging import dragging
 
 
-def bind_all(canvas, offsets):
-    pressing(canvas, offsets)
-    dragging(canvas, offsets)
+def bind_all(root, canvas, objects):
+    pressing(root, canvas, objects)
+    dragging(root, canvas, objects)
