@@ -18,6 +18,7 @@ class Objects:
         self.offset_x = 0
         self.offset_y = 0
         self.scale = 1.0
+        self.unit_size = 20
 
     def register(self, obj: Drawable):
         if obj not in self._objects:
