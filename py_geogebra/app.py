@@ -6,6 +6,7 @@ from .tools.widgets import Widgets
 from .ui.menu_bar import menu
 from .ui.sidebar import sidebar
 from .config import __version__
+from .tools.offsets import Offsets
 
 
 def run_app():
@@ -19,8 +20,13 @@ def run_app():
 
     menu_bar = menu(root, widgets)
     root.config(menu=menu_bar)
+    
+    
 
     side_bar = sidebar(root, widgets)
     canvas = Canvas(root, background="white")
     canvas.pack(fill="both", expand=True)
+    
+    offsets = Offsets(root, canvas)
+    
     root.mainloop()
