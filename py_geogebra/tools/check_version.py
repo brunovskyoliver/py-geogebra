@@ -6,7 +6,7 @@ import os
 import tarfile
 import subprocess
 import sys
-from ..tools.version import __version__
+from ..config import __version__
 from ..ui.dialogs import ask_for_update, no_need_to_update, ran_from_python
 
 
