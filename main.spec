@@ -1,4 +1,10 @@
-# -*- mode: python ; coding: utf-8 -*-
+# -*-    pathex=[],
+    binaries=[],
+    datas=[('locales', 'locales')],
+    hiddenimports=['requests', '_struct', 'struct'],
+    collect_all=['struct'],
+    hookspath=[],
+    hooksconfig={}, python ; coding: utf-8 -*-
 
 
 a = Analysis(
@@ -6,7 +12,7 @@ a = Analysis(
     pathex=[],
     binaries=[],
     datas=[('locales', 'locales')],
-    hiddenimports=['requests', '_struct'],
+    hiddenimports=['requests', '_struct', 'struct'],
     hookspath=[],
     hooksconfig={},
     runtime_hooks=[],

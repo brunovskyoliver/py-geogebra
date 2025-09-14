@@ -38,7 +38,7 @@ jobs:
 
       - name: build
         run: |
-          python -m PyInstaller --onefile --noconsole --noconfirm --add-data "locales${{ runner.os == 'Windows' && ';' || ':' }}locales" --name py-geogebra${{ matrix.suffix }} main.py
+          python -m PyInstaller --onefile --noconsole --noconfirm --hidden-import struct --hidden-import _struct --add-data "locales${{ runner.os == 'Windows' && ';' || ':' }}locales" --name py-geogebra${{ matrix.suffix }} main.py
 
       - name: Upload
         uses: actions/upload-artifact@v4
