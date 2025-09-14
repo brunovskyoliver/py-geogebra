@@ -83,9 +83,7 @@ jobs:
           make_latest: true
           files: |
             dist/**/py-geogebra*-windows.exe
-            dist/**/py-geogebra*-darwin
             dist/**/py-geogebra*-darwin.tar.gz
-            dist/**/py-geogebra*-linux
             dist/**/py-geogebra*-linux.tar.gz
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
