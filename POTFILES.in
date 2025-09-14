@@ -1,6 +1,8 @@
+py_geogebra/ui/sidebar.py
 py_geogebra/ui/menu_bar.py
 py_geogebra/ui/__init__.py
 py_geogebra/ui/dialogs.py
+py_geogebra/tools/load_svg.py
 py_geogebra/tools/__init__.py
 py_geogebra/tools/widgets.py
 py_geogebra/tools/language.py

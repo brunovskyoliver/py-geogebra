@@ -1,9 +1,10 @@
 import tkinter as tk
-from tkinter import ttk
+from tkinter import Canvas, ttk
 from .tools.language import set_language
 from .tools.language import change_lang
 from .tools.widgets import Widgets
 from .ui.menu_bar import menu
+from .ui.sidebar import sidebar
 from .config import __version__
 
 
@@ -17,6 +18,9 @@ def run_app():
     widgets.register(lambda: root.title(_("Geogebra ale lepsia") + f" v{__version__}"))
 
     menu_bar = menu(root, widgets)
-
     root.config(menu=menu_bar)
+
+    side_bar = sidebar(root, widgets)
+    canvas = Canvas(root, background="white")
+    canvas.pack(fill="both", expand=True)
     root.mainloop()

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-09-14 13:39+0200\n"
+"POT-Creation-Date: 2025-09-14 13:41+0200\n"
 "PO-Revision-Date: 2025-09-13 23:35+0200\n"
 "Last-Translator: Automatically generated\n"
 "Language-Team: none\n"
@@ -47,7 +47,8 @@ msgstr "You are on the latest version"
 
 #: py_geogebra/ui/dialogs.py:21
 msgid "Nespustil si binary"
-msgstr ""
+msgstr "You did not start program using binary"
 
-#~ msgid "Geogebra ale lepsia"
-#~ msgstr "Geogebra but better"
+#: py_geogebra/app.py:17
+msgid "Geogebra ale lepsia"
+msgstr "Geogebra but better"

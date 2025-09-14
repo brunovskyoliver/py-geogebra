@@ -5,7 +5,7 @@ a = Analysis(
     ['main.py'],
     pathex=[],
     binaries=[],
-    datas=[('locales', 'locales')],
+    datas=[('locales', 'locales'), ('resources', 'resources')],
     hiddenimports=['requests', '_struct', 'struct'],
     hookspath=[],
     hooksconfig={},
