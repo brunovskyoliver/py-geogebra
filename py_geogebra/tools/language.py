@@ -1,6 +1,7 @@
 import gettext
 import os
 import sys
+import builtins
 
 
 def set_language(lang: str):
@@ -16,4 +17,10 @@ def set_language(lang: str):
         domain="messages", localedir=localedir, languages=[lang], fallback=True
     )
     translation.install()
-    return translation.gettext
+    builtins._ = translation.gettext
+    return builtins._
+
+
+def change_lang(lang: str, widgets):
+    set_language(lang)
+    widgets.refresh()
