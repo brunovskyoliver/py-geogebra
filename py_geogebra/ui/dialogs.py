@@ -11,6 +11,6 @@ def ask_for_update(widgets):
 
 
 def no_need_to_update():
-    return messagebox.showinfo(
+    messagebox.showinfo(
         title=_("Žiadna dostupná aktualizácia"), message=_("Si na najnovšej verzii")
     )

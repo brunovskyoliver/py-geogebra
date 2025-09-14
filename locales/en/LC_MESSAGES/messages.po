@@ -7,27 +7,43 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-09-14 10:19+0200\n"
+"POT-Creation-Date: 2025-09-14 11:57+0200\n"
 "PO-Revision-Date: 2025-09-13 23:35+0200\n"
 "Last-Translator: Automatically generated\n"
 "Language-Team: none\n"
 "Language: en\n"
 "MIME-Version: 1.0\n"
-"Content-Type: text/plain; charset=ASCII\n"
+"Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-#: py_geogebra/ui/menu_bar.py:9
+#: py_geogebra/ui/menu_bar.py:11
 msgid "Language"
 msgstr "Language"
 
-#: py_geogebra/ui/menu_bar.py:17
+#: py_geogebra/ui/menu_bar.py:19 py_geogebra/ui/menu_bar.py:21
 msgid "Viac"
 msgstr "More"
 
-#: py_geogebra/ui/menu_bar.py:19
+#: py_geogebra/ui/menu_bar.py:23 py_geogebra/ui/menu_bar.py:28
 msgid "Over verziu"
 msgstr "Check latest version"
+
+#: py_geogebra/ui/dialogs.py:7
+msgid "Dostupná aktualizácia"
+msgstr "Update available"
+
+#: py_geogebra/ui/dialogs.py:8
+msgid "Chcete nainštalovať najnovšiu verziu?"
+msgstr "Do you want to install latest version?"
+
+#: py_geogebra/ui/dialogs.py:15
+msgid "Žiadna dostupná aktualizácia"
+msgstr "No new updates available"
+
+#: py_geogebra/ui/dialogs.py:15
+msgid "Si na najnovšej verzii"
+msgstr "You are on the latest version"
 
 #: py_geogebra/app.py:16
 msgid "Geogebra ale lepsia"

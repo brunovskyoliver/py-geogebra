@@ -1,7 +1,9 @@
 py_geogebra/ui/menu_bar.py
 py_geogebra/ui/__init__.py
+py_geogebra/ui/dialogs.py
 py_geogebra/tools/version.py
 py_geogebra/tools/__init__.py
 py_geogebra/tools/widgets.py
 py_geogebra/tools/language.py
+py_geogebra/tools/check_version.py
 py_geogebra/app.py
