@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-09-13 23:35+0200\n"
+"POT-Creation-Date: 2025-09-14 09:30+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,10 +17,10 @@ msgstr ""
 "Content-Type: text/plain; charset=CHARSET\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: py_geogebra/app.py:23
+#: py_geogebra/app.py:20
 msgid "Geogebra ale lepsia"
 msgstr ""
 
-#: py_geogebra/app.py:27
+#: py_geogebra/app.py:25
 msgid "Language"
 msgstr ""

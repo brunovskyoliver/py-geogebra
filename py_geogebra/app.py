@@ -1,7 +1,7 @@
 import tkinter as tk
 from tkinter import ttk
-from .language import set_language
-from .widgets import Widgets
+from .tools.language import set_language
+from .tools.widgets import Widgets
 
 
 def change_lang(lang: str):
