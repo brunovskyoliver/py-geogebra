@@ -40,10 +40,16 @@ jobs:
         run: |
           python -m PyInstaller --onefile --noconsole --noconfirm --add-data "locales${{ runner.os == 'windows-latest' && ';' || ':' }}locales" --name py-geogebra main.py
 
+      - name: Read version
+        id: get_version
+        run: |
+          echo "version=$(python -c 'import py_geogebra.version as v; print(v.__version__)')" >> $GITHUB_ENV
 
       - name: Upload
-        uses: actions/upload-artifact@v4
+        uses: softprops/action-gh-release@v2
         with:
-          name: py-geogebra-${{ matrix.os }}
-          path: |
-            dist/py-geogebra${{ matrix.os == 'windows-latest' && '.exe' || '' }}
+          tag_name: v${{ env.version }}
+          release_name: "PyGeoGebra v${{ env.version }}"
+          files: dist/py-geogebra${{ matrix.os == 'windows-latest' && '.exe' || '' }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
