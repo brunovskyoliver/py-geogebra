@@ -50,6 +50,9 @@ class Offsets:
             self.scale *= 1.1
         else:                 # zoom out
             self.scale /= 1.1
+            
+        self.objects.scale = self.scale
+        self.objects.refresh()
 
 
     def zoom_linux(self, event):
@@ -57,3 +60,5 @@ class Offsets:
             self.scale *= 1.1
         elif event.num == 5:  # scroll down
             self.scale /= 1.1
+        self.objects.scale = self.scale
+        self.objects.refresh()
