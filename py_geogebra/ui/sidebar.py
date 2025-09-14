@@ -22,7 +22,6 @@ def change_icon(img, btn):
 
 
 def tool_menu_init(root, bar, widgets, def_icon, buttons):
-
     icons = {
         name: load_icon(name)
         for name in {def_icon, *[button["icon"] for button in buttons]}
@@ -45,15 +44,15 @@ def tool_menu_init(root, bar, widgets, def_icon, buttons):
     items = []
     for b in buttons:
         icon = icons[b["icon"]]
-        i = (
-            menu.index("end") or 0
-        )  # prvy je vzdy 0 a index hadze error pri prvom bez oru
         menu.add_command(
             label=_(b["name"]),
             image=icon,
             compound="left",
             command=lambda img=icon: change_icon(img, button),
         )
+        i = (
+            menu.index("end") or 0
+        )  # prvy je vzdy 0 a index hadze error pri prvom bez oru
         items.append({"name": b["name"], "icon": icon, "index": i})
 
     menu.entries = items
@@ -76,9 +75,25 @@ def sidebar(root, widgets):
         widgets,
         def_icon="arrow",
         buttons=[
-            {"name": "Pohyb", "icon": "arrow"},
-            {"name": "Voľný tvar", "icon": "freehand"},
-            {"name": "Nástroj pero", "icon": "pen"},
+            {"name": _("Pohyb"), "icon": "arrow"},
+            {"name": _("Voľný tvar"), "icon": "freehand"},
+            {"name": _("Nástroj pero"), "icon": "pen"},
+        ],
+    )
+    tool_menu_init(
+        root,
+        bar,
+        widgets,
+        def_icon="point",
+        buttons=[
+            {"name": _(_("Bod")), "icon": "point"},
+            {"name": _("Bod na objekte"), "icon": "point_on_object"},
+            {"name": _("Pripojiť / Odpojiť bod"), "icon": "attach_detach_point"},
+            {"name": _("Priesečník"), "icon": "intersect"},
+            {"name": _("Stred"), "icon": "midpoint_or_center"},
+            {"name": _("Komplexné číslo"), "icon": "complex_number"},
+            {"name": _("Extremum"), "icon": "extremum"},
+            {"name": _("Korene"), "icon": "roots"},
         ],
     )
 

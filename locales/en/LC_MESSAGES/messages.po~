@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-09-14 13:41+0200\n"
+"POT-Creation-Date: 2025-09-14 16:23+0200\n"
 "PO-Revision-Date: 2025-09-13 23:35+0200\n"
 "Last-Translator: Automatically generated\n"
 "Language-Team: none\n"
@@ -16,6 +16,38 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+#: py_geogebra/ui/sidebar.py:89
+msgid "Bod"
+msgstr "Point"
+
+#: py_geogebra/ui/sidebar.py:90
+msgid "Bod na objekte"
+msgstr "Point on Object"
+
+#: py_geogebra/ui/sidebar.py:91
+msgid "Pripojiť / Odpojiť bod"
+msgstr "Attach / Detach Point"
+
+#: py_geogebra/ui/sidebar.py:92
+msgid "Priesečník"
+msgstr "Intersect"
+
+#: py_geogebra/ui/sidebar.py:93
+msgid "Stred"
+msgstr "Midpoint or Center"
+
+#: py_geogebra/ui/sidebar.py:94
+msgid "Komplexné číslo"
+msgstr "Complex Number"
+
+#: py_geogebra/ui/sidebar.py:95
+msgid "Extremum"
+msgstr "Extremum"
+
+#: py_geogebra/ui/sidebar.py:96
+msgid "Korene"
+msgstr "Roots"
 
 #: py_geogebra/ui/menu_bar.py:11
 msgid "Language"
@@ -49,6 +81,15 @@ msgstr "You are on the latest version"
 msgid "Nespustil si binary"
 msgstr "You did not start program using binary"
 
-#: py_geogebra/app.py:17
+#: py_geogebra/app.py:18
 msgid "Geogebra ale lepsia"
 msgstr "Geogebra but better"
+
+#~ msgid "Pohyb"
+#~ msgstr "Move"
+
+#~ msgid "Voľný tvar"
+#~ msgstr "Freehand Shape"
+
+#~ msgid "Nástroj pero"
+#~ msgstr "Pen"
