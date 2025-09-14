@@ -47,19 +47,17 @@ jobs:
           path: dist/py-geogebra${{ matrix.suffix }}${{ matrix.ext }}
           if-no-files-found: error
 
+
   release:
     needs: build
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Python
-        uses: actions/setup-python@v5
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
 
-      - name: Artifact
+      - name: Get mf files
         uses: actions/download-artifact@v4
         with:
           path: dist
@@ -68,19 +66,27 @@ jobs:
         run: |
           echo "version=$(python -c 'import py_geogebra.tools.version as v; print(v.__version__)')" >> $GITHUB_ENV
 
-      - name: Package macOS and Linux builds
-        if: matrix.os != 'windows-latest'
-        run: |
-          chmod +x dist/py-geogebra*
-          tar -czf dist/py-geogebra${{ matrix.suffix }}.tar.gz -C dist py-geogebra${{ matrix.suffix }}
+      - name: Chmod it
+        run: chmod +x dist/**/py-geogebra*-linux dist/**/py-geogebra*-darwin || true
 
-      - name: Upload
+      - name: Create tars
+        run: |
+          for f in dist/**/py-geogebra*-linux dist/**/py-geogebra*-darwin; do
+            [ -f "$f" ] && tar -czf "$f.tar.gz" -C "$(dirname "$f")" "$(basename "$f")"
+          done
+
+      - name: Upload to GitHub
         uses: softprops/action-gh-release@v2
         with:
           tag_name: v${{ env.version }}
           name: "PyGeoGebra v${{ env.version }}"
           make_latest: true
-          files: dist/py-geogebra${{ matrix.suffix }}${{ matrix.ext }}
+          files: |
+            dist/**/py-geogebra*-windows.exe
+            dist/**/py-geogebra*-darwin
+            dist/**/py-geogebra*-darwin.tar.gz
+            dist/**/py-geogebra*-linux
+            dist/**/py-geogebra*-linux.tar.gz
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
