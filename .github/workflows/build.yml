@@ -26,21 +26,21 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Set up Python
+      - name: Python
         uses: actions/setup-python@v5
         with:
           python-version: '3.12'
 
-      - name: Install dependencies
+      - name: Install deps
         run: |
           python -m pip install --upgrade pip
           pip install pyinstaller -r requirements.txt
 
-      - name: Build binary
+      - name: build
         run: |
           python -m PyInstaller --onefile --noconsole --noconfirm --add-data "locales${{ runner.os == 'Windows' && ';' || ':' }}locales" --name py-geogebra${{ matrix.suffix }} main.py
 
-      - name: Upload build artifact
+      - name: Upload
         uses: actions/upload-artifact@v4
         with:
           name: py-geogebra${{ matrix.suffix }}
@@ -51,7 +51,15 @@ jobs:
     needs: build
     runs-on: ubuntu-latest
     steps:
-      - name: Download all build artifacts
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Artifact
         uses: actions/download-artifact@v4
         with:
           path: dist
@@ -60,7 +68,7 @@ jobs:
         run: |
           echo "version=$(python -c 'import py_geogebra.version as v; print(v.__version__)')" >> $GITHUB_ENV
 
-      - name: Create GitHub Release
+      - name: Upload
         uses: softprops/action-gh-release@v2
         with:
           tag_name: v${{ env.version }}
@@ -69,4 +77,5 @@ jobs:
           files: dist/**/*
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
 
