@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-09-14 14:58+0200\n"
+"POT-Creation-Date: 2025-09-14 16:25+0200\n"
 "PO-Revision-Date: 2025-09-13 23:35+0200\n"
 "Last-Translator: Automatically generated\n"
 "Language-Team: none\n"
@@ -17,16 +17,48 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=3; plural=(n==1) ? 0 : (n>=2 && n<=4) ? 1 : 2;\n"
 
-#: py_geogebra/ui/sidebar.py:23
+#: py_geogebra/ui/sidebar.py:78
 msgid "Pohyb"
 msgstr ""
 
-#: py_geogebra/ui/sidebar.py:29
+#: py_geogebra/ui/sidebar.py:79
 msgid "Voľný tvar"
 msgstr ""
 
-#: py_geogebra/ui/sidebar.py:35
+#: py_geogebra/ui/sidebar.py:80
 msgid "Nástroj pero"
+msgstr ""
+
+#: py_geogebra/ui/sidebar.py:89
+msgid "Bod"
+msgstr ""
+
+#: py_geogebra/ui/sidebar.py:90
+msgid "Bod na objekte"
+msgstr ""
+
+#: py_geogebra/ui/sidebar.py:91
+msgid "Pripojiť / Odpojiť bod"
+msgstr ""
+
+#: py_geogebra/ui/sidebar.py:92
+msgid "Priesečník"
+msgstr ""
+
+#: py_geogebra/ui/sidebar.py:93
+msgid "Stred"
+msgstr ""
+
+#: py_geogebra/ui/sidebar.py:94
+msgid "Komplexné číslo"
+msgstr ""
+
+#: py_geogebra/ui/sidebar.py:95
+msgid "Extremum"
+msgstr ""
+
+#: py_geogebra/ui/sidebar.py:96
+msgid "Korene"
 msgstr ""
 
 #: py_geogebra/ui/menu_bar.py:11
