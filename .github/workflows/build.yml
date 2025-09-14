@@ -49,6 +49,7 @@ jobs:
         uses: softprops/action-gh-release@v2
         with:
           tag_name: v${{ env.version }}
+          make_latest: true
           name: "PyGeoGebra v${{ env.version }}"
           files: dist/py-geogebra${{ matrix.os == 'windows-latest' && '.exe' || '' }}
         env:
