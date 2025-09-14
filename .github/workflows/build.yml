@@ -52,14 +52,15 @@ jobs:
         run: |
           echo "version=$(python -c 'import py_geogebra.version as v; print(v.__version__)')" >> $GITHUB_ENV
 
-      - name: GitHub Release
+      - name: Upload
         uses: softprops/action-gh-release@v2
         with:
           tag_name: v${{ env.version }}
-          name: "PyGeoGebra v${{ env.version }}"
           make_latest: true
-          files: |
-            dist/**/*
+          name: "PyGeoGebra v${{ env.version }}"
+          files: dist/py-geogebra${{ env.NAME_SUFFIX }}${{ matrix.os == 'windows-latest' && '.exe' || '' }}
         env:
+          NAME_SUFFIX: ${{ matrix.os == 'windows-latest' && '-windows' || (matrix.os == 'macos-latest' && '-darwin' || '-linux') }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
 
