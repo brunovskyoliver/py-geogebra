@@ -1,6 +1,7 @@
 import tkinter as tk
 from tkinter import ttk
 from ..tools.language import change_lang
+from ..tools.check_version import handle_version
 
 
 def menu(root, widgets):
@@ -15,7 +16,11 @@ def menu(root, widgets):
     )
     more_selection = tk.Menu(menu_bar, tearoff=0)
     menu_bar.add_cascade(label=_("Viac"), menu=more_selection)
-    more_selection.add_command(
-        label=_("Over verziu"), command=lambda: print("checking version...")
+    more_cascade_index = menu_bar.index("end")
+    widgets.register(lambda: menu_bar.entryconfig(more_cascade_index, label=_("Viac")))
+    more_selection.add_command(label=_("Over verziu"), command=lambda: handle_version())
+    check_version_index = more_selection.index("end")
+    widgets.register(
+        lambda: more_selection.entryconfig(check_version_index, label=_("Over verziu"))
     )
     return menu_bar
