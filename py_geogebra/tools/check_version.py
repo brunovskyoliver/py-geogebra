@@ -97,4 +97,6 @@ def handle_version(root, widgets, ask_for_update):
             restart_process(unpacked_binary)
 
         else:
-            no_need_to_update()
+            pass
+    else:
+        no_need_to_update()
