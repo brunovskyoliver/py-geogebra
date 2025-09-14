@@ -68,13 +68,19 @@ jobs:
         run: |
           echo "version=$(python -c 'import py_geogebra.tools.version as v; print(v.__version__)')" >> $GITHUB_ENV
 
+      - name: Package macOS and Linux builds
+        if: matrix.os != 'windows-latest'
+        run: |
+          chmod +x dist/py-geogebra*
+          tar -czf dist/py-geogebra${{ matrix.suffix }}.tar.gz -C dist py-geogebra${{ matrix.suffix }}
+
       - name: Upload
         uses: softprops/action-gh-release@v2
         with:
           tag_name: v${{ env.version }}
           name: "PyGeoGebra v${{ env.version }}"
           make_latest: true
-          files: dist/**/*
+          files: dist/py-geogebra${{ matrix.suffix }}${{ matrix.ext }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
