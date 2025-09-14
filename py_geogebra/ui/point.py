@@ -29,7 +29,7 @@ class Point:
         x = cx + self.pos_x * self.unit_size * self.scale
         y = cy - self.pos_y * self.unit_size * self.scale
 
-        r = 3 * self.scale
+        r = 6
         self.canvas.create_oval(
             x - r, y - r, x + r, y + r, fill="blue", width=2, tags=(self.tag, "point")
         )
