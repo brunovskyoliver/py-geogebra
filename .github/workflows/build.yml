@@ -21,10 +21,15 @@ jobs:
           python -m pip install --upgrade pip
           pip install pyinstaller -r requirements.txt
 
-      - name: Build 
+      - name: Build
         run: |
-          python -m PyInstaller --onefile --noconsole --noconfirm --add-data "locales:locales" main.py
-
+          python -m PyInstaller --onefile --noconsole --noconfirm \
+            --add-data "locales:locales" \
+            --name py-geogebra main.py
+            
+      - name: Show dist contents
+        run: ls -R dist
+        
       - name: Upload Build Artifact
         uses: actions/upload-artifact@v4
         with:
