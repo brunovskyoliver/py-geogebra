@@ -9,7 +9,7 @@ def set_language(lang: str):
     ):  # https://pyinstaller.org/en/stable/runtime-information.html
         base_path = sys._MEIPASS
     else:
-        base_path = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
+        base_path = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
     localedir = os.path.join(base_path, "locales")
 
     translation = gettext.translation(
