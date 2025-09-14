@@ -1,5 +1,6 @@
 import tkinter as tk
 from ..tools.load_image import load_icon
+from .. import state
 
 
 def show_menu(e, menu):
@@ -16,9 +17,11 @@ def update_labels(items, menu):
     return _init
 
 
-def change_icon(img, btn):
+def change_icon(img, btn, tool_name):
     btn.configure(image=img)
     btn.image = img
+    state.selected_tool = tool_name
+    print(state.selected_tool)
 
 
 def tool_menu_init(root, bar, widgets, def_icon, buttons):
@@ -48,7 +51,9 @@ def tool_menu_init(root, bar, widgets, def_icon, buttons):
             label=_(b["name"]),
             image=icon,
             compound="left",
-            command=lambda img=icon: change_icon(img, button),
+            command=lambda img=icon, tool_name=b["icon"]: change_icon(
+                img, button, tool_name
+            ),
         )
         i = (
             menu.index("end") or 0
@@ -96,5 +101,6 @@ def sidebar(root, widgets):
             {"name": _("Korene"), "icon": "roots"},
         ],
     )
+    state.selected_tool = "arrow"
 
     return bar
