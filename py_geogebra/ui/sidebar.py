@@ -86,7 +86,7 @@ def sidebar(root, widgets):
         widgets,
         def_icon="point",
         buttons=[
-            {"name": _(_("Bod")), "icon": "point"},
+            {"name": _("Bod"), "icon": "point"},
             {"name": _("Bod na objekte"), "icon": "point_on_object"},
             {"name": _("Pripojiť / Odpojiť bod"), "icon": "attach_detach_point"},
             {"name": _("Priesečník"), "icon": "intersect"},
