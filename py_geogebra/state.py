@@ -10,3 +10,6 @@ points_for_obj = []
 freehand_last_pos = {"x": 0, "y": 0}
 drag_target = None
 deleted_point_label = None
+center = (0, 0)
+sidebar_width = 0
+sidebar_resizing = False

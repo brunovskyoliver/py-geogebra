@@ -1,7 +1,7 @@
 from typing import List, Protocol
 import tkinter as tk
 from .utils import center
-
+from .. import state
 
 
 class Drawable(Protocol):
@@ -25,7 +25,7 @@ class Objects:
         self.unit_size = 40
 
     def register(self, obj: Drawable):
-        cx, cy = center(self.canvas, self)
+        cx, cy = state.center
         if obj not in self._objects:
             self._objects.append(obj)
             obj.offset_x = self.offset_x
@@ -35,14 +35,14 @@ class Objects:
             if hasattr(obj, "cx") and hasattr(obj, "cy"):
                 obj.cx = cx
                 obj.cy = cy
-            obj.update()  
+            obj.update()
 
     def unregister(self, obj: Drawable):
         if obj in self._objects:
             self._objects.remove(obj)
 
     def refresh(self):
-        cx, cy = center(self.canvas, self)
+        cx, cy = state.center
         for obj in self._objects:
             obj.offset_x = self.offset_x
             obj.offset_y = self.offset_y

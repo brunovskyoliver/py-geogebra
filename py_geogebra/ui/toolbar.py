@@ -85,7 +85,7 @@ def tool_menu_init(root, canvas, bar, widgets, def_icon, buttons, objects):
     return button, menu
 
 
-def sidebar(root, canvas, widgets, objects):
+def toolbar(root, canvas, widgets, objects):
     root.configure(bg="white")
     bar = tk.Frame(root, height=40, bg="white", bd=0, highlightthickness=0)
     bar.pack(side="top", fill="x")

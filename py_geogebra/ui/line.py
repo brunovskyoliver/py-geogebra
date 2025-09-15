@@ -45,7 +45,7 @@ class Line:
             return
 
         if self.point_2 is None:
-            cx, cy = center(self.canvas, self.objects)
+            cx, cy = state.center
             x2 = (e.x - cx) / (self.unit_size * self.scale)
             y2 = (cy - e.y) / (self.unit_size * self.scale)
         else:

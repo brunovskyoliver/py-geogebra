@@ -15,7 +15,7 @@ from ..tools.utils import (
 import math
 
 
-def pressing(root, canvas, objects, axes):
+def pressing(root, canvas, sidebar, objects, axes):
     def left_click_pressed(e):
         if state.selected_tool == "arrow":
             state.start_pos["x"] = e.x
@@ -52,9 +52,9 @@ def pressing(root, canvas, objects, axes):
                 pos_y=world_y,
             )
             objects.register(p)
-        
+
         elif state.selected_tool == "pen":
-            cx, cy = center(canvas, objects)
+            cx, cy = state.center
             world_x = (e.x - cx) / (objects.unit_size * objects.scale)
             world_y = (cy - e.y) / (objects.unit_size * objects.scale)
 
@@ -63,12 +63,12 @@ def pressing(root, canvas, objects, axes):
             objects.register(state.current_pen)
 
         elif state.selected_tool == "freehand":
-            cx, cy = center(canvas, objects)
+            cx, cy = state.center
             world_x = (e.x - cx) / (objects.unit_size * objects.scale)
             world_y = (cy - e.y) / (objects.unit_size * objects.scale)
             state.freehand_last_pos["x"] = world_x
             state.freehand_last_pos["y"] = world_y
-            
+
         elif state.selected_tool == "line":
             state.start_pos["x"] = e.x
             state.start_pos["y"] = e.y
@@ -105,7 +105,7 @@ def pressing(root, canvas, objects, axes):
                 state.points_for_obj[1].point_2 = p
                 state.points_for_obj[1].update()
                 state.points_for_obj = []
-                
+
         elif state.selected_tool == "segment":
             state.start_pos["x"] = e.x
             state.start_pos["y"] = e.y
@@ -194,7 +194,19 @@ def pressing(root, canvas, objects, axes):
         elif state.selected_tool == "arrow":
             state.drag_target = None
 
+    def left_click_pressed_sidebar(e):
+        if abs(e.x - sidebar.winfo_width()) <= 20:
+            state.sidebar_resizing = True
+            state.start_pos["x"] = e.x
+            set_cursor(sidebar, "sb_h_double_arrow")
+
+    def left_click_released_sidebar(e):
+        state.sidebar_resizing = False
+        set_cursor(sidebar, "")
+
     canvas.bind("<Button-1>", left_click_pressed)
     canvas.bind("<Button-3>", middle_click_pressed)
     canvas.bind("<ButtonRelease-2>", right_click_released)
     canvas.bind("<ButtonRelease-1>", left_click_released)
+    sidebar.bind("<Button-1>", left_click_pressed_sidebar)
+    sidebar.bind("<ButtonRelease-1>", left_click_released_sidebar)
