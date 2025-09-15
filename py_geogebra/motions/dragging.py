@@ -6,7 +6,7 @@ from ..ui.free_hand import FreeHand
 def dragging(root, canvas, objects, axes):
     def left_click_drag(e):
         if state.selected_tool == "arrow":
-            if state.selected_point is None:
+            if state.drag_target is None:
                 dx = e.x - state.start_pos["x"]
                 dy = e.y - state.start_pos["y"]
                 objects.offset_x += dx
@@ -19,12 +19,11 @@ def dragging(root, canvas, objects, axes):
                 world_x = (e.x - cx) / (objects.unit_size * objects.scale)
                 world_y = (cy - e.y) / (objects.unit_size * objects.scale)
 
-                state.selected_point.pos_x = world_x
-                state.selected_point.pos_y = world_y
-                state.selected_point.update()
+                state.drag_target.pos_x = world_x
+                state.drag_target.pos_y = world_y
+                state.drag_target.update()
 
         elif state.selected_tool == "pen" and state.current_pen is not None:
-            root.config(cursor="pencil")
             cx, cy = center(canvas, objects)
             world_x = (e.x - cx) / (objects.unit_size * objects.scale)
             world_y = (cy - e.y) / (objects.unit_size * objects.scale)
