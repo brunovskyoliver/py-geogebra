@@ -9,5 +9,8 @@ def motion(root, canvas, objects, axes):
             
         if state.selected_tool == "segment" and 0 < len(state.points_for_obj) < 3:
             state.points_for_obj[1].update(e)
+        
+        if state.selected_tool == "ray" and 0 < len(state.points_for_obj) < 3:
+            state.points_for_obj[1].update(e)
 
     canvas.bind("<Motion>", handle_mouse)

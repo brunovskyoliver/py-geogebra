@@ -2,6 +2,7 @@ from .. import state
 from ..tools.utils import center, set_cursor
 from ..ui.free_hand import FreeHand
 from ..ui.line import Line
+from ..ui.ray import Ray
 from ..ui.segment import Segment
 
 
@@ -25,7 +26,7 @@ def dragging(root, canvas, objects, axes):
                 state.drag_target.pos_y = world_y
                 state.drag_target.update()
                 for obj in objects._objects:
-                    if isinstance(obj, Line) or isinstance(obj, Segment):
+                    if isinstance(obj, Line) or isinstance(obj, Segment) or isinstance(obj, Ray):
                         if (
                             obj.point_1 is state.drag_target
                             or obj.point_2 is state.drag_target

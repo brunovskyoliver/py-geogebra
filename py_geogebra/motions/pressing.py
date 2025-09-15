@@ -2,6 +2,7 @@ from .. import state
 from ..ui.point import Point
 from ..ui.pen import Pen
 from ..ui.line import Line
+from ..ui.ray import Ray
 from ..ui.segment import Segment
 from ..tools.utils import (
     number_to_ascii,
@@ -135,6 +136,42 @@ def pressing(root, canvas, objects, axes):
                 objects.register(segment)
                 state.points_for_obj.append(p)
                 state.points_for_obj.append(segment)
+
+            else:
+                state.points_for_obj[1].point_2 = p
+                state.points_for_obj = []
+
+        elif state.selected_tool == "ray":
+            state.start_pos["x"] = e.x
+            state.start_pos["y"] = e.y
+            world_x, world_y = screen_to_world(canvas, objects, e)
+            label = get_label(state)
+            items = canvas.find_overlapping(e.x, e.y, e.x + 1, e.y + 1)
+            p = None
+            for obj in objects._objects:
+                if hasattr(obj, "tag") and any(
+                    obj.tag in canvas.gettags(i) for i in items
+                ):
+                    if "point" in obj.tag:
+                        p = obj
+                        break
+            if p == None:
+                p = Point(
+                    root,
+                    canvas,
+                    label=label,
+                    unit_size=axes.unit_size,
+                    pos_x=world_x,
+                    pos_y=world_y,
+                )
+                objects.register(p)
+            if len(state.points_for_obj) < 2:
+                ray = Ray(
+                    root, canvas, unit_size=axes.unit_size, point_1=p, objects=objects
+                )
+                objects.register(ray)
+                state.points_for_obj.append(p)
+                state.points_for_obj.append(ray)
 
             else:
                 state.points_for_obj[1].point_2 = p
