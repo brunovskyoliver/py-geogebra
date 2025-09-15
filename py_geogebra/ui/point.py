@@ -18,6 +18,9 @@ class Point:
         self.scale = 1.0  # zoom factor
         self.unit_size = unit_size
 
+        self.cx = 0
+        self.cy = 0
+
         self.tag = f"point_{id(self)}"
 
         self.canvas.bind("<Configure>", lambda e: self.update())
@@ -25,10 +28,8 @@ class Point:
     def update(self):
         self.canvas.delete(self.tag)
 
-        cx, cy = center(self.canvas, self)
-
-        x = cx + self.pos_x * self.unit_size * self.scale
-        y = cy - self.pos_y * self.unit_size * self.scale
+        x = self.cx + self.pos_x * self.unit_size * self.scale
+        y = self.cy - self.pos_y * self.unit_size * self.scale
 
         visual_scale = min(max(1, self.scale**0.5), 1.9)
 
