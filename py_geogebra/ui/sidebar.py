@@ -114,6 +114,22 @@ def sidebar(root, canvas, widgets):
             {"name": _("Korene"), "icon": "roots"},
         ],
     )
+    tool_menu_init(
+        root,
+        canvas,
+        bar,
+        widgets,
+        def_icon="line",
+        buttons=[
+            {"name": _("Priamka"), "icon": "line"},
+            {"name": _("Úsečka"), "icon": "segment"},
+            {"name": _("Úsečka s danou dĺžkou"), "icon": "segment_with_length"},
+            {"name": _("Polpriamka"), "icon": "ray"},
+            {"name": _("Zalomená čiara"), "icon": "polyline"},
+            {"name": _("Vektor"), "icon": "vector"},
+            {"name": _("Vektor z bodu"), "icon": "vector_from_point"},
+        ],
+    )
     state.selected_tool = "arrow"
 
     return bar

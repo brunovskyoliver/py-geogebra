@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-09-14 16:25+0200\n"
+"POT-Creation-Date: 2025-09-15 14:45+0200\n"
 "PO-Revision-Date: 2025-09-13 23:35+0200\n"
 "Last-Translator: Automatically generated\n"
 "Language-Team: none\n"
@@ -17,49 +17,77 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-#: py_geogebra/ui/sidebar.py:78
+#: py_geogebra/ui/sidebar.py:95
 msgid "Pohyb"
 msgstr "Move"
 
-#: py_geogebra/ui/sidebar.py:79
+#: py_geogebra/ui/sidebar.py:96
 msgid "Voľný tvar"
 msgstr "Freehand Shape"
 
-#: py_geogebra/ui/sidebar.py:80
+#: py_geogebra/ui/sidebar.py:97
 msgid "Nástroj pero"
 msgstr "Pen"
 
-#: py_geogebra/ui/sidebar.py:89
+#: py_geogebra/ui/sidebar.py:107
 msgid "Bod"
 msgstr "Point"
 
-#: py_geogebra/ui/sidebar.py:90
+#: py_geogebra/ui/sidebar.py:108
 msgid "Bod na objekte"
 msgstr "Point on Object"
 
-#: py_geogebra/ui/sidebar.py:91
+#: py_geogebra/ui/sidebar.py:109
 msgid "Pripojiť / Odpojiť bod"
 msgstr "Attach / Detach Point"
 
-#: py_geogebra/ui/sidebar.py:92
+#: py_geogebra/ui/sidebar.py:110
 msgid "Priesečník"
 msgstr "Intersect"
 
-#: py_geogebra/ui/sidebar.py:93
+#: py_geogebra/ui/sidebar.py:111
 msgid "Stred"
 msgstr "Midpoint or Center"
 
-#: py_geogebra/ui/sidebar.py:94
+#: py_geogebra/ui/sidebar.py:112
 msgid "Komplexné číslo"
 msgstr "Complex Number"
 
-#: py_geogebra/ui/sidebar.py:95
+#: py_geogebra/ui/sidebar.py:113
 msgid "Extremum"
 msgstr "Extremum"
 
-#: py_geogebra/ui/sidebar.py:96
+#: py_geogebra/ui/sidebar.py:114
 msgid "Korene"
 msgstr "Roots"
+
+#: py_geogebra/ui/sidebar.py:124
+msgid "Priamka"
+msgstr "Line"
+
+#: py_geogebra/ui/sidebar.py:125
+msgid "Úsečka"
+msgstr "Segment"
+
+#: py_geogebra/ui/sidebar.py:126
+msgid "Úsečka s danou dĺžkou"
+msgstr "Segment with given length"
+
+#: py_geogebra/ui/sidebar.py:127
+msgid "Polpriamka"
+msgstr "Ray"
+
+#: py_geogebra/ui/sidebar.py:128
+msgid "Zalomená čiara"
+msgstr "Polyline"
+
+#: py_geogebra/ui/sidebar.py:129
+msgid "Vektor"
+msgstr "Vector"
+
+#: py_geogebra/ui/sidebar.py:130
+msgid "Vektor z bodu"
+msgstr "Vector from point"
 
 #: py_geogebra/ui/menu_bar.py:11
 msgid "Language"
@@ -93,6 +121,6 @@ msgstr "You are on the latest version"
 msgid "Nespustil si binary"
 msgstr "You did not start program using binary"
 
-#: py_geogebra/app.py:18
+#: py_geogebra/app.py:22
 msgid "Geogebra ale lepsia"
 msgstr "Geogebra but better"

@@ -4,13 +4,20 @@ from ..tools.utils import center
 
 class Point:
     def __init__(
-        self, root: tk.Tk, canvas: tk.Canvas, label: str = "", unit_size: int = 40
+        self,
+        root: tk.Tk,
+        canvas: tk.Canvas,
+        label: str = "",
+        unit_size: int = 40,
+        pos_x: int = 0,
+        pos_y: int = 0,
     ):
+
         self.root = root
         self.canvas = canvas
 
-        self.pos_x = 0.0
-        self.pos_y = 0.0
+        self.pos_x = pos_x
+        self.pos_y = pos_y
         self.label = label
 
         self.offset_x = 0.0
@@ -20,6 +27,8 @@ class Point:
 
         self.cx = 0
         self.cy = 0
+        self.x = 0
+        self.y = 0
 
         self.tag = f"point_{id(self)}"
         self.selected = False
@@ -41,6 +50,7 @@ class Point:
 
         x = self.cx + self.pos_x * self.unit_size * self.scale
         y = self.cy - self.pos_y * self.unit_size * self.scale
+        self.x, self.y = x, y
 
         visual_scale = min(max(1, self.scale**0.5), 1.9)
 

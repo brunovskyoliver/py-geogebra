@@ -1,7 +1,8 @@
 from .. import state
 from ..ui.point import Point
 from ..ui.pen import Pen
-from ..tools.utils import number_to_ascii, center, set_cursor
+from ..ui.line import Line
+from ..tools.utils import number_to_ascii, center, set_cursor, snap, get_label
 import math
 
 
@@ -30,24 +31,17 @@ def pressing(root, canvas, objects, axes):
             state.start_pos["x"] = e.x
             state.start_pos["y"] = e.y
 
-            cx, cy = center(canvas, objects)
-            world_x = (e.x - cx) / (objects.unit_size * objects.scale)
-            world_y = (cy - e.y) / (objects.unit_size * objects.scale)
-            step = axes.nice_step()
-            world_x = math.floor(world_x / step + 0.5) * step
-            world_y = math.floor(world_y / step + 0.5) * step
+            world_x, world_y = snap(canvas, objects, e, axes)
 
-            label = number_to_ascii(state.label_counter)
-            if state.label_counter_bck is None:
-                state.label_counter += 1
-            else:
-                state.label_counter = state.label_counter_bck
-                state.label_counter_bck = None
-            state.label_list.append(label)
-
-            p = Point(root, canvas, label=label, unit_size=axes.unit_size)
-            p.pos_x = world_x
-            p.pos_y = world_y
+            label = get_label(state)
+            p = Point(
+                root,
+                canvas,
+                label=label,
+                unit_size=axes.unit_size,
+                pos_x=world_x,
+                pos_y=world_y,
+            )
             objects.register(p)
         elif state.selected_tool == "pen":
             cx, cy = center(canvas, objects)
@@ -64,6 +58,31 @@ def pressing(root, canvas, objects, axes):
             world_y = (cy - e.y) / (objects.unit_size * objects.scale)
             state.freehand_last_pos["x"] = world_x
             state.freehand_last_pos["y"] = world_y
+        elif state.selected_tool == "line":
+            state.start_pos["x"] = e.x
+            state.start_pos["y"] = e.y
+            world_x, world_y = snap(canvas, objects, e, axes)
+            label = get_label(state)
+            p = Point(
+                root,
+                canvas,
+                label=label,
+                unit_size=axes.unit_size,
+                pos_x=world_x,
+                pos_y=world_y,
+            )
+            objects.register(p)
+            if len(state.points_for_obj) < 2:
+                line = Line(
+                    root, canvas, unit_size=axes.unit_size, point_1=p, objects=objects
+                )
+                objects.register(line)
+                state.points_for_obj.append(p)
+                state.points_for_obj.append(line)
+
+            else:
+                state.points_for_obj[1].point_2 = p
+                state.points_for_obj = []
 
     def middle_click_pressed(e):
         state.start_pos["x"] = e.x
