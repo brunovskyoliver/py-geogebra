@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-09-14 16:23+0200\n"
+"POT-Creation-Date: 2025-09-14 16:25+0200\n"
 "PO-Revision-Date: 2025-09-13 23:35+0200\n"
 "Last-Translator: Automatically generated\n"
 "Language-Team: none\n"
@@ -16,6 +16,18 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+#: py_geogebra/ui/sidebar.py:78
+msgid "Pohyb"
+msgstr "Move"
+
+#: py_geogebra/ui/sidebar.py:79
+msgid "Voľný tvar"
+msgstr "Freehand Shape"
+
+#: py_geogebra/ui/sidebar.py:80
+msgid "Nástroj pero"
+msgstr "Pen"
 
 #: py_geogebra/ui/sidebar.py:89
 msgid "Bod"
@@ -84,12 +96,3 @@ msgstr "You did not start program using binary"
 #: py_geogebra/app.py:18
 msgid "Geogebra ale lepsia"
 msgstr "Geogebra but better"
-
-#~ msgid "Pohyb"
-#~ msgstr "Move"
-
-#~ msgid "Voľný tvar"
-#~ msgstr "Freehand Shape"
-
-#~ msgid "Nástroj pero"
-#~ msgstr "Pen"

@@ -1,6 +1,7 @@
 from .. import state
 from ..tools.utils import center, set_cursor
 from ..ui.free_hand import FreeHand
+from ..ui.line import Line
 
 
 def dragging(root, canvas, objects, axes):
@@ -22,6 +23,13 @@ def dragging(root, canvas, objects, axes):
                 state.drag_target.pos_x = world_x
                 state.drag_target.pos_y = world_y
                 state.drag_target.update()
+                for obj in objects._objects:
+                    if isinstance(obj, Line):
+                        if (
+                            obj.point_1 is state.drag_target
+                            or obj.point_2 is state.drag_target
+                        ):
+                            obj.update()
 
         elif state.selected_tool == "pen" and state.current_pen is not None:
             cx, cy = center(canvas, objects)

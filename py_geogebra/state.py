@@ -6,6 +6,7 @@ current_pen = None
 label_counter = 0
 label_counter_bck = None
 label_list = []
+points_for_obj = []
 freehand_last_pos = {"x": 0, "y": 0}
 drag_target = None
 deleted_point_label = None
