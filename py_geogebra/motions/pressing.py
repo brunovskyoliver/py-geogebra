@@ -65,20 +65,31 @@ def pressing(root, canvas, objects, axes):
             world_y = (cy - e.y) / (objects.unit_size * objects.scale)
             state.freehand_last_pos["x"] = world_x
             state.freehand_last_pos["y"] = world_y
+            
         elif state.selected_tool == "line":
             state.start_pos["x"] = e.x
             state.start_pos["y"] = e.y
             world_x, world_y = screen_to_world(canvas, objects, e)
             label = get_label(state)
-            p = Point(
-                root,
-                canvas,
-                label=label,
-                unit_size=axes.unit_size,
-                pos_x=world_x,
-                pos_y=world_y,
-            )
-            objects.register(p)
+            items = canvas.find_overlapping(e.x, e.y, e.x + 1, e.y + 1)
+            p = None
+            for obj in objects._objects:
+                if hasattr(obj, "tag") and any(
+                    obj.tag in canvas.gettags(i) for i in items
+                ):
+                    if "point" in obj.tag:
+                        p = obj
+                        break
+            if p == None:
+                p = Point(
+                    root,
+                    canvas,
+                    label=label,
+                    unit_size=axes.unit_size,
+                    pos_x=world_x,
+                    pos_y=world_y,
+                )
+                objects.register(p)
             if len(state.points_for_obj) < 2:
                 line = Line(
                     root, canvas, unit_size=axes.unit_size, point_1=p, objects=objects
