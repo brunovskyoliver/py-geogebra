@@ -11,13 +11,20 @@ def pressing(root, canvas, objects, axes):
             state.start_pos["x"] = e.x
             state.start_pos["y"] = e.y
             items = canvas.find_overlapping(e.x, e.y, e.x + 1, e.y + 1)
-            state.selected_point = None
+            point_obj = None
             for obj in objects._objects:
                 if hasattr(obj, "tag") and any(
                     obj.tag in canvas.gettags(i) for i in items
                 ):
-                    state.selected_point = obj
-                    break
+                    if "point" in obj.tag:
+                        point_obj = obj
+                        break
+            if point_obj:
+                if state.selected_point and state.selected_point != point_obj:
+                    state.selected_point.deselect()
+                point_obj.select()
+                state.selected_point = point_obj
+            state.drag_target = point_obj
 
         elif state.selected_tool == "point":
             state.start_pos["x"] = e.x
@@ -60,6 +67,10 @@ def pressing(root, canvas, objects, axes):
     def right_click_released(e):
         if state.selected_tool == "pen":
             set_cursor(canvas, "crosshair")
+
+    def left_click_released(e):
+        if state.selected_tool == "arrow":
+            state.drag_target = None
 
     canvas.bind("<Button-1>", left_click_pressed)
     canvas.bind("<Button-3>", middle_click_pressed)

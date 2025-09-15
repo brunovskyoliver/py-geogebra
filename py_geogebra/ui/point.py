@@ -22,11 +22,22 @@ class Point:
         self.cy = 0
 
         self.tag = f"point_{id(self)}"
+        self.selected = False
+        self.highlight_tag = f"{self.tag}_highlight"
 
         self.canvas.bind("<Configure>", lambda e: self.update())
 
+    def select(self):
+        self.selected = True
+        self.update()
+
+    def deselect(self):
+        self.selected = False
+        self.update()
+
     def update(self):
         self.canvas.delete(self.tag)
+        self.canvas.delete(self.highlight_tag)
 
         x = self.cx + self.pos_x * self.unit_size * self.scale
         y = self.cy - self.pos_y * self.unit_size * self.scale
@@ -35,14 +46,27 @@ class Point:
 
         r = 6.0 * visual_scale
 
+        if self.selected:
+            r_h = r * 1.4
+            self.canvas.create_oval(
+                x - r_h,
+                y - r_h,
+                x + r_h,
+                y + r_h,
+                outline="blue",
+                width=2,
+                fill="",  # no fill so it looks like a ring
+                tags=(self.highlight_tag,),  # must be a tuple
+            )
+
         self.canvas.create_oval(
             x - r, y - r, x + r, y + r, fill="blue", width=2, tags=(self.tag, "point")
         )
 
         if self.label:
             self.canvas.create_text(
-                x + 5 * visual_scale,
-                y - 10 * visual_scale,
+                x + 10 * visual_scale,
+                y - 15 * visual_scale,
                 text=self.label,
                 font=("Arial", int(12 * visual_scale)),
                 fill="blue",
