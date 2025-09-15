@@ -103,6 +103,7 @@ def pressing(root, canvas, objects, axes):
 
             else:
                 state.points_for_obj[1].point_2 = p
+                state.points_for_obj[1].update()
                 state.points_for_obj = []
                 
         elif state.selected_tool == "segment":
@@ -139,6 +140,7 @@ def pressing(root, canvas, objects, axes):
 
             else:
                 state.points_for_obj[1].point_2 = p
+                state.points_for_obj[1].update()
                 state.points_for_obj = []
 
         elif state.selected_tool == "ray":
@@ -175,6 +177,7 @@ def pressing(root, canvas, objects, axes):
 
             else:
                 state.points_for_obj[1].point_2 = p
+                state.points_for_obj[1].update()
                 state.points_for_obj = []
 
     def middle_click_pressed(e):
