@@ -43,6 +43,7 @@ def dragging(root, canvas, objects, axes):
             state.freehand_last_pos["x"] = world_x
             state.freehand_last_pos["y"] = world_y
             objects.register(line)
+            objects.refresh()
 
     def right_click_drag(e):
         if state.selected_tool == "pen":
