@@ -26,9 +26,9 @@ def run_app():
     root.config(menu=menu_bar)
 
     canvas = Canvas(root, background="white")
-    side_bar = sidebar(root, canvas, widgets)
-    canvas.pack(fill="both", expand=True)
     objects = Objects(canvas)
+    side_bar = sidebar(root, canvas, widgets, objects)
+    canvas.pack(fill="both", expand=True)
     axes = Axes(root, canvas, objects.unit_size)
     objects.register(axes)
     motions.bind_all(root, canvas, objects, axes)

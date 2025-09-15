@@ -2,7 +2,7 @@ from os import confstr
 import tkinter as tk
 from typing import ChainMap
 from ..tools.load_image import load_icon
-from ..tools.utils import set_cursor
+from ..tools.utils import delete_object, set_cursor
 from .. import state
 
 
@@ -21,9 +21,14 @@ def update_labels(items, menu):
 
 
 # https://stackoverflow.com/questions/61724685/python-tkinter-cursor-icon-change-size
-def change_icon(canvas, img, btn, tool_name):
+def change_icon(canvas, img, btn, tool_name, objects):
     btn.configure(image=img)
     btn.image = img
+    if state.selected_tool == "line" and state.selected_tool != tool_name:
+        for obj in list(state.points_for_obj):
+            delete_object(canvas, objects, obj, state)
+        state.points_for_obj.clear()
+
     state.selected_tool = tool_name
 
     if tool_name in ("pen", "freehand"):
@@ -35,7 +40,7 @@ def change_icon(canvas, img, btn, tool_name):
         state.selected_point.deselect()
 
 
-def tool_menu_init(root, canvas, bar, widgets, def_icon, buttons):
+def tool_menu_init(root, canvas, bar, widgets, def_icon, buttons, objects):
     icons = {
         name: load_icon(name)
         for name in {def_icon, *[button["icon"] for button in buttons]}
@@ -63,7 +68,7 @@ def tool_menu_init(root, canvas, bar, widgets, def_icon, buttons):
             image=icon,
             compound="left",
             command=lambda img=icon, tool_name=b["icon"]: change_icon(
-                canvas, img, button, tool_name
+                canvas, img, button, tool_name, objects
             ),
         )
         i = (
@@ -80,7 +85,7 @@ def tool_menu_init(root, canvas, bar, widgets, def_icon, buttons):
     return button, menu
 
 
-def sidebar(root, canvas, widgets):
+def sidebar(root, canvas, widgets, objects):
     root.configure(bg="white")
     bar = tk.Frame(root, height=40, bg="white", bd=0, highlightthickness=0)
     bar.pack(side="top", fill="x")
@@ -96,6 +101,7 @@ def sidebar(root, canvas, widgets):
             {"name": _("Voľný tvar"), "icon": "freehand"},
             {"name": _("Nástroj pero"), "icon": "pen"},
         ],
+        objects=objects,
     )
     tool_menu_init(
         root,
@@ -113,6 +119,7 @@ def sidebar(root, canvas, widgets):
             {"name": _("Extremum"), "icon": "extremum"},
             {"name": _("Korene"), "icon": "roots"},
         ],
+        objects=objects,
     )
     tool_menu_init(
         root,
@@ -129,6 +136,7 @@ def sidebar(root, canvas, widgets):
             {"name": _("Vektor"), "icon": "vector"},
             {"name": _("Vektor z bodu"), "icon": "vector_from_point"},
         ],
+        objects=objects,
     )
     state.selected_tool = "arrow"
 

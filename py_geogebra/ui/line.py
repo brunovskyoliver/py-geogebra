@@ -78,3 +78,5 @@ class Line:
             tags=self.tag,
         )
         self.canvas.tag_raise(self.point_1.tag)
+        if self.point_2 is not None:
+            self.canvas.tag_raise(self.point_2.tag)
