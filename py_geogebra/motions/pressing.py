@@ -60,7 +60,12 @@ def pressing(root, canvas, objects, axes):
     def right_click_released(e):
         if state.selected_tool == "pen":
             set_cursor(canvas, "crosshair")
+            
+    def left_click_released(e):
+        if state.selected_tool == "freehand":
+            canvas.delete("freehand")
 
     canvas.bind("<Button-1>", left_click_pressed)
     canvas.bind("<Button-3>", middle_click_pressed)
     canvas.bind("<ButtonRelease-2>", right_click_released)
+    canvas.bind("<ButtonRelease-1>", left_click_released)
