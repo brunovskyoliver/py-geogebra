@@ -37,8 +37,13 @@ def pressing(root, canvas, objects, axes):
             world_x = math.floor(world_x / step + 0.5) * step
             world_y = math.floor(world_y / step + 0.5) * step
 
-            label = number_to_ascii(state.point_counter)
-            state.point_counter += 1
+            label = number_to_ascii(state.label_counter)
+            if state.label_counter_bck is None:
+                state.label_counter += 1
+            else:
+                state.label_counter = state.label_counter_bck
+                state.label_counter_bck = None
+            state.label_list.append(label)
 
             p = Point(root, canvas, label=label, unit_size=axes.unit_size)
             p.pos_x = world_x
