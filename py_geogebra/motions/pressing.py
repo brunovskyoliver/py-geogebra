@@ -1,9 +1,10 @@
 from .. import state
 from ..ui.point import Point
 from ..tools.utils import number_to_ascii
+import math
 
 
-def pressing(root, canvas, objects):
+def pressing(root, canvas, objects, axes):
     def left_click_pressed(e):
         if state.selected_tool == "arrow":
             state.start_pos["x"] = e.x
@@ -29,13 +30,16 @@ def pressing(root, canvas, objects):
             world_x = (e.x - cx) / (objects.unit_size * objects.scale)
             world_y = (cy - e.y) / (objects.unit_size * objects.scale)
 
+            step = axes.nice_step()
+            world_x = math.floor(world_x / step + 0.5) * step
+            world_y = math.floor(world_y / step + 0.5) * step
+
             label = number_to_ascii(state.point_counter)
             state.point_counter += 1
 
-            p = Point(root, canvas, label=label)
+            p = Point(root, canvas, label=label, unit_size=axes.unit_size)
             p.pos_x = world_x
             p.pos_y = world_y
             objects.register(p)
 
     canvas.bind("<Button-1>", left_click_pressed)
-    canvas.bind("<ButtonRelease-1>", lambda e: setattr(state, "selected_point", None))

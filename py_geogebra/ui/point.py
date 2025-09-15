@@ -2,7 +2,9 @@ import tkinter as tk
 
 
 class Point:
-    def __init__(self, root: tk.Tk, canvas: tk.Canvas, label: str = ""):
+    def __init__(
+        self, root: tk.Tk, canvas: tk.Canvas, label: str = "", unit_size: int = 40
+    ):
         self.root = root
         self.canvas = canvas
 
@@ -13,7 +15,7 @@ class Point:
         self.offset_x = 0.0
         self.offset_y = 0.0
         self.scale = 1.0  # zoom factor
-        self.unit_size = 20  # pixels per unit at scale=1
+        self.unit_size = unit_size
 
         self.tag = f"point_{id(self)}"
 
@@ -30,16 +32,20 @@ class Point:
         x = cx + self.pos_x * self.unit_size * self.scale
         y = cy - self.pos_y * self.unit_size * self.scale
 
-        r = 3. * self.scale
+        visual_scale = min(max(1, self.scale**0.5), 1.9)
+
+        r = 6.0 * visual_scale
+
         self.canvas.create_oval(
             x - r, y - r, x + r, y + r, fill="blue", width=2, tags=(self.tag, "point")
         )
+
         if self.label:
             self.canvas.create_text(
-                x + 5 * self.scale,
-                y - 10 * self.scale,
+                x + 5 * visual_scale,
+                y - 10 * visual_scale,
                 text=self.label,
-                font=("Arial", int(12 * self.scale)),
+                font=("Arial", int(12 * visual_scale)),
                 fill="blue",
                 tags=self.tag,
             )
