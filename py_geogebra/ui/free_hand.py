@@ -18,11 +18,10 @@ class FreeHand:
         self.cy = 0
 
 
-        self.tag = f"freehand_{id(self)}"
+        self.tag = "freehand"
 
 
     def update(self):
-        self.canvas.delete(self.tag)
 
         width = self.canvas.winfo_width()
         height = self.canvas.winfo_height()
