@@ -129,12 +129,12 @@ def pressing(root, canvas, objects, axes):
                 )
                 objects.register(p)
             if len(state.points_for_obj) < 2:
-                line = Segment(
+                segment = Segment(
                     root, canvas, unit_size=axes.unit_size, point_1=p, objects=objects
                 )
-                objects.register(line)
+                objects.register(segment)
                 state.points_for_obj.append(p)
-                state.points_for_obj.append(line)
+                state.points_for_obj.append(segment)
 
             else:
                 state.points_for_obj[1].point_2 = p
