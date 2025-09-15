@@ -4,6 +4,7 @@ from ..ui.pen import Pen
 from ..ui.line import Line
 from ..ui.ray import Ray
 from ..ui.segment import Segment
+from ..ui.segment_with_lenght import Segment_with_length
 from ..tools.utils import (
     number_to_ascii,
     center,
@@ -12,7 +13,7 @@ from ..tools.utils import (
     get_label,
     screen_to_world,
 )
-import math
+from tkinter import simpledialog
 
 
 def pressing(root, canvas, sidebar, objects, axes):
@@ -179,6 +180,64 @@ def pressing(root, canvas, sidebar, objects, axes):
                 state.points_for_obj[1].point_2 = p
                 state.points_for_obj[1].update()
                 state.points_for_obj = []
+
+        elif state.selected_tool == "segment_with_length":
+            world_x, world_y = screen_to_world(canvas, objects, e)
+            label = get_label(state)
+            items = canvas.find_overlapping(e.x, e.y, e.x + 1, e.y + 1)
+            p = None
+            for obj in objects._objects:
+                if hasattr(obj, "tag") and any(
+                    obj.tag in canvas.gettags(i) for i in items
+                ):
+                    if "point" in obj.tag:
+                        p = obj
+                        break
+            if p == None:
+                p = Point(
+                    root,
+                    canvas,
+                    label=label,
+                    unit_size=axes.unit_size,
+                    pos_x=world_x,
+                    pos_y=world_y,
+                )
+                objects.register(p)
+
+            length = (
+                simpledialog.askfloat(
+                    "Dĺžka úsečky",
+                    "Zadajte dĺžku úsečky (kladné číslo):",
+                    minvalue=0,
+                )
+            ) * objects.unit_size
+            new_x = e.x + length
+            cx, cy = center(canvas, objects)
+            world_x = (new_x - cx) / (objects.unit_size * objects.scale)
+
+            label = get_label(state)
+            p2 = Point(
+                root,
+                canvas,
+                label=label,
+                unit_size=axes.unit_size,
+                pos_x=world_x,
+                pos_y=world_y,
+            )
+            objects.register(p2)
+
+            swl = Segment_with_length(
+                root,
+                canvas,
+                unit_size=axes.unit_size,
+                point_1=p,
+                point_2=p2,
+                length=length,
+                angle=0,
+                objects=objects,
+            )
+            objects.register(swl)
+            objects.refresh()
 
     def middle_click_pressed(e):
         state.start_pos["x"] = e.x
