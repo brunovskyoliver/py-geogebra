@@ -29,10 +29,15 @@ def center(canvas: tk.Canvas, objects):
     return cx, cy
 
 
-def snap(canvas, objects, e, axes):
+def screen_to_world(canvas, objects, e):
     cx, cy = center(canvas, objects)
     world_x = (e.x - cx) / (objects.unit_size * objects.scale)
     world_y = (cy - e.y) / (objects.unit_size * objects.scale)
+    return world_x, world_y
+
+
+def snap(canvas, objects, e, axes):
+    world_x, world_y = screen_to_world(canvas, objects, e)
     step = axes.nice_step()
     world_x = math.floor(world_x / step + 0.5) * step
     world_y = math.floor(world_y / step + 0.5) * step
