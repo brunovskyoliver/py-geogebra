@@ -1,6 +1,6 @@
 from .. import state
 from ..ui.point import Point
-from ..tools.utils import number_to_ascii
+from ..tools.utils import number_to_ascii, center
 import math
 
 
@@ -22,14 +22,9 @@ def pressing(root, canvas, objects, axes):
             state.start_pos["x"] = e.x
             state.start_pos["y"] = e.y
 
-            width = canvas.winfo_width()
-            height = canvas.winfo_height()
-            cx = width // 2 + objects.offset_x
-            cy = height // 2 + objects.offset_y
-
+            cx, cy = center(canvas, objects)
             world_x = (e.x - cx) / (objects.unit_size * objects.scale)
             world_y = (cy - e.y) / (objects.unit_size * objects.scale)
-
             step = axes.nice_step()
             world_x = math.floor(world_x / step + 0.5) * step
             world_y = math.floor(world_y / step + 0.5) * step

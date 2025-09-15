@@ -1,29 +1,23 @@
 import tkinter as tk
-from ..tools.utils import center
 
 
-class Point:
-    def __init__(
-        self, root: tk.Tk, canvas: tk.Canvas, label: str = "", unit_size: int = 40
-    ):
+class Pen:
+    def __init__(self, root: tk.Tk, canvas: tk.Canvas, unit_size: int = 40):
         self.root = root
         self.canvas = canvas
 
         self.pos_x = 0.0
         self.pos_y = 0.0
-        self.label = label
 
         self.offset_x = 0.0
         self.offset_y = 0.0
         self.scale = 1.0  # zoom factor
         self.unit_size = unit_size
 
-        self.tag = f"point_{id(self)}"
-
         self.canvas.bind("<Configure>", lambda e: self.update())
 
     def update(self):
-        self.canvas.delete(self.tag)
+        self.canvas.delete("pen")
 
         width = self.canvas.winfo_width()
         height = self.canvas.winfo_height()
@@ -38,15 +32,5 @@ class Point:
         r = 6.0 * visual_scale
 
         self.canvas.create_oval(
-            x - r, y - r, x + r, y + r, fill="blue", width=2, tags=(self.tag, "point")
+            x - r, y - r, x + r, y + r, fill="black", width=2, tags="pen"
         )
-
-        if self.label:
-            self.canvas.create_text(
-                x + 5 * visual_scale,
-                y - 10 * visual_scale,
-                text=self.label,
-                font=("Arial", int(12 * visual_scale)),
-                fill="blue",
-                tags=self.tag,
-            )
