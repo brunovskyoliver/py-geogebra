@@ -1,4 +1,5 @@
 from .. import state
+from ..tools.utils import center
 
 
 def dragging(root, canvas, objects):
@@ -13,16 +14,15 @@ def dragging(root, canvas, objects):
                 state.start_pos["x"] = e.x
                 state.start_pos["y"] = e.y
             else:
-                width = canvas.winfo_width()
-                height = canvas.winfo_height()
-                cx = width // 2 + objects.offset_x
-                cy = height // 2 + objects.offset_y
-
+                cx, cy = center(canvas, objects)
                 world_x = (e.x - cx) / (objects.unit_size * objects.scale)
                 world_y = (cy - e.y) / (objects.unit_size * objects.scale)
 
                 state.selected_point.pos_x = world_x
                 state.selected_point.pos_y = world_y
                 state.selected_point.update()
+
+        elif state.selected_tool == "pen":
+            pass
 
     canvas.bind("<B1-Motion>", left_click_drag)

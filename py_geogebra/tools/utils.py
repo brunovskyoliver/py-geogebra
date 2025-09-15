@@ -1,3 +1,6 @@
+import tkinter as tk
+
+
 def number_to_ascii(n: int):
     s = ""
     n += 1
@@ -8,3 +11,11 @@ def number_to_ascii(n: int):
         n //= 26
 
     return s
+
+
+def center(canvas: tk.Canvas, objects):
+    width = canvas.winfo_width()
+    height = canvas.winfo_height()
+    cx = width // 2 + objects.offset_x
+    cy = height // 2 + objects.offset_y
+    return cx, cy
