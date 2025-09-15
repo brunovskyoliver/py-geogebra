@@ -3,6 +3,7 @@ from ..tools.utils import center, set_cursor
 from ..ui.free_hand import FreeHand
 from ..ui.line import Line
 from ..ui.ray import Ray
+from ..ui.segment_with_lenght import Segment_with_length
 from ..ui.segment import Segment
 
 
@@ -39,12 +40,18 @@ def dragging(root, canvas, sidebar, objects, axes):
                         isinstance(obj, Line)
                         or isinstance(obj, Segment)
                         or isinstance(obj, Ray)
+                        or isinstance(obj, Segment_with_length)
                     ):
                         if (
                             obj.point_1 is state.drag_target
                             or obj.point_2 is state.drag_target
                         ):
                             obj.update()
+                        if (
+                            state.drag_target is not obj.point_1
+                            and state.drag_target is not obj.point_2
+                        ):
+                            objects.refresh()
 
         elif state.selected_tool == "pen" and state.current_pen is not None:
             cx, cy = state.center
