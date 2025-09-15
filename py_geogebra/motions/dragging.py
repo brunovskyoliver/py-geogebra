@@ -38,6 +38,7 @@ def dragging(root, canvas, objects):
             state.freehand_last_pos["x"] = world_x
             state.freehand_last_pos["y"] = world_y
             objects.register(line)
+            objects.refresh()
 
 
     canvas.bind("<B1-Motion>", left_click_drag)
