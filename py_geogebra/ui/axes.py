@@ -1,5 +1,6 @@
 import tkinter as tk
 import math
+from ..tools.utils import center
 
 
 class Axes:
@@ -32,8 +33,7 @@ class Axes:
         width = self.canvas.winfo_width()
         height = self.canvas.winfo_height()
 
-        cx = width // 2 + self.offset_x
-        cy = height // 2 + self.offset_y
+        cx, cy = center(self.canvas, self)
 
         # main axes
         self.canvas.create_line(0, cy, width, cy, fill="black", width=2, tags="axes")

@@ -1,6 +1,7 @@
 from .. import state
 from ..ui.point import Point
-from ..tools.utils import number_to_ascii, center
+from ..ui.pen import Pen
+from ..tools.utils import number_to_ascii, center, set_cursor
 import math
 
 
@@ -36,5 +37,23 @@ def pressing(root, canvas, objects, axes):
             p.pos_x = world_x
             p.pos_y = world_y
             objects.register(p)
+        elif state.selected_tool == "pen":
+            cx, cy = center(canvas, objects)
+            world_x = (e.x - cx) / (objects.unit_size * objects.scale)
+            world_y = (cy - e.y) / (objects.unit_size * objects.scale)
+
+            state.current_pen = Pen(root, canvas, objects.unit_size)
+            state.current_pen.add_point(world_x, world_y)
+            objects.register(state.current_pen)
+
+    def middle_click_pressed(e):
+        state.start_pos["x"] = e.x
+        state.start_pos["y"] = e.y
+
+    def right_click_released(e):
+        if state.selected_tool == "pen":
+            set_cursor(canvas, "crosshair")
 
     canvas.bind("<Button-1>", left_click_pressed)
+    canvas.bind("<Button-3>", middle_click_pressed)
+    canvas.bind("<ButtonRelease-2>", right_click_released)
