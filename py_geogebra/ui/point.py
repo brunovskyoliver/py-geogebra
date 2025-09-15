@@ -52,6 +52,7 @@ class Point:
         y = self.cy - self.pos_y * self.unit_size * self.scale
         self.x, self.y = x, y
 
+
         visual_scale = min(max(1, self.scale**0.5), 1.9)
 
         r = 6.0 * visual_scale
