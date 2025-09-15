@@ -68,6 +68,7 @@ def delete_object(canvas, objects, object_to_delete, state):
     from ..ui.line import Line
     from ..ui.ray import Ray
     from ..ui.segment import Segment
+    from ..ui.segment_with_lenght import Segment_with_length
     from ..tools.utils import reconfigure_label_order
 
     if state.points_for_obj:
@@ -80,7 +81,7 @@ def delete_object(canvas, objects, object_to_delete, state):
 
     if isinstance(object_to_delete, Point):
         for obj in list(objects._objects):
-            if (isinstance(obj, Line) or isinstance(obj, Segment) or isinstance(obj, Ray)) and (
+            if (isinstance(obj, Line) or isinstance(obj, Segment) or isinstance(obj, Ray) or isinstance(obj, Segment_with_length)) and (
                 obj.point_1 is object_to_delete or obj.point_2 is object_to_delete
             ):
                 objects.unregister(obj)
