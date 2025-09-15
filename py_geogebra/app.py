@@ -29,8 +29,8 @@ def run_app():
     canvas = Canvas(root, background="white")
     canvas.pack(fill="both", expand=True)
     objects = Objects()
-    axes = Axes(root, canvas)
+    axes = Axes(root, canvas, objects.unit_size)
     objects.register(axes)
-    motions.bind_all(root, canvas, objects)
+    motions.bind_all(root, canvas, objects, axes)
 
     root.mainloop()
