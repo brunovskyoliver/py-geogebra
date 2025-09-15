@@ -31,6 +31,8 @@ def change_icon(canvas, img, btn, tool_name):
     else:
         cursor = ""
     set_cursor(canvas, cursor)
+    if state.selected_point:
+        state.selected_point.deselect()
 
 
 def tool_menu_init(root, canvas, bar, widgets, def_icon, buttons):
