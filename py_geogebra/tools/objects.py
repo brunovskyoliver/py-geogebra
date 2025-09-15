@@ -1,4 +1,7 @@
 from typing import List, Protocol
+import tkinter as tk
+from .utils import center
+
 
 
 class Drawable(Protocol):
@@ -10,9 +13,10 @@ class Drawable(Protocol):
 
 
 class Objects:
-    def __init__(self):
+    def __init__(self, canvas: tk.Canvas):
         # List of all drawable objects
         self._objects: List[Drawable] = []
+        self.canvas = canvas
 
         # Global offsets and scale
         self.offset_x = 0
@@ -21,12 +25,16 @@ class Objects:
         self.unit_size = 40
 
     def register(self, obj: Drawable):
+        cx, cy = center(self.canvas, self)
         if obj not in self._objects:
             self._objects.append(obj)
             obj.offset_x = self.offset_x
             obj.offset_y = self.offset_y
             if hasattr(obj, "scale"):
                 obj.scale = self.scale
+            if hasattr(obj, "cx") and hasattr(obj, "cy"):
+                obj.cx = cx
+                obj.cy = cy
             obj.update()  # draw immediately with correct offset
 
     def unregister(self, obj: Drawable):
@@ -34,10 +42,14 @@ class Objects:
             self._objects.remove(obj)
 
     def refresh(self):
+        cx, cy = center(self.canvas, self)
         for obj in self._objects:
             obj.offset_x = self.offset_x
             obj.offset_y = self.offset_y
 
             if hasattr(obj, "scale"):
                 obj.scale = self.scale
+            if hasattr(obj, "cx") and hasattr(obj, "cy"):
+                obj.cx = cx
+                obj.cy = cy
             obj.update()
