@@ -64,15 +64,30 @@ def reconfigure_label_order(label: str, state):
 
 def delete_object(canvas, objects, object_to_delete, state):
     from ..ui.point import Point
+    from ..ui.line import Line
+
+    if state.points_for_obj:
+        for obj in state.points_for_obj:
+            objects.unregister(obj)
+            canvas.delete(obj.tag)
+            if hasattr(obj, "highlight_tag"):
+                canvas.delete(obj.highlight_tag)
+        state.points_for_obj.clear()
+
+    if isinstance(object_to_delete, Point):
+        for obj in list(objects._objects):
+            if isinstance(obj, Line) and (
+                obj.point_1 is object_to_delete or obj.point_2 is object_to_delete
+            ):
+                objects.unregister(obj)
+                canvas.delete(obj.tag)
+        state.selected_point = None
+        reconfigure_label_order(object_to_delete.label, state)
 
     objects.unregister(object_to_delete)
     canvas.delete(object_to_delete.tag)
     if hasattr(object_to_delete, "highlight_tag"):
         canvas.delete(object_to_delete.highlight_tag)
-    if isinstance(object_to_delete, Point):
-        state.selected_point = None
-        label = object_to_delete.label
-        reconfigure_label_order(label, state)
 
 
 def world_to_screen(canvas, objects, wx, wy):
