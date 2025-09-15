@@ -2,7 +2,14 @@ from .. import state
 from ..ui.point import Point
 from ..ui.pen import Pen
 from ..ui.line import Line
-from ..tools.utils import number_to_ascii, center, set_cursor, snap, get_label
+from ..tools.utils import (
+    number_to_ascii,
+    center,
+    set_cursor,
+    snap,
+    get_label,
+    screen_to_world,
+)
 import math
 
 
@@ -61,7 +68,7 @@ def pressing(root, canvas, objects, axes):
         elif state.selected_tool == "line":
             state.start_pos["x"] = e.x
             state.start_pos["y"] = e.y
-            world_x, world_y = snap(canvas, objects, e, axes)
+            world_x, world_y = screen_to_world(canvas, objects, e)
             label = get_label(state)
             p = Point(
                 root,
@@ -91,14 +98,12 @@ def pressing(root, canvas, objects, axes):
     def right_click_released(e):
         if state.selected_tool == "pen":
             set_cursor(canvas, "crosshair")
-            
+
     def left_click_released(e):
         if state.selected_tool == "freehand":
             canvas.delete("freehand")
         elif state.selected_tool == "arrow":
             state.drag_target = None
-
-        
 
     canvas.bind("<Button-1>", left_click_pressed)
     canvas.bind("<Button-3>", middle_click_pressed)
