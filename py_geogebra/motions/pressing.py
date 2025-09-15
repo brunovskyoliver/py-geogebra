@@ -46,6 +46,13 @@ def pressing(root, canvas, objects, axes):
             state.current_pen.add_point(world_x, world_y)
             objects.register(state.current_pen)
 
+        elif state.selected_tool == "freehand":
+            cx, cy = center(canvas, objects)
+            world_x = (e.x - cx) / (objects.unit_size * objects.scale)
+            world_y = (cy - e.y) / (objects.unit_size * objects.scale)
+            state.freehand_last_pos["x"] = world_x
+            state.freehand_last_pos["y"] = world_y
+
     def middle_click_pressed(e):
         state.start_pos["x"] = e.x
         state.start_pos["y"] = e.y

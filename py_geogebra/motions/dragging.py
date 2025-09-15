@@ -1,5 +1,6 @@
 from .. import state
 from ..tools.utils import center, set_cursor
+from ..ui.free_hand import FreeHand
 
 
 def dragging(root, canvas, objects, axes):
@@ -28,6 +29,20 @@ def dragging(root, canvas, objects, axes):
             world_x = (e.x - cx) / (objects.unit_size * objects.scale)
             world_y = (cy - e.y) / (objects.unit_size * objects.scale)
             state.current_pen.add_point(world_x, world_y)
+
+        elif state.selected_tool == "freehand":
+            cx, cy = center(canvas, objects)
+            world_x = (e.x - cx) / (objects.unit_size * objects.scale)
+            world_y = (cy - e.y) / (objects.unit_size * objects.scale)
+            line = FreeHand(root, canvas)
+            line.unit_size = objects.unit_size
+            line.pos_x1 = state.freehand_last_pos["x"]
+            line.pos_y1 = state.freehand_last_pos["y"]
+            line.pos_x2 = world_x
+            line.pos_y2 = world_y
+            state.freehand_last_pos["x"] = world_x
+            state.freehand_last_pos["y"] = world_y
+            objects.register(line)
 
     def right_click_drag(e):
         if state.selected_tool == "pen":
