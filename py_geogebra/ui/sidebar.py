@@ -1,5 +1,8 @@
+from os import confstr
 import tkinter as tk
+from typing import ChainMap
 from ..tools.load_image import load_icon
+from ..tools.utils import set_cursor
 from .. import state
 
 
@@ -17,14 +20,20 @@ def update_labels(items, menu):
     return _init
 
 
-def change_icon(img, btn, tool_name):
+# https://stackoverflow.com/questions/61724685/python-tkinter-cursor-icon-change-size
+def change_icon(canvas, img, btn, tool_name):
     btn.configure(image=img)
     btn.image = img
     state.selected_tool = tool_name
-    print(state.selected_tool)
+
+    if tool_name in ("pen", "freehand"):
+        cursor = "crosshair"  # pencil nefunguje spravne na macu z nejakeho dovodu
+    else:
+        cursor = ""
+    set_cursor(canvas, cursor)
 
 
-def tool_menu_init(root, bar, widgets, def_icon, buttons):
+def tool_menu_init(root, canvas, bar, widgets, def_icon, buttons):
     icons = {
         name: load_icon(name)
         for name in {def_icon, *[button["icon"] for button in buttons]}
@@ -52,7 +61,7 @@ def tool_menu_init(root, bar, widgets, def_icon, buttons):
             image=icon,
             compound="left",
             command=lambda img=icon, tool_name=b["icon"]: change_icon(
-                img, button, tool_name
+                canvas, img, button, tool_name
             ),
         )
         i = (
@@ -69,13 +78,14 @@ def tool_menu_init(root, bar, widgets, def_icon, buttons):
     return button, menu
 
 
-def sidebar(root, widgets):
+def sidebar(root, canvas, widgets):
     root.configure(bg="white")
     bar = tk.Frame(root, height=40, bg="white", bd=0, highlightthickness=0)
     bar.pack(side="top", fill="x")
 
     tool_menu_init(
         root,
+        canvas,
         bar,
         widgets,
         def_icon="arrow",
@@ -87,6 +97,7 @@ def sidebar(root, widgets):
     )
     tool_menu_init(
         root,
+        canvas,
         bar,
         widgets,
         def_icon="point",

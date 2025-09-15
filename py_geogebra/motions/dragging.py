@@ -1,8 +1,8 @@
 from .. import state
-from ..tools.utils import center
+from ..tools.utils import center, set_cursor
 
 
-def dragging(root, canvas, objects):
+def dragging(root, canvas, objects, axes):
     def left_click_drag(e):
         if state.selected_tool == "arrow":
             if state.selected_point is None:
@@ -22,7 +22,38 @@ def dragging(root, canvas, objects):
                 state.selected_point.pos_y = world_y
                 state.selected_point.update()
 
-        elif state.selected_tool == "pen":
-            pass
+        elif state.selected_tool == "pen" and state.current_pen is not None:
+            root.config(cursor="pencil")
+            cx, cy = center(canvas, objects)
+            world_x = (e.x - cx) / (objects.unit_size * objects.scale)
+            world_y = (cy - e.y) / (objects.unit_size * objects.scale)
+            state.current_pen.add_point(world_x, world_y)
+
+    def right_click_drag(e):
+        if state.selected_tool == "pen":
+            set_cursor(canvas, "circle")
+            r = 8
+            items = canvas.find_overlapping(e.x - r, e.y - r, e.x + r, e.y + r)
+            for obj in objects._objects:
+                if hasattr(obj, "tag") and any(
+                    obj.tag in canvas.gettags(i) for i in items
+                ):
+                    if "pen" in obj.tag:
+                        cx, cy = center(canvas, objects)
+                        world_x = (e.x - cx) / (objects.unit_size * objects.scale)
+                        world_y = (cy - e.y) / (objects.unit_size * objects.scale)
+                        obj.delete_point(world_x, world_y, r=0.2)
+                        break
+
+    def middle_click_drag(e):
+        dx = e.x - state.start_pos["x"]
+        dy = e.y - state.start_pos["y"]
+        objects.offset_x += dx
+        objects.offset_y += dy
+        objects.refresh()
+        state.start_pos["x"] = e.x
+        state.start_pos["y"] = e.y
 
     canvas.bind("<B1-Motion>", left_click_drag)
+    canvas.bind("<B2-Motion>", right_click_drag)
+    canvas.bind("<B3-Motion>", middle_click_drag)

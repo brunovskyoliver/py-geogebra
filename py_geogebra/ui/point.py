@@ -25,10 +25,7 @@ class Point:
     def update(self):
         self.canvas.delete(self.tag)
 
-        width = self.canvas.winfo_width()
-        height = self.canvas.winfo_height()
-        cx = width // 2 + self.offset_x
-        cy = height // 2 + self.offset_y
+        cx, cy = center(self.canvas, self)
 
         x = cx + self.pos_x * self.unit_size * self.scale
         y = cy - self.pos_y * self.unit_size * self.scale

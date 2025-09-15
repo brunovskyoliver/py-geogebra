@@ -19,3 +19,9 @@ def center(canvas: tk.Canvas, objects):
     cx = width // 2 + objects.offset_x
     cy = height // 2 + objects.offset_y
     return cx, cy
+
+
+def set_cursor(canvas: tk.Canvas, cursor: str):
+    canvas.configure(cursor=cursor)
+    canvas.update()
+    canvas.focus_set()
