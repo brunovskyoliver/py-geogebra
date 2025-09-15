@@ -76,10 +76,10 @@ def pressing(root, canvas, objects, axes):
     def left_click_released(e):
         if state.selected_tool == "freehand":
             canvas.delete("freehand")
-
-    def left_click_released(e):
-        if state.selected_tool == "arrow":
+        elif state.selected_tool == "arrow":
             state.drag_target = None
+
+        
 
     canvas.bind("<Button-1>", left_click_pressed)
     canvas.bind("<Button-3>", middle_click_pressed)

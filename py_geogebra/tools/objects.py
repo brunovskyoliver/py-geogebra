@@ -35,7 +35,7 @@ class Objects:
             if hasattr(obj, "cx") and hasattr(obj, "cy"):
                 obj.cx = cx
                 obj.cy = cy
-            obj.update()  # draw immediately with correct offset
+            obj.update()  
 
     def unregister(self, obj: Drawable):
         if obj in self._objects:
