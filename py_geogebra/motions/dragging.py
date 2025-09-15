@@ -6,7 +6,7 @@ from ..ui.ray import Ray
 from ..ui.segment import Segment
 
 
-def dragging(root, canvas, objects, axes):
+def dragging(root, canvas, sidebar, objects, axes):
     def left_click_drag(e):
         if state.selected_tool == "arrow":
             if state.drag_target is None:
@@ -14,11 +14,20 @@ def dragging(root, canvas, objects, axes):
                 dy = e.y - state.start_pos["y"]
                 objects.offset_x += dx
                 objects.offset_y += dy
+
+                width = canvas.winfo_width()
+                height = canvas.winfo_height()
+                state.center = (
+                    width // 2 + objects.offset_x,
+                    height // 2 + objects.offset_y,
+                )
+
                 objects.refresh()
                 state.start_pos["x"] = e.x
                 state.start_pos["y"] = e.y
+
             else:
-                cx, cy = center(canvas, objects)
+                cx, cy = state.center
                 world_x = (e.x - cx) / (objects.unit_size * objects.scale)
                 world_y = (cy - e.y) / (objects.unit_size * objects.scale)
 
@@ -26,7 +35,11 @@ def dragging(root, canvas, objects, axes):
                 state.drag_target.pos_y = world_y
                 state.drag_target.update()
                 for obj in objects._objects:
-                    if isinstance(obj, Line) or isinstance(obj, Segment) or isinstance(obj, Ray):
+                    if (
+                        isinstance(obj, Line)
+                        or isinstance(obj, Segment)
+                        or isinstance(obj, Ray)
+                    ):
                         if (
                             obj.point_1 is state.drag_target
                             or obj.point_2 is state.drag_target
@@ -34,13 +47,13 @@ def dragging(root, canvas, objects, axes):
                             obj.update()
 
         elif state.selected_tool == "pen" and state.current_pen is not None:
-            cx, cy = center(canvas, objects)
+            cx, cy = state.center
             world_x = (e.x - cx) / (objects.unit_size * objects.scale)
             world_y = (cy - e.y) / (objects.unit_size * objects.scale)
             state.current_pen.add_point(world_x, world_y)
 
         elif state.selected_tool == "freehand":
-            cx, cy = center(canvas, objects)
+            cx, cy = state.center
             world_x = (e.x - cx) / (objects.unit_size * objects.scale)
             world_y = (cy - e.y) / (objects.unit_size * objects.scale)
             line = FreeHand(root, canvas)
@@ -55,7 +68,6 @@ def dragging(root, canvas, objects, axes):
             state.freehand_last_pos["x"] = world_x
             state.freehand_last_pos["y"] = world_y
 
-
     def right_click_drag(e):
         if state.selected_tool == "pen":
             set_cursor(canvas, "circle")
@@ -66,7 +78,7 @@ def dragging(root, canvas, objects, axes):
                     obj.tag in canvas.gettags(i) for i in items
                 ):
                     if "pen" in obj.tag:
-                        cx, cy = center(canvas, objects)
+                        cx, cy = state.center
                         world_x = (e.x - cx) / (objects.unit_size * objects.scale)
                         world_y = (cy - e.y) / (objects.unit_size * objects.scale)
                         obj.delete_point(world_x, world_y, r=0.2)
@@ -77,10 +89,28 @@ def dragging(root, canvas, objects, axes):
         dy = e.y - state.start_pos["y"]
         objects.offset_x += dx
         objects.offset_y += dy
+
+        width = canvas.winfo_width()
+        height = canvas.winfo_height()
+        state.center = (
+            width // 2 + objects.offset_x,
+            height // 2 + objects.offset_y,
+        )
+
         objects.refresh()
         state.start_pos["x"] = e.x
         state.start_pos["y"] = e.y
 
+    def left_click_drag_sidebar(e):
+        if state.sidebar_resizing:
+            new_width = max(50, e.x)
+            state.sidebar_width = new_width
+            sidebar.configure(width=new_width)
+            sidebar.pack_propagate(False)
+            sidebar.update_idletasks()
+
     canvas.bind("<B1-Motion>", left_click_drag)
     canvas.bind("<B2-Motion>", right_click_drag)
     canvas.bind("<B3-Motion>", middle_click_drag)
+
+    sidebar.bind("<B1-Motion>", left_click_drag_sidebar)

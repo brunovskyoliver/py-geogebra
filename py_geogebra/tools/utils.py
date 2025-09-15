@@ -1,5 +1,6 @@
 import tkinter as tk
 import math
+from .. import state
 
 
 def number_to_ascii(n: int):
@@ -21,7 +22,7 @@ def ascii_to_number(s: str):
     return n - 1
 
 
-def center(canvas: tk.Canvas, objects):
+def center(canvas, objects):
     width = canvas.winfo_width()
     height = canvas.winfo_height()
     cx = width // 2 + objects.offset_x
@@ -30,7 +31,7 @@ def center(canvas: tk.Canvas, objects):
 
 
 def screen_to_world(canvas, objects, e):
-    cx, cy = center(canvas, objects)
+    cx, cy = state.center
     world_x = (e.x - cx) / (objects.unit_size * objects.scale)
     world_y = (cy - e.y) / (objects.unit_size * objects.scale)
     return world_x, world_y
@@ -80,9 +81,11 @@ def delete_object(canvas, objects, object_to_delete, state):
 
     if isinstance(object_to_delete, Point):
         for obj in list(objects._objects):
-            if (isinstance(obj, Line) or isinstance(obj, Segment) or isinstance(obj, Ray)) and (
-                obj.point_1 is object_to_delete or obj.point_2 is object_to_delete
-            ):
+            if (
+                isinstance(obj, Line)
+                or isinstance(obj, Segment)
+                or isinstance(obj, Ray)
+            ) and (obj.point_1 is object_to_delete or obj.point_2 is object_to_delete):
                 objects.unregister(obj)
                 canvas.delete(obj.tag)
         state.selected_point = None
@@ -95,7 +98,7 @@ def delete_object(canvas, objects, object_to_delete, state):
 
 
 def world_to_screen(canvas, objects, wx, wy):
-    cx, cy = center(canvas, objects)
+    cx, cy = state.center
     sx = cx + wx * objects.unit_size * objects.scale
     sy = cy - wy * objects.unit_size * objects.scale
     return sx, sy
