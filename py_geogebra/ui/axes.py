@@ -40,7 +40,6 @@ class Axes:
         self.canvas.create_line(cx, 0, cx, height, fill="black", width=2, tags="axes")
 
         step_world = self.nice_step()
-        print(step_world)
         step_px = step_world * self.unit_size * self.scale
 
         # X
