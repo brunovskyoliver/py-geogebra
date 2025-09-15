@@ -21,9 +21,9 @@ def run_app():
     root.geometry("1280x720")  # TODO: make it dynamic ?
     widgets.register(lambda: root.title(_("Geogebra ale lepsia") + f" v{__version__}"))
 
-    menu_bar = menu(root, widgets)
 
-    root.config(menu=menu_bar)
+
+    
 
     canvas = Canvas(root, background="white")
     objects = Objects(canvas)
@@ -33,5 +33,8 @@ def run_app():
     objects.register(axes)
     motions.bind_all(root, canvas, objects, axes)
     canvas.focus_set()
+    
+    menu_bar = menu(root, widgets, canvas, objects)
+    root.config(menu=menu_bar)
 
     root.mainloop()
