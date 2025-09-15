@@ -36,5 +36,15 @@ def pressing(root, canvas, objects, axes):
             p.pos_x = world_x
             p.pos_y = world_y
             objects.register(p)
+        elif state.selected_tool == "freehand":
+            cx, cy = center(canvas, objects)
+            world_x = (e.x - cx) / (objects.unit_size * objects.scale)
+            world_y = (cy - e.y) / (objects.unit_size * objects.scale)
+            state.freehand_last_pos["x"] = world_x
+            state.freehand_last_pos["y"] = world_y
+            
+            
+
+
 
     canvas.bind("<Button-1>", left_click_pressed)
