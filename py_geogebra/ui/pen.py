@@ -11,6 +11,8 @@ class Pen:
         self.offset_x = 0.0
         self.offset_y = 0.0
         self.tag = f"pen_{id(self)}"
+        self.cx = 0
+        self.cy = 0
 
         self.points = []
 
@@ -42,7 +44,6 @@ class Pen:
         if len(self.points) < 2:
             return
 
-        cx, cy = center(self.canvas, self)
         visual_scale = min(max(1, self.scale**0.5), 1.9)
 
         segment = []
@@ -52,11 +53,15 @@ class Pen:
 
                     coords = []
                     for xx, yy in segment:
-                        x = cx + xx * self.unit_size * self.scale
-                        y = cy - yy * self.unit_size * self.scale
+                        x = self.cx + xx * self.unit_size * self.scale
+                        y = self.cy - yy * self.unit_size * self.scale
                         coords.extend((x, y))
                     self.canvas.create_line(
-                        *coords, fill="black", width=2, smooth=True, tags=self.tag
+                        *coords,
+                        fill="black",
+                        width=2 * visual_scale,
+                        smooth=True,
+                        tags=self.tag,
                     )
                 segment = []
             else:

@@ -5,3 +5,4 @@ selected_point = None
 current_pen = None
 point_counter = 0
 freehand_last_pos = {"x": 0, "y": 0}
+drag_target = None
