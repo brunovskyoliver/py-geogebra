@@ -25,3 +25,11 @@ def set_cursor(canvas: tk.Canvas, cursor: str):
     canvas.configure(cursor=cursor)
     canvas.update()
     canvas.focus_set()
+
+
+def delete_object(canvas, objects, object_to_delete, state):
+    objects.unregister(object_to_delete)
+    canvas.delete(object_to_delete.tag)
+    if hasattr(object_to_delete, "highlight_tag"):
+        canvas.delete(object_to_delete.highlight_tag)
+        state.selected_point = None
