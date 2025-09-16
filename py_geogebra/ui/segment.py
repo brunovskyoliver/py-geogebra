@@ -52,6 +52,16 @@ class Segment:
         else:
             x2, y2 = self.point_2.pos_x, self.point_2.pos_y
             self.length = distance(x1, y1, x2, y2, 2)
+            middle_x = self.point_1.x - (self.point_1.x - self.point_2.x) / 2
+            middle_y = self.point_1.y - (self.point_1.y - self.point_2.y) / 2
+            self.canvas.create_text(
+                middle_x + 1 * visual_scale,
+                middle_y - 15 * visual_scale,
+                text=self.lower_label,
+                font=("Arial", int(12 * visual_scale)),
+                fill="blue",
+                tags=self.tag,
+            )
 
         x1, y1 = world_to_screen(self.objects, x1, y1)
         x2, y2 = world_to_screen(self.objects, x2, y2)
