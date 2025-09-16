@@ -7,6 +7,7 @@ from ..ui.ray import Ray
 from ..ui.segment import Segment
 from ..ui.free_hand import FreeHand
 from ..ui.segment_with_lenght import Segment_with_length
+from ..ui.polyline import Polyline
 from ..tools.utils import (
     get_lower_label,
     number_to_ascii,
@@ -21,6 +22,8 @@ from ..tools.utils import (
 )
 from tkinter import simpledialog
 
+from py_geogebra.ui import polyline
+
 
 def pressing(root, canvas, sidebar, objects, axes):
     def left_click_pressed(e):
@@ -28,7 +31,7 @@ def pressing(root, canvas, sidebar, objects, axes):
             state.start_pos["x"] = e.x
             state.start_pos["y"] = e.y
             state.drag_target = None
-            
+
             point_obj = find_point_at_position(objects, e, canvas)
             if point_obj:
                 if state.selected_point and state.selected_point != point_obj:
@@ -38,23 +41,21 @@ def pressing(root, canvas, sidebar, objects, axes):
                 state.drag_target = point_obj
             else:
                 deselect_all(objects)
-                
-            if (not point_obj):
+
+            if not point_obj:
                 line_obj = find_line_at_position(objects, e, canvas)
                 if line_obj:
                     line_obj.pos_x, line_obj.pos_y = screen_to_world(canvas, objects, e)
                     line_obj.update()
                     state.drag_target = line_obj
-            
 
         elif state.selected_tool == "point":
             state.start_pos["x"] = e.x
             state.start_pos["y"] = e.y
 
             world_x, world_y = screen_to_world(canvas, objects, e)
-            
+
             l = find_line_at_position(objects, e, canvas)
-            
 
             label = get_label(state)
             p = Point(
@@ -65,7 +66,7 @@ def pressing(root, canvas, sidebar, objects, axes):
                 pos_x=world_x,
                 pos_y=world_y,
             )
-            
+
             if l is not None:
                 l.points.append(p)
                 l.update()
@@ -161,7 +162,6 @@ def pressing(root, canvas, sidebar, objects, axes):
             state.start_pos["x"] = e.x
             state.start_pos["y"] = e.y
             world_x, world_y = screen_to_world(canvas, objects, e)
-            items = canvas.find_overlapping(e.x, e.y, e.x + 1, e.y + 1)
             p = find_point_at_position(objects, e, canvas)
             if p == None:
                 label = get_label(state)
@@ -188,6 +188,42 @@ def pressing(root, canvas, sidebar, objects, axes):
                 state.points_for_obj[1].point_2 = p
                 state.points_for_obj[1].update()
                 state.points_for_obj = []
+        elif state.selected_tool == "polyline":
+            state.start_pos["x"] = e.x
+            state.start_pos["y"] = e.y
+            world_x, world_y = screen_to_world(canvas, objects, e)
+            if state.current_polyline is None:
+                polyline = Polyline(root, canvas, axes.unit_size, objects)
+                state.current_polyline = polyline
+                objects.register(polyline)
+            p = find_point_at_position(objects, e, canvas)
+            if p == None:
+                label = get_label(state)
+                p = Point(
+                    root,
+                    canvas,
+                    label=label,
+                    unit_size=axes.unit_size,
+                    pos_x=world_x,
+                    pos_y=world_y,
+                )
+                # sidebar.items.append(p)
+                # sidebar.update()
+                state.current_polyline.points.append(p)
+                objects.register(p)
+            elif (
+                len(state.current_polyline.points) > 2
+                and state.current_polyline.points[0] == p
+            ):
+                state.current_polyline.last_not_set = False
+                state.current_polyline.update(e)
+                state.current_polyline = None
+            else:
+                if p in state.current_polyline.points:
+                    state.current_polyline.points.remove(p)
+                else:
+                    state.current_polyline.points.append(p)
+                state.current_polyline.update(e)
 
         elif state.selected_tool == "segment_with_length":
             world_x, world_y = screen_to_world(canvas, objects, e)
@@ -255,12 +291,8 @@ def pressing(root, canvas, sidebar, objects, axes):
                     pos_x=world_x,
                     pos_y=world_y,
                 )
-                sidebar.items.append(p)
-                sidebar.update()
                 objects.register(p)
             p.select()
-
-            sidebar.update()
             state.points_for_obj.append(p)
             if len(state.points_for_obj) == 2:
                 label = get_label(state)
@@ -275,8 +307,6 @@ def pressing(root, canvas, sidebar, objects, axes):
                 )
 
                 objects.register(midpoint)
-                sidebar.items.append(midpoint)
-                sidebar.update()
                 state.points_for_obj = []
 
     def middle_click_pressed(e):
@@ -293,7 +323,7 @@ def pressing(root, canvas, sidebar, objects, axes):
             canvas.delete(state.current_pen.tag)
         elif state.selected_tool == "arrow":
             state.drag_target = None
-            
+
         objects.refresh()
 
     def left_click_pressed_sidebar(e):

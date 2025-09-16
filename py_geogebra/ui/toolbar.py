@@ -6,7 +6,6 @@ from ..tools.utils import delete_object, set_cursor, deselect_all
 from .. import state
 
 
-
 def show_menu(e, menu):
     x = e.widget.winfo_rootx()
     y = e.widget.winfo_rooty() + e.widget.winfo_height()
@@ -25,10 +24,24 @@ def update_labels(items, menu):
 def change_icon(canvas, img, btn, tool_name, objects):
     btn.configure(image=img)
     btn.image = img
-    if state.selected_tool == "line" and state.selected_tool != tool_name:
+    if (
+        state.selected_tool
+        in (
+            "line",
+            "segment",
+            "segment_with_length",
+            "ray",
+            "midpoint_or_center",
+        )
+        and state.selected_tool != tool_name
+    ):
         for obj in list(state.points_for_obj):
             delete_object(canvas, objects, obj, state)
         state.points_for_obj.clear()
+    if state.selected_tool == "polyline" and state.current_polyline:
+        delete_object(canvas, objects, state.current_polyline, state)
+        state.current_polyline = None
+
     deselect_all(objects)
     state.selected_tool = tool_name
 
