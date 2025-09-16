@@ -65,7 +65,6 @@ class Zoom:
             self.objects.scale = current
             self.objects.offset_x += x_diff
             self.objects.offset_y += y_diff
-            print(self.objects.offset_x, self.objects.offset_y)
 
             self.objects.refresh()
 
