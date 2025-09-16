@@ -287,6 +287,8 @@ def pressing(root, canvas, sidebar, objects, axes):
                 )
 
                 objects.register(midpoint)
+                sidebar.items.append(midpoint)
+                sidebar.update()
                 state.points_for_obj = []
 
                 
