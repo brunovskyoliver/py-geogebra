@@ -21,7 +21,7 @@ class Sidebar:
         for item in self.items:
             text = tk.Label(
                 self.frame,
-                text=f"{item.label} =  {item.pos_x, item.pos_y}",
+                text=f"{item.label} =  {round(item.pos_x, 2), round(item.pos_y, 2)}",
                 fg="black",
                 bg="#dddddd",
             )
