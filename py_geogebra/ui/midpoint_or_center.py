@@ -19,6 +19,7 @@ class Midpoint_or_center:
         self.root = root
         self.canvas = canvas
         self.objects = objects
+        self.color = "grey"
         
         self.point_1 = point_1
         self.point_2 = point_2
@@ -74,14 +75,14 @@ class Midpoint_or_center:
                 self.y - r_h,
                 self.x + r_h,
                 self.y + r_h,
-                outline="blue",
+                outline= self.color,
                 width=2,
                 fill="",  # no fill so it looks like a ring
                 tags=(self.highlight_tag,),  # must be a tuple
             )
 
         self.canvas.create_oval(
-            self.x - r, self.y - r, self.x + r, self.y + r, fill="blue", width=2, tags=(self.tag, "point")
+            self.x - r, self.y - r, self.x + r, self.y + r, fill=self.color, width=2, tags=(self.tag, "point")
         )
 
         if self.label:
