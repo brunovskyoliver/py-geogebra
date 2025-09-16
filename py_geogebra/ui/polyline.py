@@ -66,8 +66,8 @@ class Polyline:
         if not self.last_not_set and self.points:
             mid = self.points[len(self.points) // 2]
             self.canvas.create_text(
-                mid.x + 10 * visual_scale,
-                mid.y - 15 * visual_scale,
+                mid.x - 3 * visual_scale,
+                mid.y + 25 * visual_scale,
                 text=self.lower_label,
                 font=("Arial", int(12 * visual_scale)),
                 fill="blue",
