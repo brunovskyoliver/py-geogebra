@@ -11,6 +11,6 @@ def bind_all(root, canvas, sidebar, objects, axes):
     dragging(root, canvas, sidebar, objects, axes)
     scrolling(root, canvas, objects)
     motion(root, canvas, objects, axes)
-    keybinds(root, canvas, objects, axes)
+    keybinds(root, canvas, sidebar, objects, axes)
 
     changing_screen_size(root, canvas, sidebar, objects)

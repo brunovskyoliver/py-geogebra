@@ -12,4 +12,4 @@ def changing_screen_size(root, canvas, sidebar, objects):
         state.sidebar_width = e.width
 
     canvas.bind("<Configure>", refrershing_canvas)
-    sidebar.bind("<Configure>", refrershing_canvas)
+    sidebar.frame.bind("<Configure>", refrershing_canvas)
