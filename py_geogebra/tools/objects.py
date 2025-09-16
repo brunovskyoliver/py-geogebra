@@ -42,6 +42,7 @@ class Objects:
             self._objects.remove(obj)
 
     def refresh(self):
+        state.center = center(self.canvas, self)
         cx, cy = state.center
         for obj in self._objects:
             obj.offset_x = self.offset_x

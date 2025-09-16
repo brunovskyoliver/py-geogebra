@@ -9,7 +9,7 @@ def scrolling(root, canvas, objects):
         scale_before = state.scale
         scale_factor = 1.1 if e.delta > 0 else 1/1.1
         scale_after = scale_before * scale_factor
-
+        state.center = center(canvas, objects)
         cx, cy = state.center
 
         state.scale = scale_after
@@ -22,6 +22,7 @@ def scrolling(root, canvas, objects):
 
         offset_x_after = ((cx - x)*scale_factor) - (cx - x)
         offset_y_after = ((cy - y)*scale_factor) - (cy - y)
+
         
         # objects.offset_x += offset_x_after
         # objects.offset_y += offset_y_after
@@ -64,6 +65,7 @@ class Zoom:
             self.objects.scale = current
             self.objects.offset_x += x_diff
             self.objects.offset_y += y_diff
+            print(self.objects.offset_x, self.objects.offset_y)
 
             self.objects.refresh()
 
