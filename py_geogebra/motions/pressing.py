@@ -55,6 +55,8 @@ def pressing(root, canvas, sidebar, objects, axes):
                 pos_y=world_y,
             )
             objects.register(p)
+            sidebar.items.append(p)
+            sidebar.update()
 
         elif state.selected_tool == "pen":
             cx, cy = state.center
@@ -78,7 +80,6 @@ def pressing(root, canvas, sidebar, objects, axes):
             state.start_pos["x"] = e.x
             state.start_pos["y"] = e.y
             world_x, world_y = screen_to_world(canvas, objects, e)
-            label = get_label(state)
             items = canvas.find_overlapping(e.x, e.y, e.x + 1, e.y + 1)
             p = None
             for obj in objects._objects:
@@ -89,6 +90,7 @@ def pressing(root, canvas, sidebar, objects, axes):
                         p = obj
                         break
             if p == None:
+                label = get_label(state)
                 p = Point(
                     root,
                     canvas,
@@ -115,7 +117,6 @@ def pressing(root, canvas, sidebar, objects, axes):
             state.start_pos["x"] = e.x
             state.start_pos["y"] = e.y
             world_x, world_y = screen_to_world(canvas, objects, e)
-            label = get_label(state)
             items = canvas.find_overlapping(e.x, e.y, e.x + 1, e.y + 1)
             p = None
             for obj in objects._objects:
@@ -126,6 +127,7 @@ def pressing(root, canvas, sidebar, objects, axes):
                         p = obj
                         break
             if p == None:
+                label = get_label(state)
                 p = Point(
                     root,
                     canvas,
@@ -152,7 +154,6 @@ def pressing(root, canvas, sidebar, objects, axes):
             state.start_pos["x"] = e.x
             state.start_pos["y"] = e.y
             world_x, world_y = screen_to_world(canvas, objects, e)
-            label = get_label(state)
             items = canvas.find_overlapping(e.x, e.y, e.x + 1, e.y + 1)
             p = None
             for obj in objects._objects:
@@ -163,6 +164,7 @@ def pressing(root, canvas, sidebar, objects, axes):
                         p = obj
                         break
             if p == None:
+                label = get_label(state)
                 p = Point(
                     root,
                     canvas,
@@ -187,7 +189,6 @@ def pressing(root, canvas, sidebar, objects, axes):
 
         elif state.selected_tool == "segment_with_length":
             world_x, world_y = screen_to_world(canvas, objects, e)
-            label = get_label(state)
             items = canvas.find_overlapping(e.x, e.y, e.x + 1, e.y + 1)
             p = None
             for obj in objects._objects:
@@ -243,50 +244,6 @@ def pressing(root, canvas, sidebar, objects, axes):
             objects.register(swl)
             objects.refresh()
 
-        elif state.selected_tool == "midpoint_or_center":
-            state.start_pos["x"] = e.x
-            state.start_pos["y"] = e.y
-            label = get_label(state)
-            items = canvas.find_overlapping(e.x, e.y, e.x + 1, e.y + 1)
-            world_x, world_y = screen_to_world(canvas, objects, e)
-            p = None
-            for obj in objects._objects:
-                if hasattr(obj, "tag") and any(
-                    obj.tag in canvas.gettags(i) for i in items
-                ):
-                    if "point" in obj.tag:
-                        p = obj
-                        break
-            if p == None:
-                p = Point(
-                    root,
-                    canvas,
-                    label=label,
-                    unit_size=axes.unit_size,
-                    pos_x=world_x,
-                    pos_y=world_y,
-                )
-                objects.register(p)
-                
-            state.points_for_obj.append(p)
-            
-            if len(state.points_for_obj) == 2:
-                label = get_label(state)
-                p = Midpoint_or_center( root,
-                    canvas,
-                    label=label,
-                    unit_size=axes.unit_size,
-                    point_1 = state.points_for_obj[0],
-                    point_2 = state.points_for_obj[1]
-                )
-                objects.register(p)
-                
-                state.points_for_obj = []
-                            
-                
-                
-            
-            
     def middle_click_pressed(e):
         state.start_pos["x"] = e.x
         state.start_pos["y"] = e.y
