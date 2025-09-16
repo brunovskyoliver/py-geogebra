@@ -15,8 +15,9 @@ from ..tools.utils import (
     snap,
     get_label,
     screen_to_world,
-    deselect_all_points,
+    deselect_all,
     find_point_at_position,
+    find_line_at_position,
 )
 from tkinter import simpledialog
 
@@ -26,29 +27,34 @@ def pressing(root, canvas, sidebar, objects, axes):
         if state.selected_tool == "arrow":
             state.start_pos["x"] = e.x
             state.start_pos["y"] = e.y
-            items = canvas.find_overlapping(e.x, e.y, e.x + 1, e.y + 1)
-            point_obj = None
-            for obj in objects._objects:
-                if hasattr(obj, "tag") and any(
-                    obj.tag in canvas.gettags(i) for i in items
-                ):
-                    if "point" in obj.tag:
-                        point_obj = obj
-                        break
+            state.drag_target = None
+            
+            point_obj = find_point_at_position(objects, e, canvas)
             if point_obj:
                 if state.selected_point and state.selected_point != point_obj:
                     state.selected_point.deselect()
                 point_obj.select()
                 state.selected_point = point_obj
+                state.drag_target = point_obj
             else:
-                deselect_all_points(objects)
-            state.drag_target = point_obj
+                deselect_all(objects)
+                
+            if (not point_obj):
+                line_obj = find_line_at_position(objects, e, canvas)
+                if line_obj:
+                    line_obj.pos_x, line_obj.pos_y = screen_to_world(canvas, objects, e)
+                    line_obj.update()
+                    state.drag_target = line_obj
+            
 
         elif state.selected_tool == "point":
             state.start_pos["x"] = e.x
             state.start_pos["y"] = e.y
 
-            world_x, world_y = snap(canvas, objects, e, axes)
+            world_x, world_y = screen_to_world(canvas, objects, e)
+            
+            l = find_line_at_position(objects, e, canvas)
+            
 
             label = get_label(state)
             p = Point(
@@ -59,6 +65,10 @@ def pressing(root, canvas, sidebar, objects, axes):
                 pos_x=world_x,
                 pos_y=world_y,
             )
+            
+            if l is not None:
+                l.points.append(p)
+                l.update()
             objects.register(p)
             sidebar.items.append(p)
             sidebar.update()
@@ -283,6 +293,8 @@ def pressing(root, canvas, sidebar, objects, axes):
             canvas.delete(state.current_pen.tag)
         elif state.selected_tool == "arrow":
             state.drag_target = None
+            
+        objects.refresh()
 
     def left_click_pressed_sidebar(e):
         if abs(e.x - sidebar.frame.winfo_width()) <= 20:

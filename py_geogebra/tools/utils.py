@@ -130,19 +130,30 @@ def distance(x1, y1, x2, y2, r: int = 0):
     return d
 
 
-def deselect_all_points(objects):
+def deselect_all(objects):
     for obj in objects._objects:
         if hasattr(obj, "deselect"):
             obj.deselect()
 
 
 def find_point_at_position(objects, e, canvas, r=1):
-    items = canvas.find_overlapping(e.x, e.y, e.x + r, e.y + r)
+    items = canvas.find_overlapping(e.x-r, e.y-r, e.x + r, e.y + r)
     p = None
     for obj in objects._objects:
         if hasattr(obj, "tag") and any(obj.tag in canvas.gettags(i) for i in items):
             if "point" in obj.tag:
                 p = obj
                 break
-
     return p
+
+def find_line_at_position(objects, e, canvas, r=1):
+    items = canvas.find_overlapping(e.x-r, e.y-r, e.x + r, e.y + r)
+    line = None
+    for obj in objects._objects:
+        if hasattr(obj, "tag") and any(obj.tag in canvas.gettags(i) for i in items):
+            if "line" in obj.tag:
+                line = obj
+                break
+    return line
+
+    

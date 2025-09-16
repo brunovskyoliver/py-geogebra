@@ -19,6 +19,8 @@ class Line:
 
         self.pos_x = 0.0
         self.pos_y = 0.0
+        self.prev_x = 0.0
+        self.prev_y = 0.0
 
         self.offset_x = 0.0
         self.offset_y = 0.0
@@ -31,6 +33,9 @@ class Line:
         self.tag = f"line_{id(self)}"
         self.point_1 = point_1
         self.point_2 = None
+        
+        
+        self.points = [self.point_1]
 
         self.canvas.bind("<Configure>", lambda e: self.update())
 
@@ -39,17 +44,29 @@ class Line:
 
         visual_scale = min(max(1, self.scale**0.5), 1.9)
 
-        x1, y1 = self.point_1.pos_x, self.point_1.pos_y
-
-        if self.point_2 is None and e is None:
-            return
-
-        if self.point_2 is None:
-            cx, cy = state.center
-            x2 = (e.x - cx) / (self.unit_size * self.scale)
-            y2 = (cy - e.y) / (self.unit_size * self.scale)
-        else:
+        if (state.drag_target is self):
+            print(self.points)
+            x_dif, y_dif = self.prev_x - self.pos_x, self.prev_y - self.pos_y
+            x1, y1 = self.pos_x, self.pos_y
             x2, y2 = self.point_2.pos_x, self.point_2.pos_y
+            
+            for obj in self.points:
+                obj.pos_x -= x_dif
+                obj.pos_y -= y_dif
+                obj.update()
+            
+        else:
+            x1, y1 = self.point_1.pos_x, self.point_1.pos_y
+
+            if self.point_2 is None and e is None:
+                return
+
+            if self.point_2 is None:
+                cx, cy = state.center
+                x2 = (e.x - cx) / (self.unit_size * self.scale)
+                y2 = (cy - e.y) / (self.unit_size * self.scale)
+            else:
+                x2, y2 = self.point_2.pos_x, self.point_2.pos_y
 
         angle = math.atan2(y2 - y1, x2 - x1)
         span = (
@@ -80,3 +97,7 @@ class Line:
         self.canvas.tag_raise(self.point_1.tag)
         if self.point_2 is not None:
             self.canvas.tag_raise(self.point_2.tag)
+            if self.point_2 not in self.points:
+                self.points.append(self.point_2)
+            
+        self.prev_x, self.prev_y = self.pos_x, self.pos_y
