@@ -73,8 +73,9 @@ def reconfigure_label_order(label: str, state):
     state.label_unused.append(label)
 
 
-def delete_object(canvas, sidebar, objects, object_to_delete, state):
+def delete_object(canvas, objects, object_to_delete, state, sidebar=None):
     from ..ui.point import Point
+    from ..ui.midpoint_or_center import Midpoint_or_center
     from ..ui.line import Line
     from ..ui.ray import Ray
     from ..ui.segment import Segment
@@ -98,9 +99,14 @@ def delete_object(canvas, sidebar, objects, object_to_delete, state):
                 or isinstance(obj, Segment)
                 or isinstance(obj, Ray)
                 or isinstance(obj, Segment_with_length)
+                or isinstance(obj, Midpoint_or_center)
             ) and (obj.point_1 is object_to_delete or obj.point_2 is object_to_delete):
                 objects.unregister(obj)
                 canvas.delete(obj.tag)
+
+            if isinstance(obj, Midpoint_or_center):
+                sidebar.items.remove(obj)
+                sidebar.update()
         state.selected_point = None
         reconfigure_label_order(object_to_delete.label, state)
 
@@ -122,3 +128,21 @@ def distance(x1, y1, x2, y2, r: int = 0):
     if r != 0:
         return round(d, r)
     return d
+
+
+def deselect_all_points(objects):
+    for obj in objects._objects:
+        if hasattr(obj, "deselect"):
+            obj.deselect()
+
+
+def find_point_at_position(objects, e, canvas, r=1):
+    items = canvas.find_overlapping(e.x, e.y, e.x + r, e.y + r)
+    p = None
+    for obj in objects._objects:
+        if hasattr(obj, "tag") and any(obj.tag in canvas.gettags(i) for i in items):
+            if "point" in obj.tag:
+                p = obj
+                break
+
+    return p
