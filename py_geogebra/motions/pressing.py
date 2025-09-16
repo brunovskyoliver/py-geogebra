@@ -16,7 +16,7 @@ from ..tools.utils import (
     get_label,
     screen_to_world,
     deselect_all_points,
-    find_point_at_position
+    find_point_at_position,
 )
 from tkinter import simpledialog
 
@@ -43,7 +43,7 @@ def pressing(root, canvas, sidebar, objects, axes):
             else:
                 deselect_all_points(objects)
             state.drag_target = point_obj
-            
+
         elif state.selected_tool == "point":
             state.start_pos["x"] = e.x
             state.start_pos["y"] = e.y
@@ -96,8 +96,6 @@ def pressing(root, canvas, sidebar, objects, axes):
                     pos_x=world_x,
                     pos_y=world_y,
                 )
-                sidebar.items.append(p)
-                sidebar.update()
                 objects.register(p)
             if len(state.points_for_obj) < 2:
                 line = Line(
@@ -127,8 +125,6 @@ def pressing(root, canvas, sidebar, objects, axes):
                     pos_x=world_x,
                     pos_y=world_y,
                 )
-                sidebar.items.append(p)
-                sidebar.update()
                 objects.register(p)
             if len(state.points_for_obj) < 2:
                 lower_label = get_lower_label(state)
@@ -253,7 +249,7 @@ def pressing(root, canvas, sidebar, objects, axes):
                 sidebar.update()
                 objects.register(p)
             p.select()
-            
+
             sidebar.update()
             state.points_for_obj.append(p)
             if len(state.points_for_obj) == 2:
@@ -265,16 +261,13 @@ def pressing(root, canvas, sidebar, objects, axes):
                     unit_size=axes.unit_size,
                     point_1=state.points_for_obj[0],
                     point_2=state.points_for_obj[1],
-                    objects=objects
-                    
+                    objects=objects,
                 )
 
                 objects.register(midpoint)
                 sidebar.items.append(midpoint)
                 sidebar.update()
                 state.points_for_obj = []
-
-                
 
     def middle_click_pressed(e):
         state.start_pos["x"] = e.x
