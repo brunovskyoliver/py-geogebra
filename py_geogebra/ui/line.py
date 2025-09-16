@@ -1,5 +1,5 @@
 import tkinter as tk
-from ..tools.utils import center, world_to_screen
+from ..tools.utils import center, world_to_screen, snap_to_line
 from .. import state
 import math
 
@@ -45,14 +45,17 @@ class Line:
         visual_scale = min(max(1, self.scale**0.5), 1.9)
 
         if (state.drag_target is self):
-            print(self.points)
+            
             x_dif, y_dif = self.prev_x - self.pos_x, self.prev_y - self.pos_y
             x1, y1 = self.pos_x, self.pos_y
             x2, y2 = self.point_2.pos_x, self.point_2.pos_y
             
             for obj in self.points:
-                obj.pos_x -= x_dif
-                obj.pos_y -= y_dif
+                if (obj is self.point_1) or (obj is self.point_2):
+                    obj.pos_x -= x_dif
+                    obj.pos_y -= y_dif
+                    continue
+                snap_to_line(obj, self)
                 obj.update()
             
         else:
@@ -67,6 +70,12 @@ class Line:
                 y2 = (cy - e.y) / (self.unit_size * self.scale)
             else:
                 x2, y2 = self.point_2.pos_x, self.point_2.pos_y
+                
+        for obj in self.points:
+            if (obj is self.point_1) or (obj is self.point_2):
+                continue
+            snap_to_line(obj, self)
+            obj.update()
 
         angle = math.atan2(y2 - y1, x2 - x1)
         span = (

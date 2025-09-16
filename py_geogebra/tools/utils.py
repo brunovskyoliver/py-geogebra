@@ -167,3 +167,34 @@ def find_line_at_position(objects, e, canvas, r=1):
                 line = obj
                 break
     return line
+
+
+def snap_to_line(point, line):
+    x1, y1 = line.point_1.pos_x, line.point_1.pos_y
+    x2, y2 = line.point_2.pos_x, line.point_2.pos_y
+    px, py = point.pos_x, point.pos_y
+
+    dx, dy = x2 - x1, y2 - y1
+
+
+
+    t = point.translation
+    
+
+    proj_x = x1 + t * dx
+    proj_y = y1 + t * dy
+
+    point.pos_x = proj_x
+    point.pos_y = proj_y
+    
+def find_translation(point, line):
+    x1, y1 = line.point_1.pos_x, line.point_1.pos_y
+    x2, y2 = line.point_2.pos_x, line.point_2.pos_y
+    px, py = point.pos_x, point.pos_y
+
+    dx, dy = x2 - x1, y2 - y1
+
+
+
+    point.translation = (px - x1) / dx
+    

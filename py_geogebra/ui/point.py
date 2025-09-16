@@ -29,6 +29,8 @@ class Point:
         self.cy = 0
         self.x = 0
         self.y = 0
+        
+        self.transaltion = 0
 
         self.tag = f"point_{id(self)}"
         self.selected = False

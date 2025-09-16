@@ -19,6 +19,7 @@ from ..tools.utils import (
     deselect_all,
     find_point_at_position,
     find_line_at_position,
+    find_translation,   
 )
 from tkinter import simpledialog
 
@@ -68,6 +69,7 @@ def pressing(root, canvas, sidebar, objects, axes):
             )
 
             if l is not None:
+                find_translation(p, l)
                 l.points.append(p)
                 l.update()
             objects.register(p)
