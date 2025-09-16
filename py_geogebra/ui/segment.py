@@ -1,5 +1,5 @@
 import tkinter as tk
-from ..tools.utils import center, world_to_screen
+from ..tools.utils import center, world_to_screen, distance
 from .. import state
 import math
 
@@ -12,6 +12,7 @@ class Segment:
         unit_size: int = 40,
         point_1=None,
         objects=None,
+        lower_label: str = "",
     ):
         self.root = root
         self.canvas = canvas
@@ -24,6 +25,7 @@ class Segment:
         self.offset_y = 0.0
         self.scale = 1.0  # zoom factor
         self.unit_size = unit_size
+        self.length = 0.0
 
         self.cx = 0
         self.cy = 0
@@ -31,6 +33,7 @@ class Segment:
         self.tag = f"segment_{id(self)}"
         self.point_1 = point_1
         self.point_2 = None
+        self.lower_label = lower_label
 
     def update(self, e=None):
         self.canvas.delete(self.tag)
@@ -48,6 +51,7 @@ class Segment:
             y2 = (cy - e.y) / (self.unit_size * self.scale)
         else:
             x2, y2 = self.point_2.pos_x, self.point_2.pos_y
+            self.length = distance(x1, y1, x2, y2, 2)
 
         x1, y1 = world_to_screen(self.objects, x1, y1)
         x2, y2 = world_to_screen(self.objects, x2, y2)
