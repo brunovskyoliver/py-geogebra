@@ -14,6 +14,7 @@ from ..tools.utils import (
     snap,
     get_label,
     screen_to_world,
+    deselect_all_points,
 )
 from tkinter import simpledialog
 
@@ -37,7 +38,10 @@ def pressing(root, canvas, sidebar, objects, axes):
                     state.selected_point.deselect()
                 point_obj.select()
                 state.selected_point = point_obj
+            else:
+                deselect_all_points(objects)
             state.drag_target = point_obj
+            
 
         elif state.selected_tool == "point":
             state.start_pos["x"] = e.x

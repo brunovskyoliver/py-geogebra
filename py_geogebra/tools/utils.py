@@ -110,3 +110,8 @@ def world_to_screen(objects, wx, wy):
     sx = cx + wx * objects.unit_size * objects.scale
     sy = cy - wy * objects.unit_size * objects.scale
     return sx, sy
+
+def deselect_all_points(objects):
+    for obj in objects._objects:
+        if hasattr(obj, "deselect"):
+            obj.deselect()
