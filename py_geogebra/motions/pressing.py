@@ -216,6 +216,7 @@ def pressing(root, canvas, sidebar, objects, axes):
                 and state.current_polyline.points[0] == p
             ):
                 state.current_polyline.last_not_set = False
+                state.current_polyline.lower_label = get_lower_label(state)
                 state.current_polyline.update(e)
                 state.current_polyline = None
             else:
