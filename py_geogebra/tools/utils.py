@@ -64,7 +64,7 @@ def reconfigure_label_order(label: str, state):
     state.label_unused.append(label)
 
 
-def delete_object(canvas, objects, object_to_delete, state):
+def delete_object(canvas, objects, object_to_delete, state, sidebar = None):
     from ..ui.point import Point
     from ..ui.midpoint_or_center import Midpoint_or_center
     from ..ui.line import Line
@@ -92,6 +92,10 @@ def delete_object(canvas, objects, object_to_delete, state):
             ) and (obj.point_1 is object_to_delete or obj.point_2 is object_to_delete):
                 objects.unregister(obj)
                 canvas.delete(obj.tag)
+                
+            if isinstance(obj, Midpoint_or_center):
+                sidebar.items.remove(obj)
+                sidebar.update()
         state.selected_point = None
         reconfigure_label_order(object_to_delete.label, state)
 

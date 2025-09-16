@@ -8,6 +8,6 @@ def keybinds(root, canvas, sidebar, objects, axex):
             if state.selected_point != None and state.selected_tool == "arrow":
                 sidebar.items.remove(state.selected_point)
                 sidebar.update()
-                delete_object(canvas, objects, state.selected_point, state)
+                delete_object(canvas, objects, state.selected_point, state, sidebar)
 
     canvas.bind("<KeyPress>", keypressed)
