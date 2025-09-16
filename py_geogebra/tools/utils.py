@@ -99,7 +99,7 @@ def delete_object(canvas, objects, object_to_delete, state):
         canvas.delete(object_to_delete.highlight_tag)
 
 
-def world_to_screen(canvas, objects, wx, wy):
+def world_to_screen(objects, wx, wy):
     cx, cy = state.center
     sx = cx + wx * objects.unit_size * objects.scale
     sy = cy - wy * objects.unit_size * objects.scale

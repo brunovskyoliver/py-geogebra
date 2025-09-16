@@ -32,7 +32,6 @@ class Segment:
         self.point_1 = point_1
         self.point_2 = None
 
-
     def update(self, e=None):
         self.canvas.delete(self.tag)
 
@@ -50,9 +49,8 @@ class Segment:
         else:
             x2, y2 = self.point_2.pos_x, self.point_2.pos_y
 
-
-        x1, y1 = world_to_screen(self.canvas, self.objects, x1, y1)
-        x2, y2 = world_to_screen(self.canvas, self.objects, x2, y2)
+        x1, y1 = world_to_screen(self.objects, x1, y1)
+        x2, y2 = world_to_screen(self.objects, x2, y2)
 
         self.canvas.create_line(
             x1,

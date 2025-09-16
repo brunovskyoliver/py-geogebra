@@ -63,8 +63,8 @@ class Ray:
         x2 += span * cos_a
         y2 += span * sin_a
 
-        x1, y1 = world_to_screen(self.canvas, self.objects, x1, y1)
-        x2, y2 = world_to_screen(self.canvas, self.objects, x2, y2)
+        x1, y1 = world_to_screen(self.objects, x1, y1)
+        x2, y2 = world_to_screen(self.objects, x2, y2)
 
         self.canvas.create_line(
             x1,
