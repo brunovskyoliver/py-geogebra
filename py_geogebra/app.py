@@ -11,6 +11,7 @@ from .tools.objects import Objects
 from .ui.axes import Axes
 from py_geogebra.motions import motions
 from . import state
+from .ui.sidebar import Sidebar
 
 
 def run_app():
@@ -23,7 +24,8 @@ def run_app():
     widgets.register(lambda: root.title(_("Geogebra ale lepsia") + f" v{__version__}"))
 
     main_area = tk.Frame(root)
-    sidebar = tk.Frame(main_area, width=200, bg="#dddddd")
+    sidebar = Sidebar(root, main_area, widgets)
+    sidebar = sidebar.frame
     canvas = tk.Canvas(main_area, background="white")
     objects = Objects(canvas)
     tool_bar = toolbar(root, canvas, widgets, objects)
