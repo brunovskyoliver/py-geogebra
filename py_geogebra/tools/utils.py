@@ -54,6 +54,15 @@ def get_label(state):
     return label
 
 
+def get_lower_label(state):
+    if state.lower_label_unused:
+        label = state.lower_label_unused.pop(0)
+    else:
+        label = number_to_ascii(state.lower_label_counter)
+        state.lower_label_counter += 1
+    return label.lower()
+
+
 def set_cursor(canvas: tk.Canvas, cursor: str):
     canvas.configure(cursor=cursor)
     canvas.update()
@@ -64,7 +73,7 @@ def reconfigure_label_order(label: str, state):
     state.label_unused.append(label)
 
 
-def delete_object(canvas, objects, object_to_delete, state):
+def delete_object(canvas, sidebar, objects, object_to_delete, state):
     from ..ui.point import Point
     from ..ui.line import Line
     from ..ui.ray import Ray
@@ -81,6 +90,8 @@ def delete_object(canvas, objects, object_to_delete, state):
         state.points_for_obj.clear()
 
     if isinstance(object_to_delete, Point):
+        sidebar.items.remove(state.selected_point)
+        sidebar.update()
         for obj in list(objects._objects):
             if (
                 isinstance(obj, Line)
@@ -104,3 +115,10 @@ def world_to_screen(objects, wx, wy):
     sx = cx + wx * objects.unit_size * objects.scale
     sy = cy - wy * objects.unit_size * objects.scale
     return sx, sy
+
+
+def distance(x1, y1, x2, y2, r: int = 0):
+    d = math.sqrt((x2 - x1) ** 2 + (y2 - y1) ** 2)
+    if r != 0:
+        return round(d, r)
+    return d

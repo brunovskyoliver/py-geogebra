@@ -35,6 +35,7 @@ def dragging(root, canvas, sidebar, objects, axes):
                 state.drag_target.pos_x = world_x
                 state.drag_target.pos_y = world_y
                 state.drag_target.update()
+                sidebar.update()
                 for obj in objects._objects:
                     if (
                         isinstance(obj, Line)

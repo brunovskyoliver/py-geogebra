@@ -7,6 +7,7 @@ from ..ui.segment import Segment
 from ..ui.free_hand import FreeHand
 from ..ui.segment_with_lenght import Segment_with_length
 from ..tools.utils import (
+    get_lower_label,
     number_to_ascii,
     center,
     set_cursor,
@@ -137,8 +138,14 @@ def pressing(root, canvas, sidebar, objects, axes):
                 )
                 objects.register(p)
             if len(state.points_for_obj) < 2:
+                lower_label = get_lower_label(state)
                 segment = Segment(
-                    root, canvas, unit_size=axes.unit_size, point_1=p, objects=objects
+                    root,
+                    canvas,
+                    unit_size=axes.unit_size,
+                    point_1=p,
+                    objects=objects,
+                    lower_label=lower_label,
                 )
                 objects.register(segment)
                 state.points_for_obj.append(p)
@@ -147,6 +154,8 @@ def pressing(root, canvas, sidebar, objects, axes):
             else:
                 state.points_for_obj[1].point_2 = p
                 state.points_for_obj[1].update()
+                sidebar.items.append(state.points_for_obj[1])
+                sidebar.update()
                 state.points_for_obj = []
 
         elif state.selected_tool == "ray":

@@ -1,9 +1,10 @@
-from os import confstr
 import tkinter as tk
-from typing import ChainMap
 from ..tools.load_image import load_icon
 from ..tools.utils import delete_object, set_cursor
 from .. import state
+from ..ui.point import Point
+from ..ui.line import Line
+from ..ui.segment import Segment
 
 
 class Sidebar:
@@ -13,16 +14,33 @@ class Sidebar:
 
         self.resizing = False
         self.items = []
+        self.font = ("mathsans, Calibri, sans-serif", 16)
 
     def update(self):
         for widget in self.frame.winfo_children():
             widget.destroy()
 
         for item in self.items:
-            text = tk.Label(
-                self.frame,
-                text=f"{item.label} =  {item.pos_x, item.pos_y}",
-                fg="black",
-                bg="#dddddd",
-            )
-            text.pack(padx=10, pady=10, anchor="nw")
+            if isinstance(item, Point):
+                text = tk.Label(
+                    self.frame,
+                    text=f"{item.label} =  {item.pos_x, item.pos_y}",
+                    fg="black",
+                    bg="#dddddd",
+                    font=self.font,
+                )
+                text.pack(padx=10, pady=10, anchor="nw")
+            elif isinstance(item, Segment):
+                text = tk.Label(
+                    self.frame,
+                    text=(
+                        f"{item.lower_label} = Segment({item.point_1.label}, {item.point_2.label})\n"
+                        f"{' ' * (len(item.lower_label)-1)}= {item.length}"
+                    ),
+                    fg="black",
+                    bg="#dddddd",
+                    justify="left",
+                    anchor="nw",
+                    font=self.font,
+                )
+                text.pack(padx=10, pady=10, anchor="nw")
