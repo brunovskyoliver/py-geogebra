@@ -15,6 +15,7 @@ from ..tools.utils import (
     get_label,
     screen_to_world,
     deselect_all_points,
+    find_point_at_position
 )
 from tkinter import simpledialog
 
@@ -42,7 +43,6 @@ def pressing(root, canvas, sidebar, objects, axes):
                 deselect_all_points(objects)
             state.drag_target = point_obj
             
-
         elif state.selected_tool == "point":
             state.start_pos["x"] = e.x
             state.start_pos["y"] = e.y
@@ -84,15 +84,7 @@ def pressing(root, canvas, sidebar, objects, axes):
             state.start_pos["x"] = e.x
             state.start_pos["y"] = e.y
             world_x, world_y = screen_to_world(canvas, objects, e)
-            items = canvas.find_overlapping(e.x, e.y, e.x + 1, e.y + 1)
-            p = None
-            for obj in objects._objects:
-                if hasattr(obj, "tag") and any(
-                    obj.tag in canvas.gettags(i) for i in items
-                ):
-                    if "point" in obj.tag:
-                        p = obj
-                        break
+            p = find_point_at_position(objects, e, canvas)
             if p == None:
                 label = get_label(state)
                 p = Point(
@@ -123,15 +115,7 @@ def pressing(root, canvas, sidebar, objects, axes):
             state.start_pos["x"] = e.x
             state.start_pos["y"] = e.y
             world_x, world_y = screen_to_world(canvas, objects, e)
-            items = canvas.find_overlapping(e.x, e.y, e.x + 1, e.y + 1)
-            p = None
-            for obj in objects._objects:
-                if hasattr(obj, "tag") and any(
-                    obj.tag in canvas.gettags(i) for i in items
-                ):
-                    if "point" in obj.tag:
-                        p = obj
-                        break
+            p = find_point_at_position(objects, e, canvas)
             if p == None:
                 label = get_label(state)
                 p = Point(
@@ -163,14 +147,7 @@ def pressing(root, canvas, sidebar, objects, axes):
             state.start_pos["y"] = e.y
             world_x, world_y = screen_to_world(canvas, objects, e)
             items = canvas.find_overlapping(e.x, e.y, e.x + 1, e.y + 1)
-            p = None
-            for obj in objects._objects:
-                if hasattr(obj, "tag") and any(
-                    obj.tag in canvas.gettags(i) for i in items
-                ):
-                    if "point" in obj.tag:
-                        p = obj
-                        break
+            p = find_point_at_position(objects, e, canvas)
             if p == None:
                 label = get_label(state)
                 p = Point(
@@ -199,15 +176,7 @@ def pressing(root, canvas, sidebar, objects, axes):
 
         elif state.selected_tool == "segment_with_length":
             world_x, world_y = screen_to_world(canvas, objects, e)
-            items = canvas.find_overlapping(e.x, e.y, e.x + 1, e.y + 1)
-            p = None
-            for obj in objects._objects:
-                if hasattr(obj, "tag") and any(
-                    obj.tag in canvas.gettags(i) for i in items
-                ):
-                    if "point" in obj.tag:
-                        p = obj
-                        break
+            p = find_point_at_position(objects, e, canvas)
             if p == None:
                 label = get_label(state)
                 p = Point(
@@ -260,15 +229,7 @@ def pressing(root, canvas, sidebar, objects, axes):
 
         elif state.selected_tool == "midpoint_or_center":
             world_x, world_y = screen_to_world(canvas, objects, e)
-            items = canvas.find_overlapping(e.x, e.y, e.x + 1, e.y + 1)
-            p = None
-            for obj in objects._objects:
-                if hasattr(obj, "tag") and any(
-                    obj.tag in canvas.gettags(i) for i in items
-                ):
-                    if "point" in obj.tag:
-                        p = obj
-                        break
+            p = find_point_at_position(objects, e, canvas)
             if p == None:
                 label = get_label(state)
                 p = Point(

@@ -115,3 +115,16 @@ def deselect_all_points(objects):
     for obj in objects._objects:
         if hasattr(obj, "deselect"):
             obj.deselect()
+            
+def find_point_at_position(objects, e, canvas, r=1):
+    items = canvas.find_overlapping(e.x, e.y, e.x + r, e.y + r)
+    p = None
+    for obj in objects._objects:
+        if hasattr(obj, "tag") and any(
+            obj.tag in canvas.gettags(i) for i in items
+        ):
+            if "point" in obj.tag:
+                p = obj
+                break
+            
+    return p
