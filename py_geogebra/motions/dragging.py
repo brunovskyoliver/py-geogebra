@@ -102,12 +102,12 @@ def dragging(root, canvas, sidebar, objects, axes):
         if state.sidebar_resizing:
             new_width = max(50, e.x)
             state.sidebar_width = new_width
-            sidebar.configure(width=new_width)
-            sidebar.pack_propagate(False)
-            sidebar.update_idletasks()
+            sidebar.frame.configure(width=new_width)
+            sidebar.frame.pack_propagate(False)
+            sidebar.frame.update_idletasks()
 
     canvas.bind("<B1-Motion>", left_click_drag)
     canvas.bind("<B2-Motion>", right_click_drag)
     canvas.bind("<B3-Motion>", middle_click_drag)
 
-    sidebar.bind("<B1-Motion>", left_click_drag_sidebar)
+    sidebar.frame.bind("<B1-Motion>", left_click_drag_sidebar)

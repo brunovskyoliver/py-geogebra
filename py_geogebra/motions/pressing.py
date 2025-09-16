@@ -199,6 +199,7 @@ def pressing(root, canvas, sidebar, objects, axes):
                         p = obj
                         break
             if p == None:
+                label = get_label(state)
                 p = Point(
                     root,
                     canvas,
@@ -260,18 +261,18 @@ def pressing(root, canvas, sidebar, objects, axes):
             state.drag_target = None
 
     def left_click_pressed_sidebar(e):
-        if abs(e.x - sidebar.winfo_width()) <= 20:
+        if abs(e.x - sidebar.frame.winfo_width()) <= 20:
             state.sidebar_resizing = True
             state.start_pos["x"] = e.x
-            set_cursor(sidebar, "sb_h_double_arrow")
+            set_cursor(sidebar.frame, "sb_h_double_arrow")
 
     def left_click_released_sidebar(e):
         state.sidebar_resizing = False
-        set_cursor(sidebar, "")
+        set_cursor(sidebar.frame, "")
 
     canvas.bind("<Button-1>", left_click_pressed)
     canvas.bind("<Button-3>", middle_click_pressed)
     canvas.bind("<ButtonRelease-2>", right_click_released)
     canvas.bind("<ButtonRelease-1>", left_click_released)
-    sidebar.bind("<Button-1>", left_click_pressed_sidebar)
-    sidebar.bind("<ButtonRelease-1>", left_click_released_sidebar)
+    sidebar.frame.bind("<Button-1>", left_click_pressed_sidebar)
+    sidebar.frame.bind("<ButtonRelease-1>", left_click_released_sidebar)
