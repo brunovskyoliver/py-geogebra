@@ -66,6 +66,7 @@ def reconfigure_label_order(label: str, state):
 
 def delete_object(canvas, objects, object_to_delete, state):
     from ..ui.point import Point
+    from ..ui.midpoint_or_center import Midpoint_or_center
     from ..ui.line import Line
     from ..ui.ray import Ray
     from ..ui.segment import Segment
@@ -87,6 +88,7 @@ def delete_object(canvas, objects, object_to_delete, state):
                 or isinstance(obj, Segment)
                 or isinstance(obj, Ray)
                 or isinstance(obj, Segment_with_length)
+                or isinstance(obj, Midpoint_or_center)
             ) and (obj.point_1 is object_to_delete or obj.point_2 is object_to_delete):
                 objects.unregister(obj)
                 canvas.delete(obj.tag)
