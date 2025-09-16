@@ -99,6 +99,8 @@ def pressing(root, canvas, sidebar, objects, axes):
                     pos_x=world_x,
                     pos_y=world_y,
                 )
+                sidebar.items.append(p)
+                sidebar.update()
                 objects.register(p)
             if len(state.points_for_obj) < 2:
                 line = Line(
@@ -136,6 +138,8 @@ def pressing(root, canvas, sidebar, objects, axes):
                     pos_x=world_x,
                     pos_y=world_y,
                 )
+                sidebar.items.append(p)
+                sidebar.update()
                 objects.register(p)
             if len(state.points_for_obj) < 2:
                 segment = Segment(
@@ -173,6 +177,8 @@ def pressing(root, canvas, sidebar, objects, axes):
                     pos_x=world_x,
                     pos_y=world_y,
                 )
+                sidebar.items.append(p)
+                sidebar.update()
                 objects.register(p)
             if len(state.points_for_obj) < 2:
                 ray = Ray(
@@ -208,6 +214,7 @@ def pressing(root, canvas, sidebar, objects, axes):
                     pos_x=world_x,
                     pos_y=world_y,
                 )
+                sidebar.items.append(p)
                 objects.register(p)
 
             length = (
@@ -230,6 +237,8 @@ def pressing(root, canvas, sidebar, objects, axes):
                 pos_x=world_x,
                 pos_y=world_y,
             )
+            sidebar.items.append(p2)
+            sidebar.update()
             objects.register(p2)
 
             swl = Segment_with_length(
