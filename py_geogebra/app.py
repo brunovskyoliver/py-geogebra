@@ -25,20 +25,19 @@ def run_app():
 
     main_area = tk.Frame(root)
     sidebar = Sidebar(root, main_area, widgets)
-    sidebar = sidebar.frame
     canvas = tk.Canvas(main_area, background="white")
     objects = Objects(canvas)
     tool_bar = toolbar(root, canvas, widgets, objects)
     tool_bar.pack(side="top", fill="x")
     main_area.pack(side="top", fill="both", expand=True)
-    sidebar.pack(side="left", fill="y")
+    sidebar.frame.pack(side="left", fill="y")
     canvas.pack(side="right", fill="both", expand=True)
     root.update_idletasks()
     state.center = (
         canvas.winfo_width() // 2 + objects.offset_x,
         canvas.winfo_height() // 2 + objects.offset_y,
     )
-    state.sidebar_width = sidebar.winfo_width()
+    state.sidebar_width = sidebar.frame.winfo_width()
 
     axes = Axes(root, canvas, objects.unit_size)
     objects.register(axes)
