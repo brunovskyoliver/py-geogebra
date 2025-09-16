@@ -4,6 +4,7 @@ from ..ui.pen import Pen
 from ..ui.line import Line
 from ..ui.ray import Ray
 from ..ui.segment import Segment
+from ..ui.free_hand import FreeHand
 from ..ui.segment_with_lenght import Segment_with_length
 from ..tools.utils import (
     number_to_ascii,
@@ -67,8 +68,10 @@ def pressing(root, canvas, sidebar, objects, axes):
             cx, cy = state.center
             world_x = (e.x - cx) / (objects.unit_size * objects.scale)
             world_y = (cy - e.y) / (objects.unit_size * objects.scale)
-            state.freehand_last_pos["x"] = world_x
-            state.freehand_last_pos["y"] = world_y
+
+            state.current_pen = FreeHand(root, canvas, objects.unit_size)
+            state.current_pen.add_point(world_x, world_y)
+            objects.register(state.current_pen)
 
         elif state.selected_tool == "line":
             state.start_pos["x"] = e.x
@@ -249,7 +252,8 @@ def pressing(root, canvas, sidebar, objects, axes):
 
     def left_click_released(e):
         if state.selected_tool == "freehand":
-            canvas.delete("freehand")
+            objects.unregister(state.current_pen)
+            canvas.delete(state.current_pen.tag)
         elif state.selected_tool == "arrow":
             state.drag_target = None
 

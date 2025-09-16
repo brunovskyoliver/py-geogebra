@@ -63,17 +63,7 @@ def dragging(root, canvas, sidebar, objects, axes):
             cx, cy = state.center
             world_x = (e.x - cx) / (objects.unit_size * objects.scale)
             world_y = (cy - e.y) / (objects.unit_size * objects.scale)
-            line = FreeHand(root, canvas)
-            line.unit_size = objects.unit_size
-            line.pos_x1 = state.freehand_last_pos["x"]
-            line.pos_y1 = state.freehand_last_pos["y"]
-            line.pos_x2 = world_x
-            line.pos_y2 = world_y
-            line.cx = cx
-            line.cy = cy
-            line.update()
-            state.freehand_last_pos["x"] = world_x
-            state.freehand_last_pos["y"] = world_y
+            state.current_pen.add_point(world_x, world_y)
 
     def right_click_drag(e):
         if state.selected_tool == "pen":
