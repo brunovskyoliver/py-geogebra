@@ -2,7 +2,7 @@ from os import confstr
 import tkinter as tk
 from typing import ChainMap
 from ..tools.load_image import load_icon
-from ..tools.utils import delete_object, set_cursor, deselect_all_points
+from ..tools.utils import delete_object, set_cursor, deselect_all
 from .. import state
 
 
@@ -29,7 +29,7 @@ def change_icon(canvas, img, btn, tool_name, objects):
         for obj in list(state.points_for_obj):
             delete_object(canvas, objects, obj, state)
         state.points_for_obj.clear()
-    deselect_all_points(objects)
+    deselect_all(objects)
     state.selected_tool = tool_name
 
     if tool_name in ("pen", "freehand"):
