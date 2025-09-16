@@ -80,6 +80,7 @@ def delete_object(canvas, objects, object_to_delete, state, sidebar=None):
     from ..ui.ray import Ray
     from ..ui.segment import Segment
     from ..ui.segment_with_lenght import Segment_with_length
+    from ..ui.polyline import Polyline
     from ..tools.utils import reconfigure_label_order
 
     if state.points_for_obj:
@@ -91,8 +92,9 @@ def delete_object(canvas, objects, object_to_delete, state, sidebar=None):
         state.points_for_obj.clear()
 
     if isinstance(object_to_delete, Point):
-        sidebar.items.remove(state.selected_point)
-        sidebar.update()
+        if state.selected_point in sidebar.items:
+            sidebar.items.remove(state.selected_point)
+            sidebar.update()
         for obj in list(objects._objects):
             if (
                 isinstance(obj, Line)
@@ -107,8 +109,17 @@ def delete_object(canvas, objects, object_to_delete, state, sidebar=None):
             if isinstance(obj, Midpoint_or_center):
                 sidebar.items.remove(obj)
                 sidebar.update()
+            if isinstance(obj, Polyline) and object_to_delete in obj.points:
+                objects.unregister(obj)
+                canvas.delete(obj.tag)
+
         state.selected_point = None
         reconfigure_label_order(object_to_delete.label, state)
+    if isinstance(object_to_delete, Polyline):
+        for obj in object_to_delete.points:
+            objects.unregister(obj)
+            canvas.delete(obj.tag)
+            reconfigure_label_order(obj.label, state)
 
     objects.unregister(object_to_delete)
     canvas.delete(object_to_delete.tag)
@@ -137,7 +148,7 @@ def deselect_all(objects):
 
 
 def find_point_at_position(objects, e, canvas, r=1):
-    items = canvas.find_overlapping(e.x-r, e.y-r, e.x + r, e.y + r)
+    items = canvas.find_overlapping(e.x - r, e.y - r, e.x + r, e.y + r)
     p = None
     for obj in objects._objects:
         if hasattr(obj, "tag") and any(obj.tag in canvas.gettags(i) for i in items):
@@ -146,8 +157,9 @@ def find_point_at_position(objects, e, canvas, r=1):
                 break
     return p
 
+
 def find_line_at_position(objects, e, canvas, r=1):
-    items = canvas.find_overlapping(e.x-r, e.y-r, e.x + r, e.y + r)
+    items = canvas.find_overlapping(e.x - r, e.y - r, e.x + r, e.y + r)
     line = None
     for obj in objects._objects:
         if hasattr(obj, "tag") and any(obj.tag in canvas.gettags(i) for i in items):
@@ -155,5 +167,3 @@ def find_line_at_position(objects, e, canvas, r=1):
                 line = obj
                 break
     return line
-
-    

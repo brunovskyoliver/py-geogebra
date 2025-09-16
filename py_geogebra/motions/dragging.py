@@ -6,6 +6,7 @@ from ..ui.ray import Ray
 from ..ui.segment_with_lenght import Segment_with_length
 from ..ui.midpoint_or_center import Midpoint_or_center
 from ..ui.segment import Segment
+from ..ui.polyline import Polyline
 
 
 def dragging(root, canvas, sidebar, objects, axes):
@@ -54,6 +55,11 @@ def dragging(root, canvas, sidebar, objects, axes):
                             state.drag_target is not obj.point_1
                             and state.drag_target is not obj.point_2
                         ):
+                            objects.refresh()
+                    elif isinstance(obj, Polyline):
+                        if any(p is state.drag_target for p in obj.points):
+                            obj.update()
+                        else:
                             objects.refresh()
                 sidebar.update()
 
