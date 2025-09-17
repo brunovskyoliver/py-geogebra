@@ -34,9 +34,14 @@ def dragging(root, canvas, sidebar, objects, axes):
                 world_x = (e.x - cx) / (objects.unit_size * objects.scale)
                 world_y = (cy - e.y) / (objects.unit_size * objects.scale)
 
+
+
+
+
                 state.drag_target.pos_x = world_x
                 state.drag_target.pos_y = world_y
                 state.drag_target.update()
+
                 for obj in objects._objects:
                     if (
                         isinstance(obj, Line)
@@ -56,6 +61,9 @@ def dragging(root, canvas, sidebar, objects, axes):
                             and state.drag_target is not obj.point_1
                             and state.drag_target is not obj.point_2
                         ):
+                            state.drag_target.pos_x = world_x
+                            state.drag_target.pos_y = world_y
+                            state.drag_target.update()
                             find_translation(state.drag_target, obj)
                             obj.update()
                         elif (

@@ -30,7 +30,6 @@ class Sidebar:
                     bg="#dddddd",
                     font=self.font,
                 )
-                print(".")
                 text.pack(padx=10, pady=10, anchor="nw")
             elif isinstance(item, Segment):
                 text = tk.Label(
@@ -51,7 +50,7 @@ class Sidebar:
                     self.frame,
                     text=(
                         f"{item.lower_label} = Polyline({", ".join(p.label for p in item.points)})\n"
-                        f"{' ' * (len(item.lower_label)-1)}= {item.length}"
+                        f"{' ' * (len(item.lower_label)-1)}= {round(item.length, 2)}"
                     ),
                     fg="black",
                     bg="#dddddd",
