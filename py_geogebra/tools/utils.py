@@ -164,10 +164,22 @@ def find_line_at_position(objects, e, canvas, r=1):
     for obj in objects._objects:
         if hasattr(obj, "tag") and any(obj.tag in canvas.gettags(i) for i in items):
             if (
-                "line" in obj.tag
+                ("line" in obj.tag and "polyline" not in obj.tag)
                 or "ray" in obj.tag
                 or "segment" in obj.tag
                 or "segment_with_length" in obj.tag
+            ):
+                line = obj
+                break
+    return line
+
+def find_polyline_at_position(objects, e, canvas, r=1):
+    items = canvas.find_overlapping(e.x - r, e.y - r, e.x + r, e.y + r)
+    line = None
+    for obj in objects._objects:
+        if hasattr(obj, "tag") and any(obj.tag in canvas.gettags(i) for i in items):
+            if (
+                "polyline" in obj.tag
             ):
                 line = obj
                 break
@@ -187,6 +199,31 @@ def snap_to_line(point, line):
 
     point.pos_x = proj_x
     point.pos_y = proj_y
+    
+def snap_to_polyline(point, polyline):
+    smallest_dist = float('inf')
+    index_1 = 0
+    index_2 = 0
+    for i in range(len(polyline.line_points) - 1):
+        dist = distance(point.pos_x, point.pos_y, polyline.line_points[i].pos_x, polyline.line_points[i].pos_y) + distance(point.pos_x, point.pos_y, polyline.line_points[i+1].pos_x, polyline.line_points[i+1].pos_y) - distance(polyline.line_points[i].pos_x, polyline.line_points[i].pos_y, polyline.line_points[i+1].pos_x, polyline.line_points[i+1].pos_y)
+        if dist < smallest_dist:
+            smallest_dist = dist
+            index_1 = i
+            index_2 = i + 1
+    
+    
+    x1, y1 = polyline.line_points[index_1].pos_x, polyline.line_points[index_1].pos_y
+    x2, y2 = polyline.line_points[index_2].pos_x, polyline.line_points[index_2].pos_y
+
+    dx, dy = x2 - x1, y2 - y1
+
+    t = point.translation
+
+    proj_x = x1 + t * dx
+    proj_y = y1 + t * dy
+
+    point.pos_x = proj_x
+    point.pos_y = proj_y
 
 
 def find_translation(point, line):
@@ -195,5 +232,24 @@ def find_translation(point, line):
     px, py = point.pos_x, point.pos_y
 
     dx, dy = x2 - x1, y2 - y1
+
+    point.translation = (px - x1) / dx
+    
+def find_translation_polyline(point, polyline):
+    smallest_dist = float('inf')
+    index_1 = 0
+    index_2 = 0
+    for i in range(len(polyline.line_points) - 1):
+        dist = distance(point.pos_x, point.pos_y, polyline.line_points[i].pos_x, polyline.line_points[i].pos_y) + distance(point.pos_x, point.pos_y, polyline.line_points[i+1].pos_x, polyline.line_points[i+1].pos_y) - distance(polyline.line_points[i].pos_x, polyline.line_points[i].pos_y, polyline.line_points[i+1].pos_x, polyline.line_points[i+1].pos_y)
+        if dist < smallest_dist:
+            smallest_dist = dist
+            index_1 = i
+            index_2 = i + 1
+            
+    x1, y1 = polyline.line_points[index_1].pos_x, polyline.line_points[index_1].pos_y
+    x2, y2 = polyline.line_points[index_2].pos_x, polyline.line_points[index_2].pos_y
+    px= point.pos_x
+
+    dx = x2 - x1
 
     point.translation = (px - x1) / dx

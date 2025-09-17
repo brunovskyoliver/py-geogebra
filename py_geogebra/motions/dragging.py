@@ -1,5 +1,5 @@
 from .. import state
-from ..tools.utils import center, set_cursor, find_translation
+from ..tools.utils import center, set_cursor, find_translation, find_translation_polyline
 from ..ui.free_hand import FreeHand
 from ..ui.line import Line
 from ..ui.ray import Ray
@@ -35,9 +35,6 @@ def dragging(root, canvas, sidebar, objects, axes):
                 world_y = (cy - e.y) / (objects.unit_size * objects.scale)
 
 
-
-
-
                 state.drag_target.pos_x = world_x
                 state.drag_target.pos_y = world_y
                 state.drag_target.update()
@@ -56,10 +53,8 @@ def dragging(root, canvas, sidebar, objects, axes):
                         ):
                             obj.update()
                         elif (
-                            hasattr(obj, "points") 
+                            hasattr(obj, "points")
                             and state.drag_target in obj.points
-                            and state.drag_target is not obj.point_1
-                            and state.drag_target is not obj.point_2
                         ):
                             state.drag_target.pos_x = world_x
                             state.drag_target.pos_y = world_y
@@ -72,7 +67,13 @@ def dragging(root, canvas, sidebar, objects, axes):
                         ):
                             objects.refresh()
                     elif isinstance(obj, Polyline):
-                        if any(p is state.drag_target for p in obj.points):
+                        if state.drag_target in obj.line_points:
+                            obj.update()
+                        elif state.drag_target in obj.points:
+                            state.drag_target.pos_x = world_x
+                            state.drag_target.pos_y = world_y
+                            state.drag_target.update()
+                            find_translation_polyline(state.drag_target, obj)
                             obj.update()
                         else:
                             objects.refresh()

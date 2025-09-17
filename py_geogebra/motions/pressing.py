@@ -21,6 +21,9 @@ from ..tools.utils import (
     find_line_at_position,
     find_translation,
     snap_to_line,
+    find_polyline_at_position,
+    find_translation_polyline,
+    snap_to_polyline,
 )
 from tkinter import CURRENT, simpledialog
 
@@ -50,6 +53,14 @@ def pressing(root, canvas, sidebar, objects, axes):
                     line_obj.pos_x, line_obj.pos_y = screen_to_world(canvas, objects, e)
                     line_obj.update()
                     state.drag_target = line_obj
+                else:
+                    polyline_obj = find_polyline_at_position(objects, e, canvas)
+                    if polyline_obj:
+                        polyline_obj.pos_x, polyline_obj.pos_y = screen_to_world(
+                            canvas, objects, e
+                        )
+                        polyline_obj.update()
+                        state.drag_target = polyline_obj
 
         elif state.selected_tool == "point":
             state.start_pos["x"] = e.x
@@ -58,6 +69,7 @@ def pressing(root, canvas, sidebar, objects, axes):
             world_x, world_y = screen_to_world(canvas, objects, e)
 
             l = find_line_at_position(objects, e, canvas, r=2)
+            print(l)
 
             label = get_label(state)
             p = Point(
@@ -72,8 +84,16 @@ def pressing(root, canvas, sidebar, objects, axes):
             if l is not None:
                 find_translation(p, l)
                 l.points.append(p)
-                snap_to_line(p, l)
+                snap_to_polyline(p, l)
                 l.update()
+                
+            polyline = find_polyline_at_position(objects, e, canvas, r=2)
+            if polyline is not None:
+                find_translation_polyline(p, polyline)
+                polyline.points.append(p)
+                snap_to_polyline(p, polyline)
+                polyline.update()
+                
             objects.register(p)
             sidebar.items.append(p)
             sidebar.update()
@@ -214,11 +234,11 @@ def pressing(root, canvas, sidebar, objects, axes):
                 )
                 # sidebar.items.append(p)
                 # sidebar.update()
-                state.current_polyline.points.append(p)
+                state.current_polyline.line_points.append(p)
                 objects.register(p)
             elif (
-                len(state.current_polyline.points) > 2
-                and state.current_polyline.points[0] == p
+                len(state.current_polyline.line_points) > 2
+                and state.current_polyline.line_points[0] == p
             ):
                 state.current_polyline.last_not_set = False
                 state.current_polyline.lower_label = get_lower_label(state)
@@ -227,10 +247,10 @@ def pressing(root, canvas, sidebar, objects, axes):
                 sidebar.update()
                 state.current_polyline = None
             else:
-                if p in state.current_polyline.points:
-                    state.current_polyline.points.remove(p)
+                if p in state.current_polyline.line_points:
+                    state.current_polyline.line_points.remove(p)
                 else:
-                    state.current_polyline.points.append(p)
+                    state.current_polyline.line_points.append(p)
                 state.current_polyline.update(e)
 
         elif state.selected_tool == "segment_with_length":
