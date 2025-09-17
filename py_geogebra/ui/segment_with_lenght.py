@@ -1,5 +1,5 @@
 import tkinter as tk
-from ..tools.utils import center, world_to_screen
+from ..tools.utils import center, world_to_screen, snap_to_line
 from .. import state
 import math
 
@@ -22,6 +22,8 @@ class Segment_with_length:
 
         self.pos_x = 0.0
         self.pos_y = 0.0
+        self.prev_x = 0.0
+        self.prev_y = 0.0
 
         self.offset_x = 0.0
         self.offset_y = 0.0
@@ -37,6 +39,8 @@ class Segment_with_length:
         self.tag = f"line_{id(self)}"
         self.point_1 = point_1
         self.point_2 = point_2
+        
+        self.points = [self.point_1]
 
         self.canvas.bind("<Configure>", lambda e: self.update())
 
@@ -49,12 +53,38 @@ class Segment_with_length:
                 self.point_2.pos_y - self.point_1.pos_y,
                 self.point_2.pos_x - self.point_1.pos_x,
             )
-
-        x1, y1 = self.point_1.pos_x, self.point_1.pos_y
-        self.point_2.pos_x = x1 + self.length * math.cos(self.angle) / (self.unit_size)
-        self.point_2.pos_y = y1 + self.length * math.sin(self.angle) / (self.unit_size)
-        x2, y2 = self.point_2.pos_x, self.point_2.pos_y
-        self.point_2.update()
+            
+        if (state.drag_target is self):
+            
+            x_dif, y_dif = self.prev_x - self.pos_x, self.prev_y - self.pos_y
+            x1, y1 = self.point_1.pos_x, self.point_1.pos_y
+            x2, y2 = self.point_2.pos_x, self.point_2.pos_y
+            
+            for obj in self.points:
+                if (obj is self.point_1) or (obj is self.point_2):
+                    obj.pos_x -= x_dif
+                    obj.pos_y -= y_dif
+                    x1 -= x_dif
+                    y1 -= y_dif
+                    x2 -= x_dif
+                    y2 -= y_dif
+                    continue
+            
+        else:
+            x1, y1 = self.point_1.pos_x, self.point_1.pos_y
+            self.point_2.pos_x = x1 + self.length * math.cos(self.angle) / (self.unit_size)
+            self.point_2.pos_y = y1 + self.length * math.sin(self.angle) / (self.unit_size)
+            x2, y2 = self.point_2.pos_x, self.point_2.pos_y
+            self.point_2.update()
+            
+        for obj in self.points:
+            if (obj is not self.point_1) and (obj is not self.point_2):
+                if (obj.translation > 1):
+                    obj.translation = 1
+                elif (obj.translation < 0):
+                    obj.translation = 0
+                snap_to_line(obj, self)
+                obj.update()
 
         x1, y1 = world_to_screen(self.objects, x1, y1)
         x2, y2 = world_to_screen(self.objects, x2, y2)
@@ -68,3 +98,9 @@ class Segment_with_length:
             width=2 * visual_scale,
             tags=self.tag,
         )
+        
+        if self.point_2 not in self.points:
+                self.points.append(self.point_2)
+        
+        self.prev_x = self.pos_x
+        self.prev_y = self.pos_y
