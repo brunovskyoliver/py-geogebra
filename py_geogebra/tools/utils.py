@@ -174,7 +174,6 @@ def snap_to_line(point, line):
     x2, y2 = line.point_2.pos_x, line.point_2.pos_y
 
     dx, dy = x2 - x1, y2 - y1
-    #print(f"{point}")
 
 
     t = point.translation
@@ -196,4 +195,5 @@ def find_translation(point, line):
 
 
     point.translation = (px - x1) / dx
+    print (point.translation)
     
