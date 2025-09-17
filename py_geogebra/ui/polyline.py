@@ -33,6 +33,7 @@ class Polyline:
 
         self.points = []
         self.last_not_set = True
+        self.canvas.bind("<Configure>", lambda e: self.update())
 
     def update(self, e=None):
         length = 0.0
