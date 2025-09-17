@@ -163,7 +163,12 @@ def find_line_at_position(objects, e, canvas, r=1):
     line = None
     for obj in objects._objects:
         if hasattr(obj, "tag") and any(obj.tag in canvas.gettags(i) for i in items):
-            if "line" in obj.tag or "ray" in obj.tag or "segment" in obj.tag or "segment_with_length" in obj.tag:
+            if (
+                "line" in obj.tag
+                or "ray" in obj.tag
+                or "segment" in obj.tag
+                or "segment_with_length" in obj.tag
+            ):
                 line = obj
                 break
     return line
@@ -175,16 +180,15 @@ def snap_to_line(point, line):
 
     dx, dy = x2 - x1, y2 - y1
 
-
     t = point.translation
-    
 
     proj_x = x1 + t * dx
     proj_y = y1 + t * dy
 
     point.pos_x = proj_x
     point.pos_y = proj_y
-    
+
+
 def find_translation(point, line):
     x1, y1 = line.point_1.pos_x, line.point_1.pos_y
     x2, y2 = line.point_2.pos_x, line.point_2.pos_y
@@ -192,8 +196,4 @@ def find_translation(point, line):
 
     dx, dy = x2 - x1, y2 - y1
 
-
-
     point.translation = (px - x1) / dx
-    print (point.translation)
-    
