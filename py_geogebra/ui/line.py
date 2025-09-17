@@ -75,7 +75,6 @@ class Line:
                 x2, y2 = self.point_2.pos_x, self.point_2.pos_y
                 
         for obj in self.points:
-            print(type(obj))
             if (obj is not self.point_1) and (obj is not self.point_2):
                 snap_to_line(obj, self)
                 obj.update()
