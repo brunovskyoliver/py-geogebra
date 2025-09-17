@@ -31,6 +31,8 @@ class Segment:
 
         self.cx = 0
         self.cy = 0
+        
+        self.selected = False
 
         self.tag = f"segment_{id(self)}"
         self.point_1 = point_1
@@ -38,6 +40,14 @@ class Segment:
         self.lower_label = lower_label
         
         self.points = [self.point_1]
+        
+    def select(self):
+        self.selected = True
+        self.update()
+
+    def deselect(self):
+        self.selected = False
+        self.update()
 
     def update(self, e=None):
         self.canvas.delete(self.tag)
@@ -99,6 +109,17 @@ class Segment:
 
         x1, y1 = world_to_screen(self.objects, x1, y1)
         x2, y2 = world_to_screen(self.objects, x2, y2)
+        
+        if self.selected:
+            self.canvas.create_line(
+                x1,
+                y1,
+                x2,
+                y2,
+                fill="lightgrey",
+                width=2 * 3 * visual_scale,
+                tags=self.tag,
+            )
 
         self.canvas.create_line(
             x1,

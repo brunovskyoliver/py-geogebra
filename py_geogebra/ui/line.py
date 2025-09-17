@@ -33,11 +33,20 @@ class Line:
         self.tag = f"line_{id(self)}"
         self.point_1 = point_1
         self.point_2 = None
+        self.selected = False
         
         
         self.points = [self.point_1]
 
         self.canvas.bind("<Configure>", lambda e: self.update())
+        
+    def select(self):
+        self.selected = True
+        self.update()
+
+    def deselect(self):
+        self.selected = False
+        self.update()
 
     def update(self, e=None):
         self.canvas.delete(self.tag)
@@ -95,6 +104,17 @@ class Line:
 
         x1, y1 = world_to_screen(self.objects, x1, y1)
         x2, y2 = world_to_screen(self.objects, x2, y2)
+        
+        if self.selected:
+            self.canvas.create_line(
+                x1,
+                y1,
+                x2,
+                y2,
+                fill="lightgrey",
+                width=2 * 3 * visual_scale,
+                tags=self.tag,
+            )
 
         self.canvas.create_line(
             x1,

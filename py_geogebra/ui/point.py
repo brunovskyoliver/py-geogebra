@@ -11,10 +11,12 @@ class Point:
         unit_size: int = 40,
         pos_x: int = 0,
         pos_y: int = 0,
+        color = "blue",
     ):
 
         self.root = root
         self.canvas = canvas
+        self.color = color
 
         self.pos_x = pos_x
         self.pos_y = pos_y
@@ -66,14 +68,14 @@ class Point:
                 y - r_h,
                 x + r_h,
                 y + r_h,
-                outline="blue",
+                outline=self.color,
                 width=2,
                 fill="",  # no fill so it looks like a ring
                 tags=(self.highlight_tag,),  # must be a tuple
             )
 
         self.canvas.create_oval(
-            x - r, y - r, x + r, y + r, fill="blue", width=2, tags=(self.tag, "point")
+            x - r, y - r, x + r, y + r, fill=self.color, width=2, tags=(self.tag, "point")
         )
 
         if self.label:
