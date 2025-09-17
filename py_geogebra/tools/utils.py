@@ -230,10 +230,14 @@ def find_translation(point, line):
     x1, y1 = line.point_1.pos_x, line.point_1.pos_y
     x2, y2 = line.point_2.pos_x, line.point_2.pos_y
     px, py = point.pos_x, point.pos_y
+    alpha = math.atan2(y2 - y1, x2 - x1)
+    gama = math.atan2(px - x1, py - y1)
+    beta = math.pi / 2 - alpha - gama
+    dist = distance(x1, y1, x2, y2)
+    p_dist = distance(x1, y1, px, py)
 
-    dx, dy = x2 - x1, y2 - y1
 
-    point.translation = (px - x1) / dx
+    point.translation = (p_dist * math.cos(beta) ) / dist
     
 def find_translation_polyline(point, polyline):
     smallest_dist = float('inf')
@@ -248,8 +252,11 @@ def find_translation_polyline(point, polyline):
             
     x1, y1 = polyline.line_points[index_1].pos_x, polyline.line_points[index_1].pos_y
     x2, y2 = polyline.line_points[index_2].pos_x, polyline.line_points[index_2].pos_y
-    px= point.pos_x
-
-    dx = x2 - x1
-
-    point.translation = (px - x1) / dx
+    px, py= point.pos_x, point.pos_y
+    alpha = math.atan2(y2 - y1, x2 - x1)
+    gama = math.atan2(px - x1, py - y1)
+    beta = math.pi / 2 - alpha - gama
+    dist = distance(x1, y1, x2, y2)
+    p_dist = distance(x1, y1, px, py)
+    
+    point.translation = (p_dist * math.cos(beta) ) / dist

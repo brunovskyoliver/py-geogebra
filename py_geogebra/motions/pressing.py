@@ -69,7 +69,6 @@ def pressing(root, canvas, sidebar, objects, axes):
             world_x, world_y = screen_to_world(canvas, objects, e)
 
             l = find_line_at_position(objects, e, canvas, r=2)
-            print(l)
 
             label = get_label(state)
             p = Point(
@@ -84,7 +83,7 @@ def pressing(root, canvas, sidebar, objects, axes):
             if l is not None:
                 find_translation(p, l)
                 l.points.append(p)
-                snap_to_polyline(p, l)
+                snap_to_line(p, l)
                 l.update()
                 
             polyline = find_polyline_at_position(objects, e, canvas, r=2)
