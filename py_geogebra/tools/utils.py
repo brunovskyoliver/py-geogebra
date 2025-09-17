@@ -172,10 +172,9 @@ def find_line_at_position(objects, e, canvas, r=1):
 def snap_to_line(point, line):
     x1, y1 = line.point_1.pos_x, line.point_1.pos_y
     x2, y2 = line.point_2.pos_x, line.point_2.pos_y
-    px, py = point.pos_x, point.pos_y
 
     dx, dy = x2 - x1, y2 - y1
-
+    #print(f"{point}")
 
 
     t = point.translation

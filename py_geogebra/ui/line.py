@@ -75,10 +75,10 @@ class Line:
                 x2, y2 = self.point_2.pos_x, self.point_2.pos_y
                 
         for obj in self.points:
-            if (obj is self.point_1) or (obj is self.point_2):
-                continue
-            snap_to_line(obj, self)
-            obj.update()
+            print(type(obj))
+            if (obj is not self.point_1) and (obj is not self.point_2):
+                snap_to_line(obj, self)
+                obj.update()
 
         angle = math.atan2(y2 - y1, x2 - x1)
         span = (
