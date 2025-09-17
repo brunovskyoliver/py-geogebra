@@ -59,8 +59,7 @@ class Line:
                     x2 -= x_dif
                     y2 -= y_dif
                     continue
-                snap_to_line(obj, self)
-                obj.update()
+
             
         else:
             x1, y1 = self.point_1.pos_x, self.point_1.pos_y

@@ -1,5 +1,5 @@
 from .. import state
-from ..tools.utils import center, set_cursor
+from ..tools.utils import center, set_cursor, find_translation
 from ..ui.free_hand import FreeHand
 from ..ui.line import Line
 from ..ui.ray import Ray
@@ -50,7 +50,15 @@ def dragging(root, canvas, sidebar, objects, axes):
                             or obj.point_2 is state.drag_target
                         ):
                             obj.update()
-                        if (
+                        elif (
+                            hasattr(obj, "points") 
+                            and state.drag_target in obj.points
+                            and state.drag_target is not obj.point_1
+                            and state.drag_target is not obj.point_2
+                        ):
+                            find_translation(state.drag_target, obj)
+                            obj.update()
+                        elif (
                             state.drag_target is not obj.point_1
                             and state.drag_target is not obj.point_2
                         ):
