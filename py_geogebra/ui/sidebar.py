@@ -25,11 +25,12 @@ class Sidebar:
             if isinstance(item, Point):
                 text = tk.Label(
                     self.frame,
-                    text=f"{item.label} =  {item.pos_x, item.pos_y}",
+                    text=f"{item.label} =  {round(item.pos_x,2), round(item.pos_y,2)}",
                     fg="black",
                     bg="#dddddd",
                     font=self.font,
                 )
+                print(".")
                 text.pack(padx=10, pady=10, anchor="nw")
             elif isinstance(item, Segment):
                 text = tk.Label(
