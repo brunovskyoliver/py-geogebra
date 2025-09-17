@@ -47,13 +47,17 @@ class Line:
         if (state.drag_target is self):
             
             x_dif, y_dif = self.prev_x - self.pos_x, self.prev_y - self.pos_y
-            x1, y1 = self.pos_x, self.pos_y
+            x1, y1 = self.point_1.pos_x, self.point_1.pos_y
             x2, y2 = self.point_2.pos_x, self.point_2.pos_y
             
             for obj in self.points:
                 if (obj is self.point_1) or (obj is self.point_2):
                     obj.pos_x -= x_dif
                     obj.pos_y -= y_dif
+                    x1 -= x_dif
+                    y1 -= y_dif
+                    x2 -= x_dif
+                    y2 -= y_dif
                     continue
                 snap_to_line(obj, self)
                 obj.update()

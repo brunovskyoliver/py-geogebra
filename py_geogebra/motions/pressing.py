@@ -19,7 +19,8 @@ from ..tools.utils import (
     deselect_all,
     find_point_at_position,
     find_line_at_position,
-    find_translation,   
+    find_translation, 
+    snap_to_line,  
 )
 from tkinter import simpledialog
 
@@ -56,7 +57,7 @@ def pressing(root, canvas, sidebar, objects, axes):
 
             world_x, world_y = screen_to_world(canvas, objects, e)
 
-            l = find_line_at_position(objects, e, canvas)
+            l = find_line_at_position(objects, e, canvas, r = 2)
 
             label = get_label(state)
             p = Point(
@@ -71,6 +72,7 @@ def pressing(root, canvas, sidebar, objects, axes):
             if l is not None:
                 find_translation(p, l)
                 l.points.append(p)
+                snap_to_line(p, l)
                 l.update()
             objects.register(p)
             sidebar.items.append(p)
@@ -190,6 +192,7 @@ def pressing(root, canvas, sidebar, objects, axes):
                 state.points_for_obj[1].point_2 = p
                 state.points_for_obj[1].update()
                 state.points_for_obj = []
+                
         elif state.selected_tool == "polyline":
             state.start_pos["x"] = e.x
             state.start_pos["y"] = e.y
