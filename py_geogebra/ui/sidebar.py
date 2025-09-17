@@ -5,6 +5,7 @@ from .. import state
 from ..ui.point import Point
 from ..ui.line import Line
 from ..ui.segment import Segment
+from ..ui.polyline import Polyline
 
 
 class Sidebar:
@@ -35,6 +36,20 @@ class Sidebar:
                     self.frame,
                     text=(
                         f"{item.lower_label} = Segment({item.point_1.label}, {item.point_2.label})\n"
+                        f"{' ' * (len(item.lower_label)-1)}= {item.length}"
+                    ),
+                    fg="black",
+                    bg="#dddddd",
+                    justify="left",
+                    anchor="nw",
+                    font=self.font,
+                )
+                text.pack(padx=10, pady=10, anchor="nw")
+            elif isinstance(item, Polyline):
+                text = tk.Label(
+                    self.frame,
+                    text=(
+                        f"{item.lower_label} = Polyline({", ".join(p.label for p in item.points)})\n"
                         f"{' ' * (len(item.lower_label)-1)}= {item.length}"
                     ),
                     fg="black",

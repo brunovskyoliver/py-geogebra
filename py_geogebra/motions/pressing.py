@@ -19,10 +19,10 @@ from ..tools.utils import (
     deselect_all,
     find_point_at_position,
     find_line_at_position,
-    find_translation, 
-    snap_to_line,  
+    find_translation,
+    snap_to_line,
 )
-from tkinter import simpledialog
+from tkinter import CURRENT, simpledialog
 
 from py_geogebra.ui import polyline
 
@@ -57,7 +57,7 @@ def pressing(root, canvas, sidebar, objects, axes):
 
             world_x, world_y = screen_to_world(canvas, objects, e)
 
-            l = find_line_at_position(objects, e, canvas, r = 2)
+            l = find_line_at_position(objects, e, canvas, r=2)
 
             label = get_label(state)
             p = Point(
@@ -192,7 +192,7 @@ def pressing(root, canvas, sidebar, objects, axes):
                 state.points_for_obj[1].point_2 = p
                 state.points_for_obj[1].update()
                 state.points_for_obj = []
-                
+
         elif state.selected_tool == "polyline":
             state.start_pos["x"] = e.x
             state.start_pos["y"] = e.y
@@ -223,6 +223,8 @@ def pressing(root, canvas, sidebar, objects, axes):
                 state.current_polyline.last_not_set = False
                 state.current_polyline.lower_label = get_lower_label(state)
                 state.current_polyline.update(e)
+                sidebar.items.append(state.current_polyline)
+                sidebar.update()
                 state.current_polyline = None
             else:
                 if p in state.current_polyline.points:
