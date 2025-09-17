@@ -89,6 +89,10 @@ class Segment:
         for obj in self.points:
             if (obj is self.point_1) or (obj is self.point_2):
                 continue
+            if (obj.translation > 1):
+                obj.translation = 1
+            elif (obj.translation < 0):
+                obj.translation = 0
             snap_to_line(obj, self)
             obj.update()
 
