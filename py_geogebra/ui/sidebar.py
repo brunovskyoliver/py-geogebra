@@ -30,7 +30,6 @@ class Sidebar:
                     bg="#dddddd",
                     font=self.font,
                 )
-                print(".")
                 text.pack(padx=10, pady=10, anchor="nw")
             elif isinstance(item, Segment):
                 text = tk.Label(

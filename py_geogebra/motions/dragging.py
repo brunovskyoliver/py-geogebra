@@ -56,6 +56,7 @@ def dragging(root, canvas, sidebar, objects, axes):
                             and state.drag_target is not obj.point_1
                             and state.drag_target is not obj.point_2
                         ):
+                            
                             find_translation(state.drag_target, obj)
                             obj.update()
                         elif (
