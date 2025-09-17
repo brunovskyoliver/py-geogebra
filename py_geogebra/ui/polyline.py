@@ -32,11 +32,22 @@ class Polyline:
 
         self.tag = f"polyline_{id(self)}"
         self.lower_label = ""
+        
+        self.selected = False
 
         self.line_points = []
         self.points = []
         self.last_not_set = True
         self.canvas.bind("<Configure>", lambda e: self.update())
+        
+    def select(self):
+        self.selected = True
+        self.update()
+
+    def deselect(self):
+        self.selected = False
+        self.update()
+
 
     def update(self, e=None):
         length = 0.0
@@ -79,6 +90,15 @@ class Polyline:
 
         if len(coords) < 4:
             return
+        
+        if self.selected:
+            self.canvas.create_line(
+                *coords,
+                fill="lightgrey",
+                width=2 * 3 * visual_scale,
+                tags=self.tag,
+            )
+        
         self.canvas.create_line(
             *coords,
             fill="black",

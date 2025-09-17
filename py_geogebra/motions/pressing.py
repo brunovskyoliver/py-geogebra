@@ -52,6 +52,9 @@ def pressing(root, canvas, sidebar, objects, axes):
                 if line_obj:
                     line_obj.pos_x, line_obj.pos_y = screen_to_world(canvas, objects, e)
                     line_obj.update()
+                    if hasattr(line_obj, "select"):
+                        line_obj.select()
+                        state.selected_point = line_obj
                     state.drag_target = line_obj
                 else:
                     polyline_obj = find_polyline_at_position(objects, e, canvas)
@@ -60,6 +63,8 @@ def pressing(root, canvas, sidebar, objects, axes):
                             canvas, objects, e
                         )
                         polyline_obj.update()
+                        state.selected_point = polyline_obj
+                        polyline_obj.select()
                         state.drag_target = polyline_obj
 
         elif state.selected_tool == "point":
@@ -84,6 +89,7 @@ def pressing(root, canvas, sidebar, objects, axes):
                 find_translation(p, l)
                 l.points.append(p)
                 snap_to_line(p, l)
+                p.color = "#349AFF"
                 l.update()
                 
             polyline = find_polyline_at_position(objects, e, canvas, r=2)
@@ -91,7 +97,9 @@ def pressing(root, canvas, sidebar, objects, axes):
                 find_translation_polyline(p, polyline)
                 polyline.points.append(p)
                 snap_to_polyline(p, polyline)
+                p.color = "#349AFF"
                 polyline.update()
+                
                 
             objects.register(p)
             sidebar.items.append(p)
@@ -231,8 +239,7 @@ def pressing(root, canvas, sidebar, objects, axes):
                     pos_x=world_x,
                     pos_y=world_y,
                 )
-                # sidebar.items.append(p)
-                # sidebar.update()
+
                 state.current_polyline.line_points.append(p)
                 objects.register(p)
             elif (
