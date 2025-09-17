@@ -163,7 +163,7 @@ def find_line_at_position(objects, e, canvas, r=1):
     line = None
     for obj in objects._objects:
         if hasattr(obj, "tag") and any(obj.tag in canvas.gettags(i) for i in items):
-            if "line" in obj.tag:
+            if "line" in obj.tag or "ray" in obj.tag or "segment" in obj.tag or "segment_with_length" in obj.tag:
                 line = obj
                 break
     return line
