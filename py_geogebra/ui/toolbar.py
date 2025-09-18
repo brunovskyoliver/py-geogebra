@@ -52,6 +52,8 @@ def change_icon(canvas, img, btn, tool_name, objects):
     set_cursor(canvas, cursor)
     if state.selected_point:
         state.selected_point.deselect()
+    if state.selected_intersect:
+        state.selected_intersect = None
 
 
 def tool_menu_init(root, canvas, bar, widgets, def_icon, buttons, objects):

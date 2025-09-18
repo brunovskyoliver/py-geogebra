@@ -1,5 +1,6 @@
 from .. import state
 from ..ui.point import Point
+from ..ui.intersect import Intersect
 from ..ui.midpoint_or_center import Midpoint_or_center
 from ..ui.pen import Pen
 from ..ui.line import Line
@@ -39,6 +40,7 @@ def pressing(root, canvas, sidebar, objects, axes):
 
             point_obj = find_point_at_position(objects, e, canvas)
             if point_obj:
+                point_obj.update()
                 if state.selected_point and state.selected_point != point_obj:
                     state.selected_point.deselect()
                 point_obj.select()
@@ -104,6 +106,38 @@ def pressing(root, canvas, sidebar, objects, axes):
             objects.register(p)
             sidebar.items.append(p)
             sidebar.update()
+
+        elif state.selected_tool == "intersect":
+            l = find_line_at_position(objects, e, canvas, r=2)
+            if l is None:
+                state.selected_intersect = None
+                return
+            else:
+                if state.selected_intersect:
+                    if not state.selected_intersect.line_2:
+                        state.selected_intersect.line_2 = l
+                        state.selected_intersect.line_1.deselect()
+                        state.selected_intersect.update()
+                        state.selected_intersect = None
+                else:
+                    label = get_label(state)
+                    world_x, world_y = screen_to_world(canvas, objects, e)
+                    i = Intersect (
+                        root,
+                        canvas,
+                        label=label,
+                        unit_size=axes.unit_size,
+                        objects=objects
+                    )
+                    i.line_1 = l
+                    i.line_1.select()
+                    objects.register(i)
+                    i.update()
+                    state.selected_intersect = i
+                
+                    
+                        
+                        
 
         elif state.selected_tool == "pen":
             cx, cy = state.center

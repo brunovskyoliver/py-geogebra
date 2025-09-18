@@ -152,7 +152,8 @@ def find_point_at_position(objects, e, canvas, r=1):
     p = None
     for obj in objects._objects:
         if hasattr(obj, "tag") and any(obj.tag in canvas.gettags(i) for i in items):
-            if "point" in obj.tag:
+            if ("point" in obj.tag
+                or "intersect" in obj.tag):
                 p = obj
                 break
     return p
@@ -260,3 +261,16 @@ def find_translation_polyline(point, polyline):
     p_dist = distance(x1, y1, px, py)
     
     point.translation = (p_dist * math.cos(beta) ) / dist
+    
+def find_2lines_intersection(line_1, line_2):
+    x1, y1 = line_1.point_1.pos_x, line_1.point_1.pos_y,
+    x2, y2 = line_1.point_2.pos_x, line_1.point_2.pos_y,
+    x3, y3 = line_2.point_1.pos_x, line_2.point_1.pos_y,
+    x4, y4 = line_2.point_2.pos_x, line_2.point_2.pos_y,
+    
+    px = ((x1*y2 - y1*x2)*(x3-x4) - (x1-x2)*(x3*y4 - y3*x4))/((x1-x2)*(y3-y4)-(y1-y2)*(x3-x4))
+    py = ((x1*y2 - y1*x2)*(y3-y4) - (y1-y2)*(x3*y4 - y3*x4))/((x1-x2)*(y3-y4)-(y1-y2)*(x3-x4))
+    
+    return px, py
+    
+    
