@@ -110,10 +110,13 @@ def pressing(root, canvas, sidebar, objects, axes):
         elif state.selected_tool == "intersect":
             l = find_line_at_position(objects, e, canvas, r=2)
             if l is None:
+                state.selected_intersect.line_1.deselect()
                 state.selected_intersect = None
                 return
             else:
                 if state.selected_intersect:
+                    if state.selected_intersect.line_1 == l:
+                        return
                     if not state.selected_intersect.line_2:
                         state.selected_intersect.line_2 = l
                         state.selected_intersect.line_1.deselect()

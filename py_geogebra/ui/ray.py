@@ -36,6 +36,8 @@ class Ray:
         
         self.selected = False
         
+        self.is_drawable = True
+        
         self.points = [self.point_1]
 
         self.canvas.bind("<Configure>", lambda e: self.update())
@@ -107,26 +109,35 @@ class Ray:
         x1, y1 = world_to_screen(self.objects, x1, y1)
         x2, y2 = world_to_screen(self.objects, x2, y2)
         
-        if self.selected:
+        if not self.point_2:
+            self.is_drawable = True
+        elif self.point_1.is_drawable and self.point_2.is_drawable:
+            self.is_drawable = True
+        else:
+            self.is_drawable = False
+        
+        if self.is_drawable:
+        
+            if self.selected:
+                self.canvas.create_line(
+                    x1,
+                    y1,
+                    x2,
+                    y2,
+                    fill="lightgrey",
+                    width=2 * 3 * visual_scale,
+                    tags=self.tag,
+                )
+
             self.canvas.create_line(
                 x1,
                 y1,
                 x2,
                 y2,
-                fill="lightgrey",
-                width=2 * 3 * visual_scale,
+                fill="black",
+                width=2 * visual_scale,
                 tags=self.tag,
             )
-
-        self.canvas.create_line(
-            x1,
-            y1,
-            x2,
-            y2,
-            fill="black",
-            width=2 * visual_scale,
-            tags=self.tag,
-        )
         self.canvas.tag_raise(self.point_1.tag)
         if self.point_2 is not None:
             self.canvas.tag_raise(self.point_2.tag)

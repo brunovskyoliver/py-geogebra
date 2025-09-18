@@ -33,6 +33,8 @@ class Point:
         self.y = 0
         
         self.translation = 0
+        
+        self.is_drawable = True
 
         self.tag = f"point_{id(self)}"
         self.selected = False
@@ -59,30 +61,32 @@ class Point:
         visual_scale = min(max(1, self.scale**0.5), 1.9)
 
         r = 6.0 * visual_scale
+        
+        if self.is_drawable:
 
-        if self.selected:
-            r_h = r * 1.4
+            if self.selected:
+                r_h = r * 1.4
+                self.canvas.create_oval(
+                    x - r_h,
+                    y - r_h,
+                    x + r_h,
+                    y + r_h,
+                    outline=self.color,
+                    width=2,
+                    fill="",  # no fill so it looks like a ring
+                    tags=(self.highlight_tag,),  # must be a tuple
+                )
+
             self.canvas.create_oval(
-                x - r_h,
-                y - r_h,
-                x + r_h,
-                y + r_h,
-                outline=self.color,
-                width=2,
-                fill="",  # no fill so it looks like a ring
-                tags=(self.highlight_tag,),  # must be a tuple
+                x - r, y - r, x + r, y + r, fill=self.color, width=2, tags=(self.tag, "point")
             )
 
-        self.canvas.create_oval(
-            x - r, y - r, x + r, y + r, fill=self.color, width=2, tags=(self.tag, "point")
-        )
-
-        if self.label:
-            self.canvas.create_text(
-                x + 10 * visual_scale,
-                y - 15 * visual_scale,
-                text=self.label,
-                font=("Arial", int(12 * visual_scale)),
-                fill="blue",
-                tags=self.tag,
-            )
+            if self.label:
+                self.canvas.create_text(
+                    x + 10 * visual_scale,
+                    y - 15 * visual_scale,
+                    text=self.label,
+                    font=("Arial", int(12 * visual_scale)),
+                    fill="blue",
+                    tags=self.tag,
+                )
