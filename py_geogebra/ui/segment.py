@@ -33,6 +33,8 @@ class Segment:
         self.cy = 0
         
         self.selected = False
+        
+        self.is_drawable = True
 
         self.tag = f"segment_{id(self)}"
         self.point_1 = point_1
@@ -75,9 +77,29 @@ class Segment:
 
             x1, y1 = self.point_1.pos_x, self.point_1.pos_y
 
-            if self.point_2 is None and e is None:
-                return
+        if self.point_2 is None and e is None:
+            return
 
+        
+                
+        for obj in self.points:
+            if (obj is self.point_1) or (obj is self.point_2):
+                continue
+            if (obj.translation > 1):
+                obj.translation = 1
+            elif (obj.translation < 0):
+                obj.translation = 0
+            snap_to_line(obj, self)
+            obj.update()
+            
+        if not self.point_2:
+            self.is_drawable = True
+        elif self.point_1.is_drawable and self.point_2.is_drawable:
+            self.is_drawable = True
+        else:
+            self.is_drawable = False
+         
+        if self.is_drawable:   
             if self.point_2 is None:
                 cx, cy = state.center
                 x2 = (e.x - cx) / (self.unit_size * self.scale)
@@ -95,41 +117,31 @@ class Segment:
                     fill="blue",
                     tags=self.tag,
                 )
-                
-        for obj in self.points:
-            if (obj is self.point_1) or (obj is self.point_2):
-                continue
-            if (obj.translation > 1):
-                obj.translation = 1
-            elif (obj.translation < 0):
-                obj.translation = 0
-            snap_to_line(obj, self)
-            obj.update()
 
-
-        x1, y1 = world_to_screen(self.objects, x1, y1)
-        x2, y2 = world_to_screen(self.objects, x2, y2)
+            x1, y1 = world_to_screen(self.objects, x1, y1)
+            x2, y2 = world_to_screen(self.objects, x2, y2)
         
-        if self.selected:
+            
+            if self.selected:
+                self.canvas.create_line(
+                    x1,
+                    y1,
+                    x2,
+                    y2,
+                    fill="lightgrey",
+                    width=2 * 3 * visual_scale,
+                    tags=self.tag,
+                )
+
             self.canvas.create_line(
                 x1,
                 y1,
                 x2,
                 y2,
-                fill="lightgrey",
-                width=2 * 3 * visual_scale,
+                fill="black",
+                width=2 * visual_scale,
                 tags=self.tag,
             )
-
-        self.canvas.create_line(
-            x1,
-            y1,
-            x2,
-            y2,
-            fill="black",
-            width=2 * visual_scale,
-            tags=self.tag,
-        )
         self.canvas.tag_raise(self.point_1.tag)
         if self.point_2 is not None:
             self.canvas.tag_raise(self.point_2.tag)

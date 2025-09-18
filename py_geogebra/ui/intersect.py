@@ -35,7 +35,7 @@ class Intersect:
         self.line_1 = None
         self.line_2 = None
         self.translation = 0
-        self.drawable = True
+        self.is_drawable = True
         
 
         self.tag = f"intersect_{id(self)}"
@@ -54,7 +54,7 @@ class Intersect:
         self.canvas.delete(self.tag)
         self.canvas.delete(self.highlight_tag)
         
-        self.drawable = True
+        self.is_drawable = True
         
 
         if self.line_2:
@@ -62,23 +62,23 @@ class Intersect:
             if isinstance(self.line_1, Segment) or isinstance(self.line_1, Segment_with_length):
                 find_translation(self, self.line_1)
                 if self.translation > 1 or self.translation < 0:
-                    self.drawable = False
+                    self.is_drawable = False
             if isinstance(self.line_2, Segment) or isinstance(self.line_2, Segment_with_length):
                 find_translation(self, self.line_2)
                 if self.translation > 1 or self.translation < 0:
-                    self.drawable = False
+                    self.is_drawable = False
             if isinstance(self.line_1, Ray):
                 find_translation(self, self.line_1)
                 if self.translation < 0:
-                    self.drawable = False
+                    self.is_drawable = False
             if isinstance(self.line_2, Ray):
                 find_translation(self, self.line_2)
                 if self.translation < 0:
-                    self.drawable = False
+                    self.is_drawable = False
 
             
                 
-            if self.drawable:
+            if self.is_drawable:
                 
                 
                 visual_scale = min(max(1, self.scale**0.5), 1.9)

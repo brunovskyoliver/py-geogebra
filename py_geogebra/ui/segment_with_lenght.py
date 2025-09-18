@@ -43,6 +43,8 @@ class Segment_with_length:
         self.points = [self.point_1]
         
         self.selected = False
+        
+        self.is_drawable = True
 
         self.canvas.bind("<Configure>", lambda e: self.update())
         
@@ -99,29 +101,40 @@ class Segment_with_length:
         x1, y1 = world_to_screen(self.objects, x1, y1)
         x2, y2 = world_to_screen(self.objects, x2, y2)
         
-        if self.selected:
+        if not self.point_2:
+            self.is_drawable = True
+        elif self.point_1.is_drawable and self.point_2.is_drawable:
+            self.is_drawable = True
+        else:
+            self.is_drawable = False
+        
+        if self.is_drawable:
+            if self.selected:
+                self.canvas.create_line(
+                    x1,
+                    y1,
+                    x2,
+                    y2,
+                    fill="lightgrey",
+                    width=2 * 3 * visual_scale,
+                    tags=self.tag,
+                )
+
             self.canvas.create_line(
                 x1,
                 y1,
                 x2,
                 y2,
-                fill="lightgrey",
-                width=2 * 3 * visual_scale,
+                fill="black",
+                width=2 * visual_scale,
                 tags=self.tag,
             )
-
-        self.canvas.create_line(
-            x1,
-            y1,
-            x2,
-            y2,
-            fill="black",
-            width=2 * visual_scale,
-            tags=self.tag,
-        )
         
         if self.point_2 not in self.points:
                 self.points.append(self.point_2)
         
         self.prev_x = self.pos_x
         self.prev_y = self.pos_y
+        
+        self.point_2.is_drawable = self.point_1.is_drawable
+        self.point_2.update()
