@@ -38,7 +38,6 @@ class Point:
         self.selected = False
         self.highlight_tag = f"{self.tag}_highlight"
 
-        self.canvas.bind("<Configure>", lambda e: self.update())
 
     def select(self):
         self.selected = True
