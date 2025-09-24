@@ -30,6 +30,12 @@ def center(canvas, objects):
     return cx, cy
 
 
+def center_screen(canvas):
+    width = canvas.winfo_width()
+    height = canvas.winfo_height()
+    return width // 2, height // 2
+
+
 def screen_to_world(canvas, objects, e):
     cx, cy = state.center
     world_x = (e.x - cx) / (objects.unit_size * objects.scale)

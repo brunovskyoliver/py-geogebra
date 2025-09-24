@@ -116,6 +116,8 @@ def pressing(root, canvas, sidebar, objects, axes):
                 line = Line(
                     root, canvas, unit_size=axes.unit_size, point_1=p, objects=objects
                 )
+                lower_label = get_lower_label(state)
+                line.lower_label = lower_label
                 objects.register(line)
                 state.points_for_obj.append(p)
                 state.points_for_obj.append(line)

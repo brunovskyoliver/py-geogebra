@@ -33,9 +33,9 @@ class Line:
         self.tag = f"line_{id(self)}"
         self.point_1 = point_1
         self.point_2 = None
-        
-        
+
         self.points = [self.point_1]
+        self.lower_label = ""
 
         self.canvas.bind("<Configure>", lambda e: self.update())
 
@@ -44,12 +44,12 @@ class Line:
 
         visual_scale = min(max(1, self.scale**0.5), 1.9)
 
-        if (state.drag_target is self):
-            
+        if state.drag_target is self:
+
             x_dif, y_dif = self.prev_x - self.pos_x, self.prev_y - self.pos_y
             x1, y1 = self.point_1.pos_x, self.point_1.pos_y
             x2, y2 = self.point_2.pos_x, self.point_2.pos_y
-            
+
             for obj in self.points:
                 if (obj is self.point_1) or (obj is self.point_2):
                     obj.pos_x -= x_dif
@@ -60,7 +60,6 @@ class Line:
                     y2 -= y_dif
                     continue
 
-            
         else:
             x1, y1 = self.point_1.pos_x, self.point_1.pos_y
 
@@ -73,21 +72,40 @@ class Line:
                 y2 = (cy - e.y) / (self.unit_size * self.scale)
             else:
                 x2, y2 = self.point_2.pos_x, self.point_2.pos_y
-                
+
         for obj in self.points:
             if (obj is not self.point_1) and (obj is not self.point_2):
                 snap_to_line(obj, self)
                 obj.update()
 
         angle = math.atan2(y2 - y1, x2 - x1)
-        span = (
-            max(self.canvas.winfo_width(), self.canvas.winfo_height())
-            * 10
-            / (self.unit_size * self.scale)
+        span = max(self.canvas.winfo_width(), self.canvas.winfo_height()) / (
+            self.unit_size * self.scale
         )
         cos_a = math.cos(angle)
         sin_a = math.sin(angle)
 
+        if self.point_2 is not None:
+            x, y = self.point_2.pos_x, self.point_2.pos_y
+            x, y = world_to_screen(self.objects, x, y)
+            width, height = self.canvas.winfo_width(), self.canvas.winfo_height()
+            if angle > 0:
+                if 0 < angle < math.pi / 2:
+                    z = math.tan(math.pi / 2 - angle) * y
+                    x += z
+                    y = 10
+                    print(x, y)
+                    x = min(x, width - 10)
+            self.canvas.create_text(
+                x + 1 * visual_scale,
+                y,
+                text=self.lower_label,
+                font=("Arial", int(12 * visual_scale)),
+                fill="blue",
+                tags=self.tag,
+            )
+
+        span *= 10
         x1 -= span * cos_a
         y1 -= span * sin_a
         x2 += span * cos_a
@@ -110,5 +128,5 @@ class Line:
             self.canvas.tag_raise(self.point_2.tag)
             if self.point_2 not in self.points:
                 self.points.append(self.point_2)
-            
+
         self.prev_x, self.prev_y = self.pos_x, self.pos_y
