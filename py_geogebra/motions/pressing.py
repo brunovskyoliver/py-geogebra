@@ -1,5 +1,6 @@
 from .. import state
 from ..ui.point import Point
+from ..ui.intersect import Intersect
 from ..ui.midpoint_or_center import Midpoint_or_center
 from ..ui.pen import Pen
 from ..ui.line import Line
@@ -21,6 +22,9 @@ from ..tools.utils import (
     find_line_at_position,
     find_translation,
     snap_to_line,
+    find_polyline_at_position,
+    find_translation_polyline,
+    snap_to_polyline,
 )
 from tkinter import CURRENT, simpledialog
 
@@ -36,6 +40,7 @@ def pressing(root, canvas, sidebar, objects, axes):
 
             point_obj = find_point_at_position(objects, e, canvas)
             if point_obj:
+                point_obj.update()
                 if state.selected_point and state.selected_point != point_obj:
                     state.selected_point.deselect()
                 point_obj.select()
@@ -49,7 +54,20 @@ def pressing(root, canvas, sidebar, objects, axes):
                 if line_obj:
                     line_obj.pos_x, line_obj.pos_y = screen_to_world(canvas, objects, e)
                     line_obj.update()
+                    if hasattr(line_obj, "select"):
+                        line_obj.select()
+                        state.selected_point = line_obj
                     state.drag_target = line_obj
+                else:
+                    polyline_obj = find_polyline_at_position(objects, e, canvas)
+                    if polyline_obj:
+                        polyline_obj.pos_x, polyline_obj.pos_y = screen_to_world(
+                            canvas, objects, e
+                        )
+                        polyline_obj.update()
+                        state.selected_point = polyline_obj
+                        polyline_obj.select()
+                        state.drag_target = polyline_obj
 
         elif state.selected_tool == "point":
             state.start_pos["x"] = e.x
@@ -73,10 +91,56 @@ def pressing(root, canvas, sidebar, objects, axes):
                 find_translation(p, l)
                 l.points.append(p)
                 snap_to_line(p, l)
+                p.color = "#349AFF"
                 l.update()
+                
+            polyline = find_polyline_at_position(objects, e, canvas, r=2)
+            if polyline is not None:
+                find_translation_polyline(p, polyline)
+                polyline.points.append(p)
+                snap_to_polyline(p, polyline)
+                p.color = "#349AFF"
+                polyline.update()
+                
+                
             objects.register(p)
             sidebar.items.append(p)
             sidebar.update()
+
+        elif state.selected_tool == "intersect":
+            l = find_line_at_position(objects, e, canvas, r=2)
+            if l is None:
+                state.selected_intersect.line_1.deselect()
+                state.selected_intersect = None
+                return
+            else:
+                if state.selected_intersect:
+                    if state.selected_intersect.line_1 == l:
+                        return
+                    if not state.selected_intersect.line_2:
+                        state.selected_intersect.line_2 = l
+                        state.selected_intersect.line_1.deselect()
+                        state.selected_intersect.update()
+                        state.selected_intersect = None
+                else:
+                    label = get_label(state)
+                    world_x, world_y = screen_to_world(canvas, objects, e)
+                    i = Intersect (
+                        root,
+                        canvas,
+                        label=label,
+                        unit_size=axes.unit_size,
+                        objects=objects
+                    )
+                    i.line_1 = l
+                    i.line_1.select()
+                    objects.register(i)
+                    i.update()
+                    state.selected_intersect = i
+                
+                    
+                        
+                        
 
         elif state.selected_tool == "pen":
             cx, cy = state.center
@@ -214,13 +278,12 @@ def pressing(root, canvas, sidebar, objects, axes):
                     pos_x=world_x,
                     pos_y=world_y,
                 )
-                # sidebar.items.append(p)
-                # sidebar.update()
-                state.current_polyline.points.append(p)
+
+                state.current_polyline.line_points.append(p)
                 objects.register(p)
             elif (
-                len(state.current_polyline.points) > 2
-                and state.current_polyline.points[0] == p
+                len(state.current_polyline.line_points) > 2
+                and state.current_polyline.line_points[0] == p
             ):
                 state.current_polyline.last_not_set = False
                 state.current_polyline.lower_label = get_lower_label(state)
@@ -229,10 +292,10 @@ def pressing(root, canvas, sidebar, objects, axes):
                 sidebar.update()
                 state.current_polyline = None
             else:
-                if p in state.current_polyline.points:
-                    state.current_polyline.points.remove(p)
+                if p in state.current_polyline.line_points:
+                    state.current_polyline.line_points.remove(p)
                 else:
-                    state.current_polyline.points.append(p)
+                    state.current_polyline.line_points.append(p)
                 state.current_polyline.update(e)
 
         elif state.selected_tool == "segment_with_length":
