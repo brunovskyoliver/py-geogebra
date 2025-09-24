@@ -49,7 +49,7 @@ class Sidebar:
                 text = tk.Label(
                     self.frame,
                     text=(
-                        f"{item.lower_label} = Polyline({", ".join(p.label for p in item.points)})\n"
+                        f"{item.lower_label} = Polyline({", ".join(p.label for p in item.line_points)})\n"
                         f"{' ' * (len(item.lower_label)-1)}= {round(item.length, 2)}"
                     ),
                     fg="black",

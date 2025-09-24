@@ -11,10 +11,12 @@ class Point:
         unit_size: int = 40,
         pos_x: int = 0,
         pos_y: int = 0,
+        color = "blue",
     ):
 
         self.root = root
         self.canvas = canvas
+        self.color = color
 
         self.pos_x = pos_x
         self.pos_y = pos_y
@@ -30,13 +32,14 @@ class Point:
         self.x = 0
         self.y = 0
         
-        self.transaltion = 0
+        self.translation = 0
+        
+        self.is_drawable = True
 
         self.tag = f"point_{id(self)}"
         self.selected = False
         self.highlight_tag = f"{self.tag}_highlight"
 
-        self.canvas.bind("<Configure>", lambda e: self.update())
 
     def select(self):
         self.selected = True
@@ -58,30 +61,32 @@ class Point:
         visual_scale = min(max(1, self.scale**0.5), 1.9)
 
         r = 6.0 * visual_scale
+        
+        if self.is_drawable:
 
-        if self.selected:
-            r_h = r * 1.4
+            if self.selected:
+                r_h = r * 1.4
+                self.canvas.create_oval(
+                    x - r_h,
+                    y - r_h,
+                    x + r_h,
+                    y + r_h,
+                    outline=self.color,
+                    width=2,
+                    fill="",  # no fill so it looks like a ring
+                    tags=(self.highlight_tag,),  # must be a tuple
+                )
+
             self.canvas.create_oval(
-                x - r_h,
-                y - r_h,
-                x + r_h,
-                y + r_h,
-                outline="blue",
-                width=2,
-                fill="",  # no fill so it looks like a ring
-                tags=(self.highlight_tag,),  # must be a tuple
+                x - r, y - r, x + r, y + r, fill=self.color, width=2, tags=(self.tag, "point")
             )
 
-        self.canvas.create_oval(
-            x - r, y - r, x + r, y + r, fill="blue", width=2, tags=(self.tag, "point")
-        )
-
-        if self.label:
-            self.canvas.create_text(
-                x + 10 * visual_scale,
-                y - 15 * visual_scale,
-                text=self.label,
-                font=("Arial", int(12 * visual_scale)),
-                fill="blue",
-                tags=self.tag,
-            )
+            if self.label:
+                self.canvas.create_text(
+                    x + 10 * visual_scale,
+                    y - 15 * visual_scale,
+                    text=self.label,
+                    font=("Arial", int(12 * visual_scale)),
+                    fill="blue",
+                    tags=self.tag,
+                )
