@@ -1,6 +1,7 @@
 import tkinter as tk
 from ..tools.utils import center, world_to_screen, snap_to_line
 from .. import state
+from .lower_label import Lower_label
 import math
 
 
@@ -39,6 +40,10 @@ class Line:
 
         self.points = [self.point_1]
         self.lower_label = ""
+        self.lower_label_obj = Lower_label(
+            self.root, self.canvas, objects=self.objects, obj=self
+        )
+        self.objects.register(self.lower_label_obj)
 
         self.canvas.bind("<Configure>", lambda e: self.update())
 
@@ -97,24 +102,7 @@ class Line:
         sin_a = math.sin(angle)
 
         if self.point_2 is not None:
-            x, y = self.point_2.pos_x, self.point_2.pos_y
-            x, y = world_to_screen(self.objects, x, y)
-            width, height = self.canvas.winfo_width(), self.canvas.winfo_height()
-            if angle > 0:
-                if 0 < angle < math.pi / 2:
-                    z = math.tan(math.pi / 2 - angle) * y
-                    x += z
-                    y = 10
-                    print(x, y)
-                    x = min(x, width - 10)
-            self.canvas.create_text(
-                x + 1 * visual_scale,
-                y,
-                text=self.lower_label,
-                font=("Arial", int(12 * visual_scale)),
-                fill="blue",
-                tags=self.tag,
-            )
+            self.lower_label_obj.update()
 
         span *= 10
         x1 -= span * cos_a
@@ -161,3 +149,4 @@ class Line:
                 self.points.append(self.point_2)
 
         self.prev_x, self.prev_y = self.pos_x, self.pos_y
+        self.canvas.tag_raise(self.lower_label_obj.tag)

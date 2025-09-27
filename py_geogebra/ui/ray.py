@@ -1,6 +1,7 @@
 import tkinter as tk
 from ..tools.utils import center, world_to_screen, snap_to_line
 from .. import state
+from .lower_label import Lower_label
 import math
 
 
@@ -33,15 +34,20 @@ class Ray:
         self.tag = f"ray_{id(self)}"
         self.point_1 = point_1
         self.point_2 = None
-        
+
         self.selected = False
-        
+
         self.is_drawable = True
-        
+
         self.points = [self.point_1]
+        self.lower_label = ""
+        self.lower_label_obj = Lower_label(
+            self.root, self.canvas, objects=self.objects, obj=self
+        )
+        self.objects.register(self.lower_label_obj)
 
         self.canvas.bind("<Configure>", lambda e: self.update())
-        
+
     def select(self):
         self.selected = True
         self.update()
@@ -55,12 +61,12 @@ class Ray:
 
         visual_scale = min(max(1, self.scale**0.5), 1.9)
 
-        if (state.drag_target is self):
-            
+        if state.drag_target is self:
+
             x_dif, y_dif = self.prev_x - self.pos_x, self.prev_y - self.pos_y
             x1, y1 = self.point_1.pos_x, self.point_1.pos_y
             x2, y2 = self.point_2.pos_x, self.point_2.pos_y
-            
+
             for obj in self.points:
                 if (obj is self.point_1) or (obj is self.point_2):
                     obj.pos_x -= x_dif
@@ -72,7 +78,7 @@ class Ray:
                     continue
                 snap_to_line(obj, self)
                 obj.update()
-            
+
         else:
             x1, y1 = self.point_1.pos_x, self.point_1.pos_y
 
@@ -85,16 +91,20 @@ class Ray:
                 y2 = (cy - e.y) / (self.unit_size * self.scale)
             else:
                 x2, y2 = self.point_2.pos_x, self.point_2.pos_y
-                
+
         for obj in self.points:
             if (obj is self.point_1) or (obj is self.point_2):
                 continue
-            if (obj.translation < 0):
+            if obj.translation < 0:
                 obj.translation = 0
             snap_to_line(obj, self)
             obj.update()
 
         angle = math.atan2(y2 - y1, x2 - x1)
+
+        if self.point_2 is not None:
+            self.lower_label_obj.update()
+
         span = (
             max(self.canvas.winfo_width(), self.canvas.winfo_height())
             * 10
@@ -108,16 +118,16 @@ class Ray:
 
         x1, y1 = world_to_screen(self.objects, x1, y1)
         x2, y2 = world_to_screen(self.objects, x2, y2)
-        
+
         if not self.point_2:
             self.is_drawable = True
         elif self.point_1.is_drawable and self.point_2.is_drawable:
             self.is_drawable = True
         else:
             self.is_drawable = False
-        
+
         if self.is_drawable:
-        
+
             if self.selected:
                 self.canvas.create_line(
                     x1,
@@ -143,5 +153,6 @@ class Ray:
             self.canvas.tag_raise(self.point_2.tag)
             if self.point_2 not in self.points:
                 self.points.append(self.point_2)
-            
+
         self.prev_x, self.prev_y = self.pos_x, self.pos_y
+        self.canvas.tag_raise(self.lower_label_obj.tag)
