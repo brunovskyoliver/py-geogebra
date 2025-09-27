@@ -93,7 +93,7 @@ def pressing(root, canvas, sidebar, objects, axes):
                 snap_to_line(p, l)
                 p.color = "#349AFF"
                 l.update()
-                
+
             polyline = find_polyline_at_position(objects, e, canvas, r=2)
             if polyline is not None:
                 find_translation_polyline(p, polyline)
@@ -101,8 +101,7 @@ def pressing(root, canvas, sidebar, objects, axes):
                 snap_to_polyline(p, polyline)
                 p.color = "#349AFF"
                 polyline.update()
-                
-                
+
             objects.register(p)
             sidebar.items.append(p)
             sidebar.update()
@@ -125,22 +124,18 @@ def pressing(root, canvas, sidebar, objects, axes):
                 else:
                     label = get_label(state)
                     world_x, world_y = screen_to_world(canvas, objects, e)
-                    i = Intersect (
+                    i = Intersect(
                         root,
                         canvas,
                         label=label,
                         unit_size=axes.unit_size,
-                        objects=objects
+                        objects=objects,
                     )
                     i.line_1 = l
                     i.line_1.select()
                     objects.register(i)
                     i.update()
                     state.selected_intersect = i
-                
-                    
-                        
-                        
 
         elif state.selected_tool == "pen":
             cx, cy = state.center
@@ -250,6 +245,8 @@ def pressing(root, canvas, sidebar, objects, axes):
                 ray = Ray(
                     root, canvas, unit_size=axes.unit_size, point_1=p, objects=objects
                 )
+                lower_label = get_lower_label(state)
+                ray.lower_label = lower_label
                 objects.register(ray)
                 state.points_for_obj.append(p)
                 state.points_for_obj.append(ray)
