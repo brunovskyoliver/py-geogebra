@@ -67,6 +67,7 @@ class Line:
             "points": [p.label for p in self.points],
             "point_1": self.point_1.label if self.point_1 else None,
             "point_2": self.point_2.label if self.point_2 else None,
+            "prescription": [p for p in self.prescription],
         }
 
     @classmethod
@@ -86,12 +87,17 @@ class Line:
         line.offset_x = data.get("offset_x", 0)
         line.offset_y = data.get("offset_y", 0)
         line.lower_label = data.get("lower_label", "")
+        line.tag = data.get("tag", "")
+        line.lower_label_obj = Lower_label(root, obj=line)
+        globals.objects.register(line.lower_label_obj)
         line.pos_x = data.get("pos_x", 0)
         line.pos_y = data.get("pos_y", 0)
         line.points = [find_point(lbl) for lbl in data.get("points", []) if lbl]
         cx, cy = state.center
         line.cx = cx
         line.cy = cy
+        line.prescription = data.get("prescription", {})
+        globals.sidebar.items.append(line)
         line.update()
         return line
 

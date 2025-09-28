@@ -23,6 +23,7 @@ class Sidebar:
         return {
             "type": "Sidebar",
             "width": self.frame.winfo_width(),
+            "order": [item.tag for item in self.items],
         }
 
     def load_from_dict(self, data: dict):
