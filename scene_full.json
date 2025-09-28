@@ -17,32 +17,62 @@
     {
       "type": "Point",
       "label": "A",
-      "pos_x": -5.275,
-      "pos_y": 5.275,
+      "pos_x": -6.025,
+      "pos_y": 0.05,
       "color": "blue",
       "unit_size": 40,
       "scale": 1.0,
       "is_drawable": true,
       "offset_x": 0,
       "offset_y": 0,
-      "tag": "point_4436793616"
+      "tag": "point_4364382864"
+    },
+    {
+      "type": "Line",
+      "lower_label": "a",
+      "pos_x": 0.0,
+      "pos_y": 0.0,
+      "unit_size": 40,
+      "scale": 1.0,
+      "is_drawable": true,
+      "offset_x": 0,
+      "offset_y": 0,
+      "tag": "line_4625014112",
+      "points": [
+        "A",
+        "B"
+      ],
+      "point_1": "A",
+      "point_2": "B"
+    },
+    {
+      "type": "Point",
+      "label": "B",
+      "pos_x": 0.025,
+      "pos_y": 3.975,
+      "color": "blue",
+      "unit_size": 40,
+      "scale": 1.0,
+      "is_drawable": true,
+      "offset_x": 0,
+      "offset_y": 0,
+      "tag": "point_4625015552"
     }
   ],
   "state": {
-    "selected_tool": "point",
+    "selected_tool": "line",
     "start_pos": {
-      "x": 134,
-      "y": 305
+      "x": 346,
+      "y": 357
     },
     "scale": 1.0,
     "selected_point": null,
     "current_pen": null,
     "current_polyline": null,
-    "label_counter": 1,
-    "lower_label_counter": 0,
+    "label_counter": 2,
+    "lower_label_counter": 1,
     "label_unused": [],
     "lower_label_unused": [],
-    "points_for_obj": [],
     "freehand_last_pos": {
       "x": 0,
       "y": 0

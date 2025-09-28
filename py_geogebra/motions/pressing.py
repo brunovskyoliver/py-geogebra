@@ -101,7 +101,6 @@ def pressing(root):
                 polyline.update()
 
             globals.objects.register(p)
-            globals.objects.to_json("scene_full.json")
 
         elif state.selected_tool == "intersect":
             l = find_line_at_position(e, r=2)
