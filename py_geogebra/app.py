@@ -20,6 +20,7 @@ def run_app():
     global widgets
     set_language("sk")
     widgets = Widgets()
+    globals.widgets = widgets
 
     root = tk.Tk()
     root.geometry("1280x720")

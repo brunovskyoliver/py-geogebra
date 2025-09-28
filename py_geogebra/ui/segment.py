@@ -138,4 +138,7 @@ class Segment:
             if self.point_2 not in self.points:
                 self.points.append(self.point_2)
 
+        for p in self.points:
+            self.canvas.tag_raise(p.tag)
+
         self.prev_x, self.prev_y = self.pos_x, self.pos_y

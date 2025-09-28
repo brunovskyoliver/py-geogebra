@@ -85,7 +85,7 @@ def tool_menu_init(root, bar, def_icon, buttons):
             image=icon,
             compound="left",
             command=lambda img=icon, tool_name=b["icon"]: change_icon(
-                canvas, img, button, tool_name, objects
+                img, button, tool_name
             ),
         )
         i = (
@@ -109,22 +109,17 @@ def toolbar(root):
 
     tool_menu_init(
         root,
-        globals.canvas,
         bar,
-        globals.widgets,
         def_icon="arrow",
         buttons=[
             {"name": _("Pohyb"), "icon": "arrow"},
             {"name": _("Voľný tvar"), "icon": "freehand"},
             {"name": _("Nástroj pero"), "icon": "pen"},
         ],
-        objects=globals.objects,
     )
     tool_menu_init(
         root,
-        globals.canvas,
         bar,
-        globals.widgets,
         def_icon="point",
         buttons=[
             {"name": _("Bod"), "icon": "point"},
@@ -136,7 +131,6 @@ def toolbar(root):
             {"name": _("Extremum"), "icon": "extremum"},
             {"name": _("Korene"), "icon": "roots"},
         ],
-        objects=globals.objects,
     )
     tool_menu_init(
         root,
@@ -151,7 +145,6 @@ def toolbar(root):
             {"name": _("Vektor"), "icon": "vector"},
             {"name": _("Vektor z bodu"), "icon": "vector_from_point"},
         ],
-        objects=globals.objects,
     )
     state.selected_tool = "arrow"
 

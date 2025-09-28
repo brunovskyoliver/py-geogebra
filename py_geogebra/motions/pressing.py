@@ -10,6 +10,7 @@ from ..ui.free_hand import FreeHand
 from ..ui.segment_with_lenght import Segment_with_length
 from ..ui.polyline import Polyline
 from ..tools.utils import (
+    delete_object,
     g,
     get_lower_label,
     number_to_ascii,
@@ -310,13 +311,18 @@ def pressing(root):
                     pos_y=world_y,
                 )
                 globals.objects.register(p)
-            length = (
-                simpledialog.askfloat(
-                    "Dĺžka úsečky",
-                    "Zadajte dĺžku úsečky (kladné číslo):",
-                    minvalue=0,
-                )
-            ) * globals.objects.unit_size
+            length = simpledialog.askfloat(
+                "Dĺžka úsečky",
+                "Zadajte dĺžku úsečky (kladné číslo):",
+                minvalue=0,
+            )
+            if length is None:
+                delete_object(p, state)
+                globals.sidebar.items.remove(p)
+                globals.sidebar.update()
+                return
+
+            length *= globals.objects.unit_size
             new_x = e.x + length
             cx, cy = center()
             world_x = (new_x - cx) / (globals.objects.unit_size * globals.objects.scale)

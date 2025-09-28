@@ -149,3 +149,5 @@ class Segment_with_length:
 
         self.point_2.is_drawable = self.point_1.is_drawable
         self.point_2.update()
+        for p in self.points:
+            self.canvas.tag_raise(p.tag)
