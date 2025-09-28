@@ -26,7 +26,7 @@ def run_app():
     widgets.register(lambda: root.title(_("Geogebra ale lepsia") + f" v{__version__}"))
 
     main_area = tk.Frame(root)
-    sidebar = Sidebar(root, main_area, widgets)
+    sidebar = Sidebar(root, main_area)
     globals.sidebar = sidebar
     canvas = tk.Canvas(main_area, background="white")
     globals.canvas = canvas
@@ -42,7 +42,6 @@ def run_app():
         canvas.winfo_width() // 2 + objects.offset_x,
         canvas.winfo_height() // 2 + objects.offset_y,
     )
-    state.sidebar_width = sidebar.frame.winfo_width()
 
     axes = Axes(root, objects.unit_size)
     globals.axes = axes

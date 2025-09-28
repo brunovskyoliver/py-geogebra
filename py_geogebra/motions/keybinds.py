@@ -22,11 +22,11 @@ def keybinds(root):
             with open("scene_full.json", "r", encoding="utf-8") as f:
                 data = json.load(f)
             globals.objects.load_from_dict(root, data)
+            print("loaded")
 
     def keyreleased(e):
         if e.keysym == "Shift_L":
             state.shift_pressed = False
 
-    globals.canvas.focus_set()
-    globals.canvas.bind("<KeyPress>", keypressed)
-    globals.canvas.bind("<KeyRelease>", keyreleased)
+    root.bind("<KeyPress>", keypressed)
+    root.bind("<KeyRelease>", keyreleased)
