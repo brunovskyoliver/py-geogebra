@@ -75,6 +75,7 @@ class Objects:
                 obj.to_dict() for obj in self._objects if hasattr(obj, "to_dict")
             ],
             "state": state.to_dict(),
+            "sidebar": globals.sidebar.to_dict(),
         }
 
     def to_json(self, path):
@@ -91,6 +92,7 @@ class Objects:
         state.load_from_dict(data.get("state", {}))
         state.selected_tool = "arrow"
         state.center = center()
+        globals.sidebar.load_from_dict(data.get("sidebar", {}))
         for od in data.get("objects", []):
             if od["type"] == "Point":
                 p = Point.from_dict(root, od)

@@ -1,8 +1,8 @@
 {
   "version": 1,
   "view": {
-    "offset_x": 158,
-    "offset_y": 1,
+    "offset_x": -1,
+    "offset_y": 0,
     "scale": 1.0,
     "unit_size": 40
   },
@@ -11,21 +11,21 @@
       "type": "Axes",
       "unit_size": 40,
       "scale": 1.0,
-      "offset_x": 158,
-      "offset_y": 1
+      "offset_x": -1,
+      "offset_y": 0
     },
     {
       "type": "Point",
       "label": "A",
-      "pos_x": 3.425,
-      "pos_y": 8.575,
+      "pos_x": -7.875,
+      "pos_y": 9.45,
       "color": "blue",
       "unit_size": 40,
       "scale": 1.0,
       "is_drawable": true,
-      "offset_x": 158,
-      "offset_y": 1,
-      "tag": "point_4652996832"
+      "offset_x": -1,
+      "offset_y": 0,
+      "tag": "point_4637877568"
     },
     {
       "type": "Line",
@@ -35,9 +35,9 @@
       "unit_size": 40,
       "scale": 1.0,
       "is_drawable": true,
-      "offset_x": 158,
-      "offset_y": 1,
-      "tag": "line_4652996976",
+      "offset_x": -1,
+      "offset_y": 0,
+      "tag": "line_4324280512",
       "points": [
         "A",
         "B"
@@ -48,28 +48,28 @@
     {
       "type": "Point",
       "label": "B",
-      "pos_x": -7.075,
-      "pos_y": 2.075,
+      "pos_x": -6.75,
+      "pos_y": 0.975,
       "color": "blue",
       "unit_size": 40,
       "scale": 1.0,
       "is_drawable": true,
-      "offset_x": 158,
-      "offset_y": 1,
-      "tag": "point_4652996736"
+      "offset_x": -1,
+      "offset_y": 0,
+      "tag": "point_4637876512"
     },
     {
       "type": "Point",
       "label": "C",
-      "pos_x": -5.3,
-      "pos_y": -2.85,
+      "pos_x": 2.5,
+      "pos_y": 6.775,
       "color": "blue",
       "unit_size": 40,
       "scale": 1.0,
       "is_drawable": true,
-      "offset_x": 158,
-      "offset_y": 1,
-      "tag": "point_4652997552"
+      "offset_x": -1,
+      "offset_y": 0,
+      "tag": "point_4637876704"
     },
     {
       "type": "Line",
@@ -79,35 +79,35 @@
       "unit_size": 40,
       "scale": 1.0,
       "is_drawable": true,
-      "offset_x": 158,
-      "offset_y": 1,
-      "tag": "line_4652997888",
+      "offset_x": -1,
+      "offset_y": 0,
+      "tag": "line_4637878000",
       "points": [
         "C",
-        "A"
+        "B"
       ],
       "point_1": "C",
-      "point_2": "A"
+      "point_2": "B"
     },
     {
       "type": "Point",
       "label": "D",
-      "pos_x": -2.375,
-      "pos_y": 9.5,
+      "pos_x": -4.825,
+      "pos_y": 11.125,
       "color": "blue",
       "unit_size": 40,
       "scale": 1.0,
       "is_drawable": true,
-      "offset_x": 158,
-      "offset_y": 1,
-      "tag": "point_4652998320"
+      "offset_x": -1,
+      "offset_y": 0,
+      "tag": "point_4637878480"
     }
   ],
   "state": {
-    "selected_tool": "arrow",
+    "selected_tool": "point",
     "start_pos": {
-      "x": 272,
-      "y": 200
+      "x": 185,
+      "y": 71
     },
     "scale": 1.0,
     "selected_point": null,
@@ -124,12 +124,15 @@
     "drag_target": null,
     "deleted_point_label": null,
     "center": [
-      503,
-      517
+      378,
+      516
     ],
-    "sidebar_width": 200,
     "sidebar_resizing": false,
     "selected_intersect": null,
     "shift_pressed": false
+  },
+  "sidebar": {
+    "type": "Sidebar",
+    "width": 131
   }
 }

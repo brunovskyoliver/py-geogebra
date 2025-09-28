@@ -140,10 +140,7 @@ def dragging(root):
     def left_click_drag_sidebar(e):
         if state.sidebar_resizing:
             new_width = max(50, e.x)
-            state.sidebar_width = new_width
-            globals.sidebar.frame.configure(width=new_width)
-            globals.sidebar.frame.pack_propagate(False)
-            globals.sidebar.frame.update_idletasks()
+            globals.sidebar.resize(new_width)
 
     globals.canvas.bind("<B1-Motion>", left_click_drag)
     globals.canvas.bind("<B2-Motion>", right_click_drag)

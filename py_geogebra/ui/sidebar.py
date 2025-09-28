@@ -11,13 +11,30 @@ from ..ui.ray import Ray
 
 
 class Sidebar:
-    def __init__(self, root: tk.Tk, main_area: tk.Frame, widgets):
-        self.frame = tk.Frame(main_area, width=200, bg="#dddddd")
+    def __init__(self, root: tk.Tk, main_area: tk.Frame, width=200):
+        self.frame = tk.Frame(main_area, width=width, bg="#dddddd")
         self.frame.pack_propagate(False)
 
         self.resizing = False
         self.items = []
         self.font = ("mathsans, Calibri, sans-serif", 16)
+
+    def to_dict(self) -> dict:
+        return {
+            "type": "Sidebar",
+            "width": self.frame.winfo_width(),
+        }
+
+    def load_from_dict(self, data: dict):
+        if not data:
+            return
+        self.resize(data.get("width", 200))
+        self.update()
+
+    def resize(self, width):
+        self.frame.configure(width=width)
+        self.frame.pack_propagate(False)
+        self.frame.update_idletasks()
 
     def update(self):
         for widget in self.frame.winfo_children():
