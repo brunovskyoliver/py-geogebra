@@ -28,8 +28,6 @@ from ..tools.utils import (
 )
 from tkinter import CURRENT, simpledialog
 
-from py_geogebra.ui import polyline
-
 
 def pressing(root, canvas, sidebar, objects, axes):
     def left_click_pressed(e):
@@ -308,6 +306,8 @@ def pressing(root, canvas, sidebar, objects, axes):
                 state.current_polyline.last_not_set = False
                 state.current_polyline.lower_label = get_lower_label(state)
                 state.current_polyline.update(e)
+                sidebar.items.append(state.current_polyline)
+                sidebar.update()
                 state.current_polyline = None
             else:
                 if p in state.current_polyline.line_points:

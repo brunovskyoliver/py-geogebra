@@ -1,5 +1,6 @@
 import tkinter as tk
 import math
+
 from .. import state
 
 
@@ -122,6 +123,7 @@ def delete_object(canvas, objects, object_to_delete, state, sidebar=None):
                 isinstance(obj, Line)
                 or isinstance(obj, Ray)
                 or isinstance(obj, Segment)
+                or isinstance(obj, Polyline)
             ):
                 reconfigure_lower_label_order(obj.lower_label, state)
                 sidebar.items.remove(obj)
