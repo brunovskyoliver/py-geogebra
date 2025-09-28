@@ -10,7 +10,7 @@ def scrolling(root):
         scale_before = state.scale
         scale_factor = 1.1 if e.delta > 0 else 1 / 1.1
         scale_after = scale_before * scale_factor
-        state.center = center(canvas, globals.objects)
+        state.center = center()
         cx, cy = state.center
 
         state.scale = scale_after

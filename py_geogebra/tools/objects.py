@@ -91,6 +91,7 @@ class Objects:
         self._objects.clear()
         state.load_from_dict(data.get("state", {}))
         state.selected_tool = "arrow"
+        state.shift_pressed = False
         state.center = center()
         globals.sidebar.load_from_dict(data.get("sidebar", {}))
         for od in data.get("objects", []):
