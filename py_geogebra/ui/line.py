@@ -1,5 +1,10 @@
 import tkinter as tk
-from ..tools.utils import center, world_to_screen, snap_to_line
+from ..tools.utils import (
+    center,
+    world_to_screen,
+    snap_to_line,
+    get_linear_fuction_prescription,
+)
 from .. import state
 from .lower_label import Lower_label
 import math
@@ -44,6 +49,8 @@ class Line:
             self.root, self.canvas, objects=self.objects, obj=self
         )
         self.objects.register(self.lower_label_obj)
+        self.prescription = ()
+        self.angle = 0
 
         self.canvas.bind("<Configure>", lambda e: self.update())
 
@@ -94,15 +101,17 @@ class Line:
                 snap_to_line(obj, self)
                 obj.update()
 
-        angle = math.atan2(y2 - y1, x2 - x1)
+        self.angle = math.atan2(y2 - y1, x2 - x1)
         span = max(self.canvas.winfo_width(), self.canvas.winfo_height()) / (
             self.unit_size * self.scale
         )
-        cos_a = math.cos(angle)
-        sin_a = math.sin(angle)
+        cos_a = math.cos(self.angle)
+        sin_a = math.sin(self.angle)
 
         if self.point_2 is not None:
             self.lower_label_obj.update()
+
+        self.prescription = get_linear_fuction_prescription(x1, y1, x2, y2)
 
         span *= 10
         x1 -= span * cos_a

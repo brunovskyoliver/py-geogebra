@@ -16,3 +16,4 @@ center = (0, 0)
 sidebar_width = 0
 sidebar_resizing = False
 selected_intersect = None
+shift_pressed = False

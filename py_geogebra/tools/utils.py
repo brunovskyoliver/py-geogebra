@@ -79,6 +79,10 @@ def reconfigure_label_order(label: str, state):
     state.label_unused.append(label)
 
 
+def reconfigure_lower_label_order(lower_label: str, state):
+    state.lower_label_unused.append(lower_label)
+
+
 def delete_object(canvas, objects, object_to_delete, state, sidebar=None):
     from ..ui.point import Point
     from ..ui.midpoint_or_center import Midpoint_or_center
@@ -111,6 +115,17 @@ def delete_object(canvas, objects, object_to_delete, state, sidebar=None):
             ) and (obj.point_1 is object_to_delete or obj.point_2 is object_to_delete):
                 objects.unregister(obj)
                 canvas.delete(obj.tag)
+                if hasattr(obj, "lower_label"):
+                    objects.unregister(obj.lower_label_obj)
+
+            if (
+                isinstance(obj, Line)
+                or isinstance(obj, Ray)
+                or isinstance(obj, Segment)
+            ):
+                reconfigure_lower_label_order(obj.lower_label, state)
+                sidebar.items.remove(obj)
+                sidebar.update()
 
             if isinstance(obj, Midpoint_or_center):
                 sidebar.items.remove(obj)
@@ -158,8 +173,7 @@ def find_point_at_position(objects, e, canvas, r=1):
     p = None
     for obj in objects._objects:
         if hasattr(obj, "tag") and any(obj.tag in canvas.gettags(i) for i in items):
-            if ("point" in obj.tag
-                or "intersect" in obj.tag):
+            if "point" in obj.tag or "intersect" in obj.tag:
                 p = obj
                 break
     return p
@@ -180,14 +194,13 @@ def find_line_at_position(objects, e, canvas, r=1):
                 break
     return line
 
+
 def find_polyline_at_position(objects, e, canvas, r=1):
     items = canvas.find_overlapping(e.x - r, e.y - r, e.x + r, e.y + r)
     line = None
     for obj in objects._objects:
         if hasattr(obj, "tag") and any(obj.tag in canvas.gettags(i) for i in items):
-            if (
-                "polyline" in obj.tag
-            ):
+            if "polyline" in obj.tag:
                 line = obj
                 break
     return line
@@ -206,19 +219,38 @@ def snap_to_line(point, line):
 
     point.pos_x = proj_x
     point.pos_y = proj_y
-    
+
+
 def snap_to_polyline(point, polyline):
-    smallest_dist = float('inf')
+    smallest_dist = float("inf")
     index_1 = 0
     index_2 = 0
     for i in range(len(polyline.line_points) - 1):
-        dist = distance(point.pos_x, point.pos_y, polyline.line_points[i].pos_x, polyline.line_points[i].pos_y) + distance(point.pos_x, point.pos_y, polyline.line_points[i+1].pos_x, polyline.line_points[i+1].pos_y) - distance(polyline.line_points[i].pos_x, polyline.line_points[i].pos_y, polyline.line_points[i+1].pos_x, polyline.line_points[i+1].pos_y)
+        dist = (
+            distance(
+                point.pos_x,
+                point.pos_y,
+                polyline.line_points[i].pos_x,
+                polyline.line_points[i].pos_y,
+            )
+            + distance(
+                point.pos_x,
+                point.pos_y,
+                polyline.line_points[i + 1].pos_x,
+                polyline.line_points[i + 1].pos_y,
+            )
+            - distance(
+                polyline.line_points[i].pos_x,
+                polyline.line_points[i].pos_y,
+                polyline.line_points[i + 1].pos_x,
+                polyline.line_points[i + 1].pos_y,
+            )
+        )
         if dist < smallest_dist:
             smallest_dist = dist
             index_1 = i
             index_2 = i + 1
-    
-    
+
     x1, y1 = polyline.line_points[index_1].pos_x, polyline.line_points[index_1].pos_y
     x2, y2 = polyline.line_points[index_2].pos_x, polyline.line_points[index_2].pos_y
 
@@ -243,40 +275,81 @@ def find_translation(point, line):
     dist = distance(x1, y1, x2, y2)
     p_dist = distance(x1, y1, px, py)
 
+    point.translation = (p_dist * math.cos(beta)) / dist
 
-    point.translation = (p_dist * math.cos(beta) ) / dist
-    
+
 def find_translation_polyline(point, polyline):
-    smallest_dist = float('inf')
+    smallest_dist = float("inf")
     index_1 = 0
     index_2 = 0
     for i in range(len(polyline.line_points) - 1):
-        dist = distance(point.pos_x, point.pos_y, polyline.line_points[i].pos_x, polyline.line_points[i].pos_y) + distance(point.pos_x, point.pos_y, polyline.line_points[i+1].pos_x, polyline.line_points[i+1].pos_y) - distance(polyline.line_points[i].pos_x, polyline.line_points[i].pos_y, polyline.line_points[i+1].pos_x, polyline.line_points[i+1].pos_y)
+        dist = (
+            distance(
+                point.pos_x,
+                point.pos_y,
+                polyline.line_points[i].pos_x,
+                polyline.line_points[i].pos_y,
+            )
+            + distance(
+                point.pos_x,
+                point.pos_y,
+                polyline.line_points[i + 1].pos_x,
+                polyline.line_points[i + 1].pos_y,
+            )
+            - distance(
+                polyline.line_points[i].pos_x,
+                polyline.line_points[i].pos_y,
+                polyline.line_points[i + 1].pos_x,
+                polyline.line_points[i + 1].pos_y,
+            )
+        )
         if dist < smallest_dist:
             smallest_dist = dist
             index_1 = i
             index_2 = i + 1
-            
+
     x1, y1 = polyline.line_points[index_1].pos_x, polyline.line_points[index_1].pos_y
     x2, y2 = polyline.line_points[index_2].pos_x, polyline.line_points[index_2].pos_y
-    px, py= point.pos_x, point.pos_y
+    px, py = point.pos_x, point.pos_y
     alpha = math.atan2(y2 - y1, x2 - x1)
     gama = math.atan2(px - x1, py - y1)
     beta = math.pi / 2 - alpha - gama
     dist = distance(x1, y1, x2, y2)
     p_dist = distance(x1, y1, px, py)
-    
-    point.translation = (p_dist * math.cos(beta) ) / dist
-    
+
+    point.translation = (p_dist * math.cos(beta)) / dist
+
+
 def find_2lines_intersection(line_1, line_2):
-    x1, y1 = line_1.point_1.pos_x, line_1.point_1.pos_y,
-    x2, y2 = line_1.point_2.pos_x, line_1.point_2.pos_y,
-    x3, y3 = line_2.point_1.pos_x, line_2.point_1.pos_y,
-    x4, y4 = line_2.point_2.pos_x, line_2.point_2.pos_y,
-    
-    px = ((x1*y2 - y1*x2)*(x3-x4) - (x1-x2)*(x3*y4 - y3*x4))/((x1-x2)*(y3-y4)-(y1-y2)*(x3-x4))
-    py = ((x1*y2 - y1*x2)*(y3-y4) - (y1-y2)*(x3*y4 - y3*x4))/((x1-x2)*(y3-y4)-(y1-y2)*(x3-x4))
-    
+    x1, y1 = (
+        line_1.point_1.pos_x,
+        line_1.point_1.pos_y,
+    )
+    x2, y2 = (
+        line_1.point_2.pos_x,
+        line_1.point_2.pos_y,
+    )
+    x3, y3 = (
+        line_2.point_1.pos_x,
+        line_2.point_1.pos_y,
+    )
+    x4, y4 = (
+        line_2.point_2.pos_x,
+        line_2.point_2.pos_y,
+    )
+
+    px = ((x1 * y2 - y1 * x2) * (x3 - x4) - (x1 - x2) * (x3 * y4 - y3 * x4)) / (
+        (x1 - x2) * (y3 - y4) - (y1 - y2) * (x3 - x4)
+    )
+    py = ((x1 * y2 - y1 * x2) * (y3 - y4) - (y1 - y2) * (x3 * y4 - y3 * x4)) / (
+        (x1 - x2) * (y3 - y4) - (y1 - y2) * (x3 - x4)
+    )
+
     return px, py
-    
-    
+
+
+def get_linear_fuction_prescription(x1, y1, x2, y2):
+    a = y2 - y1
+    b = x1 - x2
+    c = x2 * y1 - x1 * y2
+    return round(a, 2), round(b, 2), round(-c, 2)

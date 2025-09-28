@@ -1,25 +1,40 @@
 import tkinter as tk
-from ..tools.utils import center
+from types import NoneType
+from ..tools.utils import center, snap
+from .. import state
 
 
 class Point:
+
     def __init__(
         self,
         root: tk.Tk,
         canvas: tk.Canvas,
+        objects,
+        axes,
+        e,
         label: str = "",
         unit_size: int = 40,
         pos_x: int = 0,
         pos_y: int = 0,
-        color = "blue",
+        color="blue",
+        sidebar=None,
     ):
 
         self.root = root
         self.canvas = canvas
         self.color = color
+        self.sidebar = sidebar
+        self.objects = objects
+        self.axes = axes
 
-        self.pos_x = pos_x
-        self.pos_y = pos_y
+        if not state.shift_pressed or e == None:
+            self.pos_x = pos_x
+            self.pos_y = pos_y
+        else:
+            self.pos_x, self.pos_y = snap(
+                canvas=self.canvas, objects=self.objects, e=e, axes=self.axes
+            )
         self.label = label
 
         self.offset_x = 0.0
@@ -31,15 +46,17 @@ class Point:
         self.cy = 0
         self.x = 0
         self.y = 0
-        
+
         self.translation = 0
-        
+
         self.is_drawable = True
 
         self.tag = f"point_{id(self)}"
         self.selected = False
         self.highlight_tag = f"{self.tag}_highlight"
 
+        self.sidebar.items.append(self)
+        self.sidebar.update()
 
     def select(self):
         self.selected = True
@@ -47,6 +64,12 @@ class Point:
 
     def deselect(self):
         self.selected = False
+        self.update()
+
+    def snap_point(self, e):
+        self.pos_x, self.pos_y = snap(
+            canvas=self.canvas, objects=self.objects, e=e, axes=self.axes
+        )
         self.update()
 
     def update(self):
@@ -57,11 +80,10 @@ class Point:
         y = self.cy - self.pos_y * self.unit_size * self.scale
         self.x, self.y = x, y
 
-
         visual_scale = min(max(1, self.scale**0.5), 1.9)
 
         r = 6.0 * visual_scale
-        
+
         if self.is_drawable:
 
             if self.selected:
@@ -78,7 +100,13 @@ class Point:
                 )
 
             self.canvas.create_oval(
-                x - r, y - r, x + r, y + r, fill=self.color, width=2, tags=(self.tag, "point")
+                x - r,
+                y - r,
+                x + r,
+                y + r,
+                fill=self.color,
+                width=2,
+                tags=(self.tag, "point"),
             )
 
             if self.label:
