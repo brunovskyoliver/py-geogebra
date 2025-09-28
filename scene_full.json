@@ -17,67 +17,28 @@
     {
       "type": "Point",
       "label": "A",
-      "pos_x": -3.975,
-      "pos_y": 5.225,
+      "pos_x": -5.275,
+      "pos_y": 5.275,
       "color": "blue",
       "unit_size": 40,
       "scale": 1.0,
       "is_drawable": true,
       "offset_x": 0,
       "offset_y": 0,
-      "tag": "point_4667956096"
-    },
-    {
-      "type": "Point",
-      "label": "B",
-      "pos_x": 0.275,
-      "pos_y": 8.975,
-      "color": "blue",
-      "unit_size": 40,
-      "scale": 1.0,
-      "is_drawable": true,
-      "offset_x": 0,
-      "offset_y": 0,
-      "tag": "point_4667956000"
-    },
-    {
-      "type": "Point",
-      "label": "C",
-      "pos_x": 3,
-      "pos_y": 6,
-      "color": "blue",
-      "unit_size": 40,
-      "scale": 1.0,
-      "is_drawable": true,
-      "offset_x": 0,
-      "offset_y": 0,
-      "tag": "point_4667955952"
-    },
-    {
-      "type": "Point",
-      "label": "D",
-      "pos_x": 3,
-      "pos_y": 5,
-      "color": "blue",
-      "unit_size": 40,
-      "scale": 1.0,
-      "is_drawable": true,
-      "offset_x": 0,
-      "offset_y": 0,
-      "tag": "point_4667957728"
+      "tag": "point_4436793616"
     }
   ],
   "state": {
     "selected_tool": "point",
     "start_pos": {
-      "x": 474,
-      "y": 322
+      "x": 134,
+      "y": 305
     },
     "scale": 1.0,
     "selected_point": null,
     "current_pen": null,
     "current_polyline": null,
-    "label_counter": 4,
+    "label_counter": 1,
     "lower_label_counter": 0,
     "label_unused": [],
     "lower_label_unused": [],
@@ -95,6 +56,6 @@
     "sidebar_width": 200,
     "sidebar_resizing": false,
     "selected_intersect": null,
-    "shift_pressed": true
+    "shift_pressed": false
   }
 }

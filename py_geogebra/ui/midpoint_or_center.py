@@ -1,24 +1,23 @@
 import tkinter as tk
 from ..tools.utils import center, screen_to_world
 from .. import state
+from .. import globals
 
 
 class Midpoint_or_center:
     def __init__(
         self,
         root: tk.Tk,
-        canvas: tk.Canvas,
         label: str = "",
         unit_size: int = 40,
         point_1=None,
         point_2=None,
-        objects=None,
     ):
         point_1.deselect()
         point_2.deselect()
         self.root = root
-        self.canvas = canvas
-        self.objects = objects
+        self.canvas = globals.canvas
+        self.objects = globals.objects
         self.color = "grey"
 
         self.point_1 = point_1

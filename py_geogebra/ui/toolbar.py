@@ -4,6 +4,7 @@ from typing import ChainMap
 from ..tools.load_image import load_icon
 from ..tools.utils import delete_object, set_cursor, deselect_all
 from .. import state
+from .. import globals
 
 
 def show_menu(e, menu):
@@ -49,7 +50,7 @@ def change_icon(canvas, img, btn, tool_name, objects):
         cursor = "crosshair"  # pencil nefunguje spravne na macu z nejakeho dovodu
     else:
         cursor = ""
-    set_cursor(cursor)
+    set_cursor(globals.canvas, cursor)
     if state.selected_point:
         state.selected_point.deselect()
     if state.selected_intersect:

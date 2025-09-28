@@ -6,6 +6,7 @@ from ..tools.utils import (
     get_linear_fuction_prescription,
 )
 from .. import state
+from .. import globals
 from .lower_label import Lower_label
 import math
 
@@ -14,14 +15,12 @@ class Ray:
     def __init__(
         self,
         root: tk.Tk,
-        canvas: tk.Canvas,
         unit_size: int = 40,
         point_1=None,
-        objects=None,
     ):
         self.root = root
-        self.canvas = canvas
-        self.objects = objects
+        self.canvas = globals.canvas
+        self.objects = globals.objects
 
         self.pos_x = 0.0
         self.pos_y = 0.0
@@ -46,9 +45,7 @@ class Ray:
 
         self.points = [self.point_1]
         self.lower_label = ""
-        self.lower_label_obj = Lower_label(
-            self.root, self.canvas, objects=self.objects, obj=self
-        )
+        self.lower_label_obj = Lower_label(self.root, obj=self)
         self.objects.register(self.lower_label_obj)
         self.prescription = ()
         self.angle = 0

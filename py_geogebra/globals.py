@@ -1,9 +1,12 @@
+from typing import TYPE_CHECKING, Optional
 from tkinter import Canvas
-from .tools.objects import Objects
-from .ui.axes import Axes
-from .ui.sidebar import Sidebar
 
-objects: Objects | None = None
-axes: Axes | None = None
-sidebar: Sidebar | None = None
-canvas: Canvas | None = None
+if TYPE_CHECKING:
+    from .tools.objects import Objects
+    from .ui.axes import Axes
+    from .ui.sidebar import Sidebar
+
+objects: Optional["Objects"] = None
+axes: Optional["Axes"] = None
+sidebar: Optional["Sidebar"] = None
+canvas: Optional[Canvas] = None

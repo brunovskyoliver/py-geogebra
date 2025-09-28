@@ -1,12 +1,13 @@
 import tkinter as tk
 from ..tools.utils import center
 from .. import state
+from .. import globals
 
 
 class FreeHand:
-    def __init__(self, root: tk.Tk, canvas: tk.Canvas, unit_size: int = 40):
+    def __init__(self, root: tk.Tk, unit_size: int = 40):
         self.root = root
-        self.canvas = canvas
+        self.canvas = globals.canvas
         self.unit_size = unit_size
         self.scale = 1.0
         self.offset_x = 0.0
