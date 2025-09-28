@@ -30,7 +30,7 @@ def run_app():
     globals.sidebar = sidebar
     canvas = tk.Canvas(main_area, background="white")
     globals.canvas = canvas
-    objects = Objects(canvas)
+    objects = Objects()
     globals.objects = objects
     tool_bar = toolbar(root, canvas, widgets, objects)
     tool_bar.pack(side="top", fill="x")
@@ -49,7 +49,7 @@ def run_app():
     objects.register(axes)
     motions.bind_all(root)
     canvas.focus_set()
-    menu_bar = menu(root, widgets, globals.canvas, globals.objects)
+    menu_bar = menu(root, widgets)
     root.config(menu=menu_bar)
     # with open("scene_full.json", "r", encoding="utf-8") as f:
     #     data = json.load(f)

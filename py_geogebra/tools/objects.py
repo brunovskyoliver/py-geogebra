@@ -19,10 +19,10 @@ class Drawable(Protocol):
 
 
 class Objects:
-    def __init__(self, canvas: tk.Canvas):
+    def __init__(self):
         # List of all drawable objects
         self._objects: List[Drawable] = []
-        self.canvas = canvas
+        self.canvas = globals.canvas
 
         # Global offsets and scale
         self.offset_x = 0
@@ -60,6 +60,7 @@ class Objects:
                 obj.cx = cx
                 obj.cy = cy
             obj.update()
+        globals.objects.to_json("scene_full.json")
 
     def to_dict(self):
         return {

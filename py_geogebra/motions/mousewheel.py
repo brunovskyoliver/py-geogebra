@@ -4,7 +4,7 @@ from .. import globals
 
 
 def scrolling(root):
-    zoom = Zoom(globals.canvas, globals.objects)
+    zoom = Zoom()
 
     def scroll(e):
         scale_before = state.scale
@@ -34,9 +34,9 @@ def scrolling(root):
 
 
 class Zoom:
-    def __init__(self, canvas, objects):
-        self.canvas = canvas
-        self.objects = objects
+    def __init__(self):
+        self.canvas = globals.canvas
+        self.objects = globals.objects
         self.animation_id = None
         self.target_scale = None
         self.steps = 10

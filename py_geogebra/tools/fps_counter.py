@@ -1,16 +1,18 @@
 import tkinter as tk
 import time
+from .. import globals
 
 
 class FPSCounter:
-    def __init__(self, canvas: tk.Canvas, x=10, y=10):
-        self.canvas = canvas
+    def __init__(self, x=10, y=10):
+        self.canvas = globals.canvas
         self.text_id = canvas.create_text(
-            x, y,
+            x,
+            y,
             text="FPS: 0",
             anchor="nw",  # north-west (top-left)
             font=("Arial", 12),
-            fill="black"
+            fill="black",
         )
 
         self.last_time = time.time()
