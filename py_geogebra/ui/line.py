@@ -70,9 +70,9 @@ class Line:
         }
 
     @classmethod
-    def from_dict(cls, root, objects, data: dict):
+    def from_dict(cls, root, data: dict):
         def find_point(label):
-            for obj in objects._objects:
+            for obj in globals.objects._objects:
                 if getattr(obj, "label", None) == label:
                     return obj
             return None

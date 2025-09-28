@@ -68,7 +68,7 @@ class Point:
         }
 
     @classmethod
-    def from_dict(cls, root, objects, data: dict):
+    def from_dict(cls, root, data: dict):
         p = cls(
             root=root,
             e=None,
