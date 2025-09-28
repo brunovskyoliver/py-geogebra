@@ -47,7 +47,7 @@ class Objects:
             self._objects.remove(obj)
 
     def refresh(self):
-        state.center = center(self.canvas, self)
+        state.center = center()
         cx, cy = state.center
         for obj in self._objects:
             obj.offset_x = self.offset_x
@@ -88,7 +88,7 @@ class Objects:
         self._objects.clear()
         state.load_from_dict(data.get("state", {}))
         state.selected_tool = "arrow"
-        state.center = center(canvas, self)
+        state.center = center()
         for od in data.get("objects", []):
             if od["type"] == "Point":
                 p = Point.from_dict(root, canvas, self, axes, sidebar, od)

@@ -6,11 +6,10 @@ from .motion import motion
 from .changing_screen_size import changing_screen_size
 
 
-def bind_all(root, canvas, sidebar, objects, axes):
-    pressing(root, canvas, sidebar, objects, axes)
-    dragging(root, canvas, sidebar, objects, axes)
-    scrolling(root, canvas, objects)
-    motion(root, canvas, objects, axes)
-    keybinds(root, canvas, sidebar, objects, axes)
-
-    changing_screen_size(root, canvas, sidebar, objects)
+def bind_all(root):
+    pressing(root)
+    dragging(root)
+    scrolling(root)
+    motion(root)
+    keybinds(root)
+    changing_screen_size(root)

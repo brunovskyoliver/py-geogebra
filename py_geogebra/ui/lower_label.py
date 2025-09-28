@@ -44,7 +44,7 @@ class Lower_label:
             span = max(self.canvas.winfo_width(), self.canvas.winfo_height()) / (
                 self.unit_size * self.scale
             )
-            x, y = world_to_screen(self.objects, x2, y2)
+            x, y = world_to_screen(x2, y2)
             width, height = self.canvas.winfo_width(), self.canvas.winfo_height()
             if angle > 0:
                 if 0 < angle < math.pi / 2:

@@ -32,9 +32,7 @@ class Point:
             self.pos_x = pos_x
             self.pos_y = pos_y
         else:
-            self.pos_x, self.pos_y = snap(
-                canvas=self.canvas, objects=self.objects, e=e, axes=self.axes
-            )
+            self.pos_x, self.pos_y = snap(e=e)
         self.label = label
 
         self.offset_x = 0.0
@@ -107,9 +105,7 @@ class Point:
         self.update()
 
     def snap_point(self, e):
-        self.pos_x, self.pos_y = snap(
-            canvas=self.canvas, objects=self.objects, e=e, axes=self.axes
-        )
+        self.pos_x, self.pos_y = snap(e=e)
         self.update()
 
     def update(self):
