@@ -14,6 +14,27 @@ class Axes:
         self.scale = 1.0
         self.unit_size = unit_size
 
+    def to_dict(self) -> dict:
+        return {
+            "type": "Axes",
+            "unit_size": self.unit_size,
+            "scale": self.scale,
+            "offset_x": self.offset_x,
+            "offset_y": self.offset_y,
+        }
+
+    @classmethod
+    def from_dict(cls, root, canvas, objects, data: dict):
+        axes = cls(
+            root=root,
+            canvas=canvas,
+        )
+        axes.scale = data.get("scale", 1.0)
+        axes.offset_x = data.get("offset_x", 0)
+        axes.offset_y = data.get("offset_y", 0)
+        axes.update()
+        return axes
+
     def nice_step(self, min_px=50):
         raw_step = min_px / (self.unit_size * self.scale)
         power = math.floor(math.log10(raw_step))

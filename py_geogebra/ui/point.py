@@ -58,6 +58,46 @@ class Point:
         self.sidebar.items.append(self)
         self.sidebar.update()
 
+    def to_dict(self) -> dict:
+        return {
+            "type": "Point",
+            "label": self.label,
+            "pos_x": self.pos_x,
+            "pos_y": self.pos_y,
+            "color": self.color,
+            "unit_size": self.unit_size,
+            "scale": self.scale,
+            "is_drawable": self.is_drawable,
+            "offset_x": self.offset_x,
+            "offset_y": self.offset_y,
+            "tag": self.tag,
+        }
+
+    @classmethod
+    def from_dict(cls, root, canvas, objects, axes, sidebar, data: dict):
+        p = cls(
+            root=root,
+            canvas=canvas,
+            objects=objects,
+            axes=axes,
+            e=None,
+            label=data.get("label", ""),
+            unit_size=data.get("unit_size", 40),
+            pos_x=data.get("pos_x", 0),
+            pos_y=data.get("pos_y", 0),
+            color=data.get("color", "blue"),
+            sidebar=sidebar,
+        )
+        p.scale = data.get("scale", 1.0)
+        p.is_drawable = data.get("is_drawable", True)
+        p.offset_x = data.get("offset_x", 0)
+        p.offset_y = data.get("offset_y", 0)
+        cx, cy = state.center
+        p.cx = cx
+        p.cy = cy
+        p.update()
+        return p
+
     def select(self):
         self.selected = True
         self.update()

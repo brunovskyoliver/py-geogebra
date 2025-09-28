@@ -12,6 +12,7 @@ from .ui.axes import Axes
 from py_geogebra.motions import motions
 from . import state
 from .ui.sidebar import Sidebar
+import json
 
 
 def run_app():
@@ -45,5 +46,8 @@ def run_app():
     canvas.focus_set()
     menu_bar = menu(root, widgets, canvas, objects)
     root.config(menu=menu_bar)
+    with open("scene_full.json", "r", encoding="utf-8") as f:
+        data = json.load(f)
+    objects.load_from_dict(root, canvas, axes, sidebar, data)
 
     root.mainloop()
