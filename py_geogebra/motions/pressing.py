@@ -210,7 +210,6 @@ def pressing(root):
                     lower_label=lower_label,
                 )
                 globals.objects.register(segment)
-                lower_label = get_lower_label(state)
                 segment.lower_label = lower_label
                 state.points_for_obj.append(p)
                 state.points_for_obj.append(segment)

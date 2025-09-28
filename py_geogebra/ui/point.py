@@ -145,5 +145,5 @@ class Point:
                     text=self.label,
                     font=("Arial", int(12 * visual_scale)),
                     fill="blue",
-                    tags=self.tag,
+                    tags=(self.tag, "point_label"),
                 )

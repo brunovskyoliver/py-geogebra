@@ -1,6 +1,8 @@
 from types import FunctionType
 from typing import List, Protocol
 import tkinter as tk
+
+from py_geogebra.ui.lower_label import Lower_label
 from .utils import center
 from .. import state
 import json
@@ -8,7 +10,13 @@ import inspect
 from ..ui.point import Point
 from ..ui.axes import Axes
 from ..ui.line import Line
+from ..ui.ray import Ray
+from ..ui.segment import Segment
+from ..ui.segment_with_lenght import Segment_with_length
+from ..ui.polyline import Polyline
+from ..ui.lower_label import Lower_label
 from .. import globals
+from py_geogebra.ui import polyline
 
 
 class Drawable(Protocol):
@@ -65,9 +73,8 @@ class Objects:
     def restore_sidebar_order(self, order_tags):
         tags = {}
         for obj in globals.objects._objects:
-            if hasattr(obj, "tag"):
+            if hasattr(obj, "tag") and not isinstance(obj, Lower_label):
                 tags[obj.tag] = obj
-                print(obj.tag)
 
         globals.sidebar.items.clear()
         for tag in order_tags:
@@ -126,9 +133,32 @@ class Objects:
             if od["type"] == "Line":
                 line = Line.from_dict(root, od)
                 self.register(line)
+            elif od["type"] == "Ray":
+                ray = Ray.from_dict(root, od)
+                self.register(ray)
+            elif od["type"] == "Segment":
+                segment = Segment.from_dict(root, od)
+                self.register(segment)
+            elif od["type"] == "Segment With Length":
+                swl = Segment_with_length.from_dict(root, od)
+                self.register(swl)
+            elif od["type"] == "Polyline":
+                polyline = Polyline.from_dict(root, od)
+                self.register(polyline)
 
-        self.refresh()
+        for od in data.get("objects", []):
+            if od["type"] == "Lower_label":
+                ll = Lower_label.from_dict(root, od)
+                self.register(ll)
+
         if "sidebar" in data and "order" in data["sidebar"]:
             self.restore_sidebar_order(data["sidebar"]["order"])
+
+        # XD SYNTAX - MILUJEM PYTHON
+        for obj in self._objects:
+            if isinstance(obj, Lower_label) and obj.obj:
+                obj.obj.lower_label_obj = obj
+                obj.obj.update()
+        self.refresh()
 
         return self

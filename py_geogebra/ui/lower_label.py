@@ -21,6 +21,34 @@ class Lower_label:
         self.tag = f"lower_label_{id(self)}"
         self.canvas.bind("<Configure>", lambda e: self.update())
 
+    def to_dict(self) -> dict:
+        return {
+            "type": "Lower Label",
+            "unit_size": self.unit_size,
+            "scale": self.scale,
+            "tag": self.tag,
+            "parent_tag": getattr(self.obj, "tag", None),
+        }
+
+    @classmethod
+    def from_dict(cls, root, data: dict):
+        parent = None
+        if "parent_tag" in data:
+            for obj in globals.objects._objects:
+                if getattr(obj, "tag", None) == data["parent_tag"]:
+                    parent = obj
+                    break
+
+        ll = cls(
+            root=root,
+            unit_size=data.get("unit_size", 40),
+            obj=parent,
+        )
+        ll.scale = data.get("scale", 1.0)
+        ll.tag = data.get("tag", f"lower_label_{id(ll)}")
+        globals.objects.register(ll)
+        return ll
+
     def update(self, e=None):
         if self.obj is None:
             return

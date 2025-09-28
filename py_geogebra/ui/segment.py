@@ -46,6 +46,52 @@ class Segment:
         self.points = [self.point_1]
         self.canvas.bind("<Configure>", lambda e: self.update())
 
+    def to_dict(self) -> dict:
+        return {
+            "type": "Segment",
+            "lower_label": self.lower_label,
+            "pos_x": self.pos_x,
+            "pos_y": self.pos_y,
+            "unit_size": self.unit_size,
+            "scale": self.scale,
+            "is_drawable": self.is_drawable,
+            "offset_x": self.offset_x,
+            "offset_y": self.offset_y,
+            "tag": self.tag,
+            "points": [p.label for p in self.points],
+            "point_1": self.point_1.label if self.point_1 else None,
+            "point_2": self.point_2.label if self.point_2 else None,
+        }
+
+    @classmethod
+    def from_dict(cls, root, data: dict):
+        def find_point(label):
+            for obj in globals.objects._objects:
+                if getattr(obj, "label", None) == label:
+                    return obj
+            return None
+
+        p1 = find_point(data.get("point_1"))
+        p2 = find_point(data.get("point_2"))
+        segment = cls(root=root, point_1=p1, unit_size=data.get("unit_size", 40))
+        segment.point_2 = p2
+        segment.scale = data.get("scale", 1.0)
+        segment.is_drawable = data.get("is_drawable", True)
+        segment.offset_x = data.get("offset_x", 0)
+        segment.offset_y = data.get("offset_y", 0)
+        segment.lower_label = data.get("lower_label", "")
+        segment.tag = data.get("tag", "")
+        segment.lower_label_obj = Lower_label(root, obj=segment)
+        globals.objects.register(segment.lower_label_obj)
+        segment.pos_x = data.get("pos_x", 0)
+        segment.pos_y = data.get("pos_y", 0)
+        segment.points = [find_point(lbl) for lbl in data.get("points", []) if lbl]
+        cx, cy = state.center
+        segment.cx = cx
+        segment.cy = cy
+        segment.update()
+        return segment
+
     def select(self):
         self.selected = True
         self.update()

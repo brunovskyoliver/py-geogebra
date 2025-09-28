@@ -17,18 +17,25 @@
     {
       "type": "Point",
       "label": "A",
-      "pos_x": -6.125,
-      "pos_y": -0.425,
+      "pos_x": -6,
+      "pos_y": 9,
       "color": "blue",
       "unit_size": 40,
       "scale": 1.0,
       "is_drawable": true,
       "offset_x": 0,
       "offset_y": 0,
-      "tag": "point_4705100352"
+      "tag": "point_4369556272"
     },
     {
-      "type": "Line",
+      "type": "Lower Label",
+      "unit_size": 40,
+      "scale": 1.0,
+      "tag": "lower_label_4364905088",
+      "parent_tag": "segment_4369556464"
+    },
+    {
+      "type": "Segment",
       "lower_label": "a",
       "pos_x": 0.0,
       "pos_y": 0.0,
@@ -37,47 +44,49 @@
       "is_drawable": true,
       "offset_x": 0,
       "offset_y": 0,
-      "tag": "line_4704911232",
+      "tag": "segment_4369556464",
       "points": [
         "A",
         "B"
       ],
       "point_1": "A",
-      "point_2": "B",
-      "prescription": [
-        9.9,
-        -3.15,
-        -59.3
-      ]
+      "point_2": "B"
     },
     {
       "type": "Point",
       "label": "B",
-      "pos_x": -2.975,
-      "pos_y": 9.475,
+      "pos_x": -4,
+      "pos_y": 6,
       "color": "blue",
       "unit_size": 40,
       "scale": 1.0,
       "is_drawable": true,
       "offset_x": 0,
       "offset_y": 0,
-      "tag": "point_4705100496"
+      "tag": "point_4369556320"
     },
     {
       "type": "Point",
       "label": "C",
-      "pos_x": 1.2,
-      "pos_y": -2.45,
+      "pos_x": 1,
+      "pos_y": 10,
       "color": "blue",
       "unit_size": 40,
       "scale": 1.0,
       "is_drawable": true,
       "offset_x": 0,
       "offset_y": 0,
-      "tag": "point_4705100208"
+      "tag": "point_4369556176"
     },
     {
-      "type": "Line",
+      "type": "Lower Label",
+      "unit_size": 40,
+      "scale": 1.0,
+      "tag": "lower_label_4369557424",
+      "parent_tag": "segment_4369557232"
+    },
+    {
+      "type": "Segment",
       "lower_label": "b",
       "pos_x": 0.0,
       "pos_y": 0.0,
@@ -86,32 +95,56 @@
       "is_drawable": true,
       "offset_x": 0,
       "offset_y": 0,
-      "tag": "line_4705101072",
+      "tag": "segment_4369557232",
       "points": [
         "C",
         "B"
       ],
       "point_1": "C",
-      "point_2": "B",
+      "point_2": "B"
+    },
+    {
+      "type": "Lower Label",
+      "unit_size": 40,
+      "scale": 1.0,
+      "tag": "lower_label_4369557904",
+      "parent_tag": "line_4369557136"
+    },
+    {
+      "type": "Line",
+      "lower_label": "c",
+      "pos_x": 0.0,
+      "pos_y": 0.0,
+      "unit_size": 40,
+      "scale": 1.0,
+      "is_drawable": true,
+      "offset_x": 0,
+      "offset_y": 0,
+      "tag": "line_4369557136",
+      "points": [
+        "A",
+        "C"
+      ],
+      "point_1": "A",
+      "point_2": "C",
       "prescription": [
-        11.93,
-        4.17,
-        4.08
+        1,
+        -7,
+        -69
       ]
     }
   ],
   "state": {
-    "selected_tool": "line",
+    "selected_tool": "arrow",
     "start_pos": {
-      "x": 224,
-      "y": 140
+      "x": 394,
+      "y": 109
     },
     "scale": 1.0,
-    "selected_point": null,
     "current_pen": null,
     "current_polyline": null,
     "label_counter": 3,
-    "lower_label_counter": 2,
+    "lower_label_counter": 3,
     "label_unused": [],
     "lower_label_unused": [],
     "freehand_last_pos": {
@@ -132,11 +165,12 @@
     "type": "Sidebar",
     "width": 200,
     "order": [
-      "point_4705100352",
-      "point_4705100496",
-      "line_4704911232",
-      "point_4705100208",
-      "line_4705101072"
+      "point_4369556272",
+      "point_4369556320",
+      "segment_4369556464",
+      "point_4369556176",
+      "segment_4369557232",
+      "line_4369557136"
     ]
   }
 }
