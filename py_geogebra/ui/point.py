@@ -82,6 +82,7 @@ class Point:
         p.is_drawable = data.get("is_drawable", True)
         p.offset_x = data.get("offset_x", 0)
         p.offset_y = data.get("offset_y", 0)
+        p.tag = data.get("tag", "")
         cx, cy = state.center
         p.cx = cx
         p.cy = cy

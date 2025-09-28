@@ -62,6 +62,21 @@ class Objects:
                 obj.cy = cy
             obj.update()
 
+    def restore_sidebar_order(self, order_tags):
+        tags = {}
+        for obj in globals.objects._objects:
+            if hasattr(obj, "tag"):
+                tags[obj.tag] = obj
+                print(obj.tag)
+
+        globals.sidebar.items.clear()
+        for tag in order_tags:
+            obj = tags.get(tag)
+            if obj:
+                globals.sidebar.items.append(obj)
+
+        globals.sidebar.update()
+
     def to_dict(self):
         return {
             "version": 1,
@@ -72,7 +87,12 @@ class Objects:
                 "unit_size": self.unit_size,
             },
             "objects": [
-                obj.to_dict() for obj in self._objects if hasattr(obj, "to_dict")
+                obj.to_dict()
+                for obj in sorted(
+                    self._objects,
+                    key=lambda o: 0 if getattr(o, "type", None) == "Point" else 1,
+                )
+                if hasattr(obj, "to_dict")
             ],
             "state": state.to_dict(),
             "sidebar": globals.sidebar.to_dict(),
@@ -94,6 +114,7 @@ class Objects:
         state.shift_pressed = False
         state.center = center()
         globals.sidebar.load_from_dict(data.get("sidebar", {}))
+        # naskor musime loadnut POINTS, lebo inak sa nam neincializuju ostatne objecty ktore na POINTS zalezia...
         for od in data.get("objects", []):
             if od["type"] == "Point":
                 p = Point.from_dict(root, od)
@@ -101,8 +122,13 @@ class Objects:
             elif od["type"] == "Axes":
                 axes = Axes.from_dict(root, od)
                 self.register(axes)
-            elif od["type"] == "Line":
+        for od in data.get("objects", []):
+            if od["type"] == "Line":
                 line = Line.from_dict(root, od)
                 self.register(line)
+
         self.refresh()
+        if "sidebar" in data and "order" in data["sidebar"]:
+            self.restore_sidebar_order(data["sidebar"]["order"])
+
         return self
