@@ -32,7 +32,7 @@ def run_app():
     globals.canvas = canvas
     objects = Objects()
     globals.objects = objects
-    tool_bar = toolbar(root, canvas, widgets, objects)
+    tool_bar = toolbar(root)
     tool_bar.pack(side="top", fill="x")
     main_area.pack(side="top", fill="both", expand=True)
     sidebar.frame.pack(side="left", fill="y")

@@ -22,7 +22,7 @@ def update_labels(items, menu):
 
 
 # https://stackoverflow.com/questions/61724685/python-tkinter-cursor-icon-change-size
-def change_icon(canvas, img, btn, tool_name, objects):
+def change_icon(img, btn, tool_name):
     btn.configure(image=img)
     btn.image = img
     if (
@@ -57,7 +57,7 @@ def change_icon(canvas, img, btn, tool_name, objects):
         state.selected_intersect = None
 
 
-def tool_menu_init(root, canvas, bar, widgets, def_icon, buttons, objects):
+def tool_menu_init(root, bar, def_icon, buttons):
     icons = {
         name: load_icon(name)
         for name in {def_icon, *[button["icon"] for button in buttons]}
@@ -97,34 +97,34 @@ def tool_menu_init(root, canvas, bar, widgets, def_icon, buttons, objects):
 
     button.bind("<Button-1>", lambda e, m=menu: show_menu(e, m))
 
-    widgets.register(update_labels(items, menu))
+    globals.widgets.register(update_labels(items, menu))
 
     return button, menu
 
 
-def toolbar(root, canvas, widgets, objects):
+def toolbar(root):
     root.configure(bg="white")
     bar = tk.Frame(root, height=40, bg="white", bd=0, highlightthickness=0)
     bar.pack(side="top", fill="x")
 
     tool_menu_init(
         root,
-        canvas,
+        globals.canvas,
         bar,
-        widgets,
+        globals.widgets,
         def_icon="arrow",
         buttons=[
             {"name": _("Pohyb"), "icon": "arrow"},
             {"name": _("Voľný tvar"), "icon": "freehand"},
             {"name": _("Nástroj pero"), "icon": "pen"},
         ],
-        objects=objects,
+        objects=globals.objects,
     )
     tool_menu_init(
         root,
-        canvas,
+        globals.canvas,
         bar,
-        widgets,
+        globals.widgets,
         def_icon="point",
         buttons=[
             {"name": _("Bod"), "icon": "point"},
@@ -136,13 +136,11 @@ def toolbar(root, canvas, widgets, objects):
             {"name": _("Extremum"), "icon": "extremum"},
             {"name": _("Korene"), "icon": "roots"},
         ],
-        objects=objects,
+        objects=globals.objects,
     )
     tool_menu_init(
         root,
-        canvas,
         bar,
-        widgets,
         def_icon="line",
         buttons=[
             {"name": _("Priamka"), "icon": "line"},
@@ -153,7 +151,7 @@ def toolbar(root, canvas, widgets, objects):
             {"name": _("Vektor"), "icon": "vector"},
             {"name": _("Vektor z bodu"), "icon": "vector_from_point"},
         ],
-        objects=objects,
+        objects=globals.objects,
     )
     state.selected_tool = "arrow"
 
