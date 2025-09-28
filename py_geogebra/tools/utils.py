@@ -111,6 +111,9 @@ def delete_object(object_to_delete, state):
             g().canvas.delete(obj.tag)
             if hasattr(obj, "highlight_tag"):
                 g().canvas.delete(obj.highlight_tag)
+            if isinstance(obj, Point):
+                g().sidebar.items.remove(obj)
+                reconfigure_label_order(obj.label, state)
         state.points_for_obj.clear()
 
     if isinstance(object_to_delete, Point):
