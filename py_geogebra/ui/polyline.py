@@ -121,15 +121,6 @@ class Polyline:
                         2,
                     )
             self.lower_label_obj.update()
-            # mid = self.line_points[len(self.line_points) // 3]
-            # self.canvas.create_text(
-            #     mid.x - 3 * visual_scale,
-            #     mid.y + 25 * visual_scale,
-            #     text=self.lower_label,
-            #     font=("Arial", int(12 * visual_scale)),
-            #     fill="blue",
-            #     tags=self.tag,
-            # )
         self.length = length
 
         for p in self.line_points:

@@ -1,5 +1,10 @@
 from .. import state
-from ..tools.utils import center, set_cursor, find_translation, find_translation_polyline
+from ..tools.utils import (
+    center,
+    set_cursor,
+    find_translation,
+    find_translation_polyline,
+)
 from ..ui.free_hand import FreeHand
 from ..ui.line import Line
 from ..ui.ray import Ray
@@ -34,10 +39,12 @@ def dragging(root, canvas, sidebar, objects, axes):
                 world_x = (e.x - cx) / (objects.unit_size * objects.scale)
                 world_y = (cy - e.y) / (objects.unit_size * objects.scale)
 
-
-                state.drag_target.pos_x = world_x
-                state.drag_target.pos_y = world_y
-                state.drag_target.update()
+                if state.shift_pressed:
+                    state.drag_target.snap_point(e)
+                else:
+                    state.drag_target.pos_x = world_x
+                    state.drag_target.pos_y = world_y
+                    state.drag_target.update()
 
                 for obj in objects._objects:
                     if (
@@ -52,10 +59,7 @@ def dragging(root, canvas, sidebar, objects, axes):
                             or obj.point_2 is state.drag_target
                         ):
                             obj.update()
-                        elif (
-                            hasattr(obj, "points")
-                            and state.drag_target in obj.points
-                        ):
+                        elif hasattr(obj, "points") and state.drag_target in obj.points:
                             state.drag_target.pos_x = world_x
                             state.drag_target.pos_y = world_y
                             state.drag_target.update()
