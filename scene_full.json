@@ -1,0 +1,100 @@
+{
+  "version": 1,
+  "view": {
+    "offset_x": -347,
+    "offset_y": 160,
+    "scale": 1.0,
+    "unit_size": 40
+  },
+  "objects": [
+    {
+      "type": "Axes",
+      "unit_size": 40,
+      "scale": 1.0,
+      "offset_x": -347,
+      "offset_y": 160
+    },
+    {
+      "type": "Point",
+      "label": "A",
+      "pos_x": -6.05,
+      "pos_y": 7.0,
+      "color": "blue",
+      "unit_size": 40,
+      "scale": 1.0,
+      "is_drawable": true,
+      "offset_x": -347,
+      "offset_y": 160,
+      "tag": "point_4537473200"
+    },
+    {
+      "type": "Point",
+      "label": "B",
+      "pos_x": -2.75,
+      "pos_y": 5.125,
+      "color": "blue",
+      "unit_size": 40,
+      "scale": 1.0,
+      "is_drawable": true,
+      "offset_x": -347,
+      "offset_y": 160,
+      "tag": "point_4537472960"
+    },
+    {
+      "type": "Point",
+      "label": "C",
+      "pos_x": 1.75,
+      "pos_y": 7.325,
+      "color": "blue",
+      "unit_size": 40,
+      "scale": 1.0,
+      "is_drawable": true,
+      "offset_x": -347,
+      "offset_y": 160,
+      "tag": "point_4537476176"
+    },
+    {
+      "type": "Point",
+      "label": "D",
+      "pos_x": -4.075,
+      "pos_y": 11.8,
+      "color": "blue",
+      "unit_size": 40,
+      "scale": 1.0,
+      "is_drawable": true,
+      "offset_x": -347,
+      "offset_y": 160,
+      "tag": "point_4537477424"
+    }
+  ],
+  "state": {
+    "selected_tool": "point",
+    "start_pos": {
+      "x": 285,
+      "y": 204
+    },
+    "scale": 1.0,
+    "selected_point": null,
+    "current_pen": null,
+    "current_polyline": null,
+    "label_counter": 4,
+    "lower_label_counter": 0,
+    "label_unused": [],
+    "lower_label_unused": [],
+    "points_for_obj": [],
+    "freehand_last_pos": {
+      "x": 0,
+      "y": 0
+    },
+    "drag_target": null,
+    "deleted_point_label": null,
+    "center": [
+      448,
+      676
+    ],
+    "sidebar_width": 200,
+    "sidebar_resizing": false,
+    "selected_intersect": null,
+    "shift_pressed": false
+  }
+}

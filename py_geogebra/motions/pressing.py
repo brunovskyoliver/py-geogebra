@@ -105,6 +105,7 @@ def pressing(root, canvas, sidebar, objects, axes):
                 polyline.update()
 
             objects.register(p)
+            objects.to_json("scene_full.json")
 
         elif state.selected_tool == "intersect":
             l = find_line_at_position(objects, e, canvas, r=2)

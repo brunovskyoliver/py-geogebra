@@ -1,3 +1,25 @@
+import json, inspect
+
+
+def to_dict() -> dict:
+    g = globals()
+    return {
+        name: g[name]
+        for name, val in g.items()
+        if not name.startswith("_")
+        and not inspect.isfunction(val)
+        and not inspect.isclass(val)
+        and not inspect.ismodule(val)
+    }
+
+
+def load_from_dict(data: dict) -> None:
+    g = globals()
+    for name, val in data.items():
+        if name in g:
+            g[name] = val
+
+
 selected_tool = None
 start_pos = {"x": 0, "y": 0}
 scale = 1.0
