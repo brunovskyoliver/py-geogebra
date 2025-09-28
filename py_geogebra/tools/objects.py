@@ -7,6 +7,7 @@ import json
 import inspect
 from ..ui.point import Point
 from ..ui.axes import Axes
+from ..ui.line import Line
 from .. import globals
 
 
@@ -60,7 +61,6 @@ class Objects:
                 obj.cx = cx
                 obj.cy = cy
             obj.update()
-        globals.objects.to_json("scene_full.json")
 
     def to_dict(self):
         return {
@@ -93,10 +93,13 @@ class Objects:
         state.center = center()
         for od in data.get("objects", []):
             if od["type"] == "Point":
-                p = Point.from_dict(root, self, od)
+                p = Point.from_dict(root, od)
                 self.register(p)
             elif od["type"] == "Axes":
-                axes = Axes.from_dict(root, self, data)
+                axes = Axes.from_dict(root, od)
                 self.register(axes)
+            elif od["type"] == "Line":
+                line = Line.from_dict(root, od)
+                self.register(line)
         self.refresh()
         return self

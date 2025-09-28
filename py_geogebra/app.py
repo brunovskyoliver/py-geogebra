@@ -51,8 +51,5 @@ def run_app():
     canvas.focus_set()
     menu_bar = menu(root, widgets)
     root.config(menu=menu_bar)
-    # with open("scene_full.json", "r", encoding="utf-8") as f:
-    #     data = json.load(f)
-    # objects.load_from_dict(root, globals.canvas, globals.axes, globals.sidebar, data)
 
     root.mainloop()
