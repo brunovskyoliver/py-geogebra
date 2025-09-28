@@ -3,23 +3,22 @@ from ..tools.utils import world_to_screen, find_2lines_intersection, find_transl
 from .segment import Segment
 from .segment_with_lenght import Segment_with_length
 from .ray import Ray
+from .. import globals
 
 
 class Intersect:
     def __init__(
         self,
         root: tk.Tk,
-        canvas: tk.Canvas,
         label: str = "",
         unit_size: int = 40,
         color="grey",
-        objects=None,
     ):
 
         self.root = root
-        self.canvas = canvas
+        self.canvas = globals.canvas
         self.color = color
-        self.objects = objects
+        self.objects = globals.objects
 
         self.pos_x = 0
         self.pos_y = 0

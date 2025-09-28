@@ -7,6 +7,7 @@ import json
 import inspect
 from ..ui.point import Point
 from ..ui.axes import Axes
+from .. import globals
 
 
 class Drawable(Protocol):
@@ -79,7 +80,7 @@ class Objects:
         with open(path, "w", encoding="utf-8") as f:
             json.dump(self.to_dict(), f, indent=2)
 
-    def load_from_dict(self, root, canvas, axes, sidebar, data: dict):
+    def load_from_dict(self, root, data: dict):
         view = data.get("view", {})
         self.offset_x = view.get("offset_x", 0)
         self.offset_y = view.get("offset_y", 0)
@@ -91,10 +92,10 @@ class Objects:
         state.center = center()
         for od in data.get("objects", []):
             if od["type"] == "Point":
-                p = Point.from_dict(root, canvas, self, axes, sidebar, od)
+                p = Point.from_dict(root, self, od)
                 self.register(p)
             elif od["type"] == "Axes":
-                axes = Axes.from_dict(root, canvas, self, data)
+                axes = Axes.from_dict(root, self, data)
                 self.register(axes)
         self.refresh()
         return self

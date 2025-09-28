@@ -1,6 +1,7 @@
 import tkinter as tk
 from ..tools.utils import center, world_to_screen, distance, snap_to_polyline
 from .. import state
+from .. import globals
 from .lower_label import Lower_label
 import math
 
@@ -9,13 +10,11 @@ class Polyline:
     def __init__(
         self,
         root: tk.Tk,
-        canvas: tk.Canvas,
         unit_size: int = 40,
-        objects=None,
     ):
         self.root = root
-        self.canvas = canvas
-        self.objects = objects
+        self.canvas = globals.canvas
+        self.objects = globals.objects
 
         self.pos_x = 0.0
         self.pos_y = 0.0
@@ -39,9 +38,7 @@ class Polyline:
         self.points = []
         self.last_not_set = True
         self.lower_label = ""
-        self.lower_label_obj = Lower_label(
-            self.root, self.canvas, objects=self.objects, obj=self
-        )
+        self.lower_label_obj = Lower_label(self.root, obj=self)
         self.objects.register(self.lower_label_obj)
         self.canvas.bind("<Configure>", lambda e: self.update())
 

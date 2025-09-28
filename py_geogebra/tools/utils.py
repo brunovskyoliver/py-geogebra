@@ -81,10 +81,10 @@ def get_lower_label(state):
     return label.lower()
 
 
-def set_cursor(cursor: str):
-    g().canvas.configure(cursor=cursor)
-    g().canvas.update()
-    g().canvas.focus_set()
+def set_cursor(canvas: tk.Canvas, cursor: str):
+    canvas.configure(cursor=cursor)
+    canvas.update()
+    canvas.focus_set()
 
 
 def reconfigure_label_order(label: str, state):

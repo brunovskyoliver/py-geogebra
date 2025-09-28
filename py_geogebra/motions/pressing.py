@@ -10,6 +10,7 @@ from ..ui.free_hand import FreeHand
 from ..ui.segment_with_lenght import Segment_with_length
 from ..ui.polyline import Polyline
 from ..tools.utils import (
+    g,
     get_lower_label,
     number_to_ascii,
     center,
@@ -77,15 +78,11 @@ def pressing(root):
             label = get_label(state)
             p = Point(
                 root,
-                globals.canvas,
-                globals.objects,
-                globals.axes,
                 e,
                 label=label,
                 unit_size=globals.axes.unit_size,
                 pos_x=world_x,
                 pos_y=world_y,
-                sidebar=globals.sidebar,
             )
 
             if l is not None:
@@ -126,10 +123,8 @@ def pressing(root):
                     world_x, world_y = screen_to_world(e)
                     i = Intersect(
                         root,
-                        globals.canvas,
                         label=label,
                         unit_size=globals.axes.unit_size,
-                        objects=globals.objects,
                     )
                     i.line_1 = l
                     i.line_1.select()
@@ -142,7 +137,7 @@ def pressing(root):
             world_x = (e.x - cx) / (globals.objects.unit_size * globals.objects.scale)
             world_y = (cy - e.y) / (globals.objects.unit_size * globals.objects.scale)
 
-            state.current_pen = Pen(root, globals.canvas, globals.objects.unit_size)
+            state.current_pen = Pen(root, globals.objects.unit_size)
             state.current_pen.add_point(world_x, world_y)
             globals.objects.register(state.current_pen)
 
@@ -151,9 +146,7 @@ def pressing(root):
             world_x = (e.x - cx) / (globals.objects.unit_size * globals.objects.scale)
             world_y = (cy - e.y) / (globals.objects.unit_size * globals.objects.scale)
 
-            state.current_pen = FreeHand(
-                root, globals.canvas, globals.objects.unit_size
-            )
+            state.current_pen = FreeHand(root, globals.objects.unit_size)
             state.current_pen.add_point(world_x, world_y)
             globals.objects.register(state.current_pen)
 
@@ -166,24 +159,18 @@ def pressing(root):
                 label = get_label(state)
                 p = Point(
                     root,
-                    globals.canvas,
-                    globals.objects,
-                    globals.axes,
                     e,
                     label=label,
                     unit_size=globals.axes.unit_size,
                     pos_x=world_x,
                     pos_y=world_y,
-                    sidebar=globals.sidebar,
                 )
                 globals.objects.register(p)
             if len(state.points_for_obj) < 2:
                 line = Line(
                     root,
-                    globals.canvas,
                     unit_size=globals.axes.unit_size,
                     point_1=p,
-                    objects=globals.objects,
                 )
                 lower_label = get_lower_label(state)
                 line.lower_label = lower_label
@@ -207,25 +194,19 @@ def pressing(root):
                 label = get_label(state)
                 p = Point(
                     root,
-                    globals.canvas,
-                    globals.objects,
-                    globals.axes,
                     e,
                     label=label,
                     unit_size=globals.axes.unit_size,
                     pos_x=world_x,
                     pos_y=world_y,
-                    sidebar=globals.sidebar,
                 )
                 globals.objects.register(p)
             if len(state.points_for_obj) < 2:
                 lower_label = get_lower_label(state)
                 segment = Segment(
                     root,
-                    globals.canvas,
                     unit_size=globals.axes.unit_size,
                     point_1=p,
-                    objects=globals.objects,
                     lower_label=lower_label,
                 )
                 globals.objects.register(segment)
@@ -250,24 +231,18 @@ def pressing(root):
                 label = get_label(state)
                 p = Point(
                     root,
-                    globals.canvas,
-                    globals.objects,
-                    globals.axes,
                     e,
                     label=label,
                     unit_size=globals.axes.unit_size,
                     pos_x=world_x,
                     pos_y=world_y,
-                    sidebar=globals.sidebar,
                 )
                 globals.objects.register(p)
             if len(state.points_for_obj) < 2:
                 ray = Ray(
                     root,
-                    globals.canvas,
                     unit_size=globals.axes.unit_size,
                     point_1=p,
-                    objects=globals.objects,
                 )
                 lower_label = get_lower_label(state)
                 ray.lower_label = lower_label
@@ -288,9 +263,7 @@ def pressing(root):
             state.start_pos["y"] = e.y
             world_x, world_y = screen_to_world(e)
             if state.current_polyline is None:
-                polyline = Polyline(
-                    root, globals.canvas, globals.axes.unit_size, globals.objects
-                )
+                polyline = Polyline(root, globals.axes.unit_size)
                 state.current_polyline = polyline
                 globals.objects.register(polyline)
             p = find_point_at_position(e)
@@ -298,15 +271,11 @@ def pressing(root):
                 label = get_label(state)
                 p = Point(
                     root,
-                    globals.canvas,
-                    globals.objects,
-                    globals.axes,
                     e,
                     label=label,
                     unit_size=globals.axes.unit_size,
                     pos_x=world_x,
                     pos_y=world_y,
-                    sidebar=globals.sidebar,
                 )
 
                 state.current_polyline.line_points.append(p)
@@ -335,15 +304,11 @@ def pressing(root):
                 label = get_label(state)
                 p = Point(
                     root,
-                    globals.canvas,
-                    globals.objects,
-                    globals.axes,
                     e,
                     label=label,
                     unit_size=globals.axes.unit_size,
                     pos_x=world_x,
                     pos_y=world_y,
-                    sidebar=globals.sidebar,
                 )
                 globals.objects.register(p)
             length = (
@@ -360,27 +325,21 @@ def pressing(root):
             label = get_label(state)
             p2 = Point(
                 root,
-                globals.canvas,
-                globals.objects,
-                globals.axes,
                 e=None,
                 label=label,
                 unit_size=globals.axes.unit_size,
                 pos_x=world_x,
                 pos_y=world_y,
-                sidebar=globals.sidebar,
             )
             globals.objects.register(p2)
 
             swl = Segment_with_length(
                 root,
-                globals.canvas,
                 unit_size=globals.axes.unit_size,
                 point_1=p,
                 point_2=p2,
                 length=length,
                 angle=0,
-                objects=globals.objects,
             )
             lower_label = get_lower_label(state)
             swl.lower_label = lower_label
@@ -395,15 +354,11 @@ def pressing(root):
                 label = get_label(state)
                 p = Point(
                     root,
-                    globals.canvas,
-                    globals.objects,
-                    globals.axes,
                     e,
                     label=label,
                     unit_size=globals.axes.unit_size,
                     pos_x=world_x,
                     pos_y=world_y,
-                    sidebar=globals.sidebar,
                 )
                 globals.objects.register(p)
             p.select()
@@ -412,12 +367,10 @@ def pressing(root):
                 label = get_label(state)
                 midpoint = Midpoint_or_center(
                     root,
-                    globals.canvas,
                     label=label,
                     unit_size=globals.axes.unit_size,
                     point_1=state.points_for_obj[0],
                     point_2=state.points_for_obj[1],
-                    objects=globals.objects,
                 )
 
                 globals.objects.register(midpoint)
@@ -429,7 +382,7 @@ def pressing(root):
 
     def right_click_released(e):
         if state.selected_tool == "pen":
-            set_cursor("crosshair")
+            set_cursor(globals.canvas, "crosshair")
 
     def left_click_released(e):
         if state.selected_tool == "freehand":

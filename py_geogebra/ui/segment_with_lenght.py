@@ -3,24 +3,23 @@ from ..tools.utils import center, world_to_screen, snap_to_line
 from .. import state
 import math
 from .lower_label import Lower_label
+from .. import globals
 
 
 class Segment_with_length:
     def __init__(
         self,
         root: tk.Tk,
-        canvas: tk.Canvas,
         unit_size: int = 40,
         point_1=None,
         point_2=None,
         length: float = 1.0,
         angle: float = 0.0,
-        objects=None,
         lower_label: str = "",
     ):
         self.root = root
-        self.canvas = canvas
-        self.objects = objects
+        self.canvas = globals.canvas
+        self.objects = globals.objects
 
         self.pos_x = 0.0
         self.pos_y = 0.0
@@ -48,9 +47,7 @@ class Segment_with_length:
 
         self.is_drawable = True
         self.lower_label = lower_label
-        self.lower_label_obj = Lower_label(
-            self.root, self.canvas, objects=self.objects, obj=self
-        )
+        self.lower_label_obj = Lower_label(self.root, obj=self)
         self.objects.register(self.lower_label_obj)
 
         self.canvas.bind("<Configure>", lambda e: self.update())

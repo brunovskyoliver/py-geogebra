@@ -44,7 +44,7 @@ def run_app():
     )
     state.sidebar_width = sidebar.frame.winfo_width()
 
-    axes = Axes(root, canvas, objects.unit_size)
+    axes = Axes(root, objects.unit_size)
     globals.axes = axes
     objects.register(axes)
     motions.bind_all(root)

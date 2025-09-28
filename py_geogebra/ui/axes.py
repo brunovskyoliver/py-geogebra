@@ -2,12 +2,13 @@ import tkinter as tk
 import math
 from ..tools.utils import center, world_to_screen
 from .. import state
+from .. import globals
 
 
 class Axes:
-    def __init__(self, root: tk.Tk, canvas: tk.Canvas, unit_size: int = 40):
+    def __init__(self, root: tk.Tk, unit_size: int = 40):
         self.root = root
-        self.canvas = canvas
+        self.canvas = globals.canvas
 
         self.offset_x = 0.0
         self.offset_y = 0.0
@@ -24,10 +25,9 @@ class Axes:
         }
 
     @classmethod
-    def from_dict(cls, root, canvas, objects, data: dict):
+    def from_dict(cls, root, data: dict):
         axes = cls(
             root=root,
-            canvas=canvas,
         )
         axes.scale = data.get("scale", 1.0)
         axes.offset_x = data.get("offset_x", 0)

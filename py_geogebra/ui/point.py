@@ -1,7 +1,7 @@
 import tkinter as tk
-from types import NoneType
-from ..tools.utils import center, snap
+from ..tools.utils import snap
 from .. import state
+from .. import globals
 
 
 class Point:
@@ -9,24 +9,20 @@ class Point:
     def __init__(
         self,
         root: tk.Tk,
-        canvas: tk.Canvas,
-        objects,
-        axes,
         e,
         label: str = "",
         unit_size: int = 40,
         pos_x: int = 0,
         pos_y: int = 0,
         color="blue",
-        sidebar=None,
     ):
 
         self.root = root
-        self.canvas = canvas
+        self.canvas = globals.canvas
         self.color = color
-        self.sidebar = sidebar
-        self.objects = objects
-        self.axes = axes
+        self.sidebar = globals.sidebar
+        self.objects = globals.objects
+        self.axes = globals.objects
 
         if not state.shift_pressed or e == None:
             self.pos_x = pos_x
@@ -72,19 +68,15 @@ class Point:
         }
 
     @classmethod
-    def from_dict(cls, root, canvas, objects, axes, sidebar, data: dict):
+    def from_dict(cls, root, objects, data: dict):
         p = cls(
             root=root,
-            canvas=canvas,
-            objects=objects,
-            axes=axes,
             e=None,
             label=data.get("label", ""),
             unit_size=data.get("unit_size", 40),
             pos_x=data.get("pos_x", 0),
             pos_y=data.get("pos_y", 0),
             color=data.get("color", "blue"),
-            sidebar=sidebar,
         )
         p.scale = data.get("scale", 1.0)
         p.is_drawable = data.get("is_drawable", True)

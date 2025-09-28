@@ -1,6 +1,7 @@
 import tkinter as tk
 from ..tools.utils import center, world_to_screen, snap_to_line
 from .. import state
+from .. import globals
 import math
 
 
@@ -8,14 +9,12 @@ class Lower_label:
     def __init__(
         self,
         root: tk.Tk,
-        canvas: tk.Canvas,
         unit_size: int = 40,
-        objects=None,
         obj=None,
     ):
         self.root = root
-        self.canvas = canvas
-        self.objects = objects
+        self.canvas = globals.canvas
+        self.objects = globals.objects
         self.obj = obj
         self.scale = 1.0  # zoom factor
         self.unit_size = unit_size
