@@ -1,8 +1,9 @@
 from .. import state
 from ..tools.utils import center, set_cursor
+from .. import globals
 
 
-def motion(root, canvas, objects, axes):
+def motion(root):
     def handle_mouse(e):
         if state.selected_tool == "line" and 0 < len(state.points_for_obj) < 3:
             state.points_for_obj[1].update(e)
@@ -20,4 +21,4 @@ def motion(root, canvas, objects, axes):
         ):
             state.current_polyline.update(e)
 
-    canvas.bind("<Motion>", handle_mouse)
+    globals.canvas.bind("<Motion>", handle_mouse)

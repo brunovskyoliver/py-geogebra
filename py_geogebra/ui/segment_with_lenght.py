@@ -109,8 +109,8 @@ class Segment_with_length:
                 snap_to_line(obj, self)
                 obj.update()
 
-        x1, y1 = world_to_screen(self.objects, x1, y1)
-        x2, y2 = world_to_screen(self.objects, x2, y2)
+        x1, y1 = world_to_screen(x1, y1)
+        x2, y2 = world_to_screen(x2, y2)
 
         if not self.point_2:
             self.is_drawable = True

@@ -3,6 +3,17 @@ import math
 
 from .. import state
 
+import importlib
+
+_globals = None
+
+
+def g():
+    global _globals
+    if _globals is None:
+        _globals = importlib.import_module("py_geogebra.globals")
+    return _globals
+
 
 def number_to_ascii(n: int):
     s = ""
@@ -23,30 +34,30 @@ def ascii_to_number(s: str):
     return n - 1
 
 
-def center(canvas, objects):
-    width = canvas.winfo_width()
-    height = canvas.winfo_height()
-    cx = width // 2 + objects.offset_x
-    cy = height // 2 + objects.offset_y
+def center():
+    width = g().canvas.winfo_width()
+    height = g().canvas.winfo_height()
+    cx = width // 2 + g().objects.offset_x
+    cy = height // 2 + g().objects.offset_y
     return cx, cy
 
 
-def center_screen(canvas):
-    width = canvas.winfo_width()
-    height = canvas.winfo_height()
+def center_screen():
+    width = g().canvas.winfo_width()
+    height = g().canvas.winfo_height()
     return width // 2, height // 2
 
 
-def screen_to_world(canvas, objects, e):
+def screen_to_world(e):
     cx, cy = state.center
-    world_x = (e.x - cx) / (objects.unit_size * objects.scale)
-    world_y = (cy - e.y) / (objects.unit_size * objects.scale)
+    world_x = (e.x - cx) / (g().objects.unit_size * g().objects.scale)
+    world_y = (cy - e.y) / (g().objects.unit_size * g().objects.scale)
     return world_x, world_y
 
 
-def snap(canvas, objects, e, axes):
-    world_x, world_y = screen_to_world(canvas, objects, e)
-    step = axes.nice_step()
+def snap(e):
+    world_x, world_y = screen_to_world(e)
+    step = g().axes.nice_step()
     world_x = math.floor(world_x / step + 0.5) * step
     world_y = math.floor(world_y / step + 0.5) * step
     return world_x, world_y
@@ -70,10 +81,10 @@ def get_lower_label(state):
     return label.lower()
 
 
-def set_cursor(canvas: tk.Canvas, cursor: str):
-    canvas.configure(cursor=cursor)
-    canvas.update()
-    canvas.focus_set()
+def set_cursor(cursor: str):
+    g().canvas.configure(cursor=cursor)
+    g().canvas.update()
+    g().canvas.focus_set()
 
 
 def reconfigure_label_order(label: str, state):
@@ -84,7 +95,7 @@ def reconfigure_lower_label_order(lower_label: str, state):
     state.lower_label_unused.append(lower_label)
 
 
-def delete_object(canvas, objects, object_to_delete, state, sidebar=None):
+def delete_object(object_to_delete, state):
     from ..ui.point import Point
     from ..ui.midpoint_or_center import Midpoint_or_center
     from ..ui.line import Line
@@ -96,17 +107,17 @@ def delete_object(canvas, objects, object_to_delete, state, sidebar=None):
 
     if state.points_for_obj:
         for obj in state.points_for_obj:
-            objects.unregister(obj)
-            canvas.delete(obj.tag)
+            g().objects.unregister(obj)
+            g().canvas.delete(obj.tag)
             if hasattr(obj, "highlight_tag"):
-                canvas.delete(obj.highlight_tag)
+                g().canvas.delete(obj.highlight_tag)
         state.points_for_obj.clear()
 
     if isinstance(object_to_delete, Point):
-        if state.selected_point in sidebar.items:
-            sidebar.items.remove(state.selected_point)
-            sidebar.update()
-        for obj in list(objects._objects):
+        if state.selected_point in g().sidebar.items:
+            g().sidebar.items.remove(state.selected_point)
+            g().sidebar.update()
+        for obj in list(g().objects._objects):
             if (
                 isinstance(obj, Line)
                 or isinstance(obj, Segment)
@@ -114,10 +125,10 @@ def delete_object(canvas, objects, object_to_delete, state, sidebar=None):
                 or isinstance(obj, Segment_with_length)
                 or isinstance(obj, Midpoint_or_center)
             ) and (obj.point_1 is object_to_delete or obj.point_2 is object_to_delete):
-                objects.unregister(obj)
-                canvas.delete(obj.tag)
+                g().objects.unregister(obj)
+                g().canvas.delete(obj.tag)
                 if hasattr(obj, "lower_label"):
-                    objects.unregister(obj.lower_label_obj)
+                    g().objects.unregister(obj.lower_label_obj)
 
             if (
                 isinstance(obj, Line)
@@ -126,34 +137,34 @@ def delete_object(canvas, objects, object_to_delete, state, sidebar=None):
                 or isinstance(obj, Polyline)
             ):
                 reconfigure_lower_label_order(obj.lower_label, state)
-                sidebar.items.remove(obj)
-                sidebar.update()
+                g().sidebar.items.remove(obj)
+                g().sidebar.update()
 
             if isinstance(obj, Midpoint_or_center):
-                sidebar.items.remove(obj)
-                sidebar.update()
+                g().sidebar.items.remove(obj)
+                g().sidebar.update()
             if isinstance(obj, Polyline) and object_to_delete in obj.points:
-                objects.unregister(obj)
-                canvas.delete(obj.tag)
+                g().objects.unregister(obj)
+                g().canvas.delete(obj.tag)
 
         state.selected_point = None
         reconfigure_label_order(object_to_delete.label, state)
     if isinstance(object_to_delete, Polyline):
         for obj in object_to_delete.points:
-            objects.unregister(obj)
-            canvas.delete(obj.tag)
+            g().objects.unregister(obj)
+            g().canvas.delete(obj.tag)
             reconfigure_label_order(obj.label, state)
 
-    objects.unregister(object_to_delete)
-    canvas.delete(object_to_delete.tag)
+    g().objects.unregister(object_to_delete)
+    g().canvas.delete(object_to_delete.tag)
     if hasattr(object_to_delete, "highlight_tag"):
-        canvas.delete(object_to_delete.highlight_tag)
+        g().canvas.delete(object_to_delete.highlight_tag)
 
 
-def world_to_screen(objects, wx, wy):
+def world_to_screen(wx, wy):
     cx, cy = state.center
-    sx = cx + wx * objects.unit_size * objects.scale
-    sy = cy - wy * objects.unit_size * objects.scale
+    sx = cx + wx * g().objects.unit_size * g().objects.scale
+    sy = cy - wy * g().objects.unit_size * g().objects.scale
     return sx, sy
 
 
@@ -164,28 +175,28 @@ def distance(x1, y1, x2, y2, r: int = 0):
     return d
 
 
-def deselect_all(objects):
-    for obj in objects._objects:
+def deselect_all():
+    for obj in g().objects._objects:
         if hasattr(obj, "deselect"):
             obj.deselect()
 
 
-def find_point_at_position(objects, e, canvas, r=1):
-    items = canvas.find_overlapping(e.x - r, e.y - r, e.x + r, e.y + r)
+def find_point_at_position(e, r=1):
+    items = g().canvas.find_overlapping(e.x - r, e.y - r, e.x + r, e.y + r)
     p = None
-    for obj in objects._objects:
-        if hasattr(obj, "tag") and any(obj.tag in canvas.gettags(i) for i in items):
+    for obj in g().objects._objects:
+        if hasattr(obj, "tag") and any(obj.tag in g().canvas.gettags(i) for i in items):
             if "point" in obj.tag or "intersect" in obj.tag:
                 p = obj
                 break
     return p
 
 
-def find_line_at_position(objects, e, canvas, r=1):
-    items = canvas.find_overlapping(e.x - r, e.y - r, e.x + r, e.y + r)
+def find_line_at_position(e, r=1):
+    items = g().canvas.find_overlapping(e.x - r, e.y - r, e.x + r, e.y + r)
     line = None
-    for obj in objects._objects:
-        if hasattr(obj, "tag") and any(obj.tag in canvas.gettags(i) for i in items):
+    for obj in g().objects._objects:
+        if hasattr(obj, "tag") and any(obj.tag in g().canvas.gettags(i) for i in items):
             if (
                 ("line" in obj.tag and "polyline" not in obj.tag)
                 or "ray" in obj.tag
@@ -197,11 +208,11 @@ def find_line_at_position(objects, e, canvas, r=1):
     return line
 
 
-def find_polyline_at_position(objects, e, canvas, r=1):
-    items = canvas.find_overlapping(e.x - r, e.y - r, e.x + r, e.y + r)
+def find_polyline_at_position(e, r=1):
+    items = g().canvas.find_overlapping(e.x - r, e.y - r, e.x + r, e.y + r)
     line = None
-    for obj in objects._objects:
-        if hasattr(obj, "tag") and any(obj.tag in canvas.gettags(i) for i in items):
+    for obj in g().objects._objects:
+        if hasattr(obj, "tag") and any(obj.tag in g().canvas.gettags(i) for i in items):
             if "polyline" in obj.tag:
                 line = obj
                 break

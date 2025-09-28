@@ -112,8 +112,8 @@ class Segment:
                 self.length = distance(x1, y1, x2, y2, 2)
                 self.lower_label_obj.update()
 
-            x1, y1 = world_to_screen(self.objects, x1, y1)
-            x2, y2 = world_to_screen(self.objects, x2, y2)
+            x1, y1 = world_to_screen(x1, y1)
+            x2, y2 = world_to_screen(x2, y2)
 
             if self.selected:
                 self.canvas.create_line(

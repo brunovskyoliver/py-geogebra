@@ -13,6 +13,7 @@ from py_geogebra.motions import motions
 from . import state
 from .ui.sidebar import Sidebar
 import json
+from . import globals
 
 
 def run_app():
@@ -26,8 +27,11 @@ def run_app():
 
     main_area = tk.Frame(root)
     sidebar = Sidebar(root, main_area, widgets)
+    globals.sidebar = sidebar
     canvas = tk.Canvas(main_area, background="white")
+    globals.canvas = canvas
     objects = Objects(canvas)
+    globals.objects = objects
     tool_bar = toolbar(root, canvas, widgets, objects)
     tool_bar.pack(side="top", fill="x")
     main_area.pack(side="top", fill="both", expand=True)
@@ -41,13 +45,14 @@ def run_app():
     state.sidebar_width = sidebar.frame.winfo_width()
 
     axes = Axes(root, canvas, objects.unit_size)
+    globals.axes = axes
     objects.register(axes)
-    motions.bind_all(root, canvas, sidebar, objects, axes)
+    motions.bind_all(root)
     canvas.focus_set()
-    menu_bar = menu(root, widgets, canvas, objects)
+    menu_bar = menu(root, widgets, globals.canvas, globals.objects)
     root.config(menu=menu_bar)
-    with open("scene_full.json", "r", encoding="utf-8") as f:
-        data = json.load(f)
-    objects.load_from_dict(root, canvas, axes, sidebar, data)
+    # with open("scene_full.json", "r", encoding="utf-8") as f:
+    #     data = json.load(f)
+    # objects.load_from_dict(root, globals.canvas, globals.axes, globals.sidebar, data)
 
     root.mainloop()

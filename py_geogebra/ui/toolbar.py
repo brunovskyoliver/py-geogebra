@@ -36,20 +36,20 @@ def change_icon(canvas, img, btn, tool_name, objects):
         and state.selected_tool != tool_name
     ):
         for obj in list(state.points_for_obj):
-            delete_object(canvas, objects, obj, state)
+            delete_object(obj, state)
         state.points_for_obj.clear()
     if state.selected_tool == "polyline" and state.current_polyline:
-        delete_object(canvas, objects, state.current_polyline, state)
+        delete_object(state.current_polyline, state)
         state.current_polyline = None
 
-    deselect_all(objects)
+    deselect_all()
     state.selected_tool = tool_name
 
     if tool_name in ("pen", "freehand"):
         cursor = "crosshair"  # pencil nefunguje spravne na macu z nejakeho dovodu
     else:
         cursor = ""
-    set_cursor(canvas, cursor)
+    set_cursor(cursor)
     if state.selected_point:
         state.selected_point.deselect()
     if state.selected_intersect:
