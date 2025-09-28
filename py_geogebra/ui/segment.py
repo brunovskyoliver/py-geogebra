@@ -1,6 +1,7 @@
 import tkinter as tk
 from ..tools.utils import center, world_to_screen, distance, snap_to_line
 from .. import state
+from .lower_label import Lower_label
 import math
 
 
@@ -31,18 +32,23 @@ class Segment:
 
         self.cx = 0
         self.cy = 0
-        
+
         self.selected = False
-        
+
         self.is_drawable = True
 
         self.tag = f"segment_{id(self)}"
         self.point_1 = point_1
         self.point_2 = None
         self.lower_label = lower_label
-        
+        self.lower_label_obj = Lower_label(
+            self.root, self.canvas, objects=self.objects, obj=self
+        )
+        self.objects.register(self.lower_label_obj)
+
         self.points = [self.point_1]
-        
+        self.canvas.bind("<Configure>", lambda e: self.update())
+
     def select(self):
         self.selected = True
         self.update()
@@ -55,13 +61,13 @@ class Segment:
         self.canvas.delete(self.tag)
 
         visual_scale = min(max(1, self.scale**0.5), 1.9)
-    
-        if (state.drag_target is self):
-            
+
+        if state.drag_target is self:
+
             x_dif, y_dif = self.prev_x - self.pos_x, self.prev_y - self.pos_y
             x1, y1 = self.point_1.pos_x, self.point_1.pos_y
             x2, y2 = self.point_2.pos_x, self.point_2.pos_y
-            
+
             for obj in self.points:
                 if (obj is self.point_1) or (obj is self.point_2):
                     obj.pos_x -= x_dif
@@ -72,34 +78,31 @@ class Segment:
                     y2 -= y_dif
                     continue
 
-            
-        else:       
+        else:
 
             x1, y1 = self.point_1.pos_x, self.point_1.pos_y
 
         if self.point_2 is None and e is None:
             return
 
-        
-                
         for obj in self.points:
             if (obj is self.point_1) or (obj is self.point_2):
                 continue
-            if (obj.translation > 1):
+            if obj.translation > 1:
                 obj.translation = 1
-            elif (obj.translation < 0):
+            elif obj.translation < 0:
                 obj.translation = 0
             snap_to_line(obj, self)
             obj.update()
-            
+
         if not self.point_2:
             self.is_drawable = True
         elif self.point_1.is_drawable and self.point_2.is_drawable:
             self.is_drawable = True
         else:
             self.is_drawable = False
-         
-        if self.is_drawable:   
+
+        if self.is_drawable:
             if self.point_2 is None:
                 cx, cy = state.center
                 x2 = (e.x - cx) / (self.unit_size * self.scale)
@@ -107,21 +110,11 @@ class Segment:
             else:
                 x2, y2 = self.point_2.pos_x, self.point_2.pos_y
                 self.length = distance(x1, y1, x2, y2, 2)
-                middle_x = self.point_1.x - (self.point_1.x - self.point_2.x) / 2
-                middle_y = self.point_1.y - (self.point_1.y - self.point_2.y) / 2
-                self.canvas.create_text(
-                    middle_x + 1 * visual_scale,
-                    middle_y - 15 * visual_scale,
-                    text=self.lower_label,
-                    font=("Arial", int(12 * visual_scale)),
-                    fill="blue",
-                    tags=self.tag,
-                )
+                self.lower_label_obj.update()
 
             x1, y1 = world_to_screen(self.objects, x1, y1)
             x2, y2 = world_to_screen(self.objects, x2, y2)
-        
-            
+
             if self.selected:
                 self.canvas.create_line(
                     x1,
@@ -147,5 +140,5 @@ class Segment:
             self.canvas.tag_raise(self.point_2.tag)
             if self.point_2 not in self.points:
                 self.points.append(self.point_2)
-                
+
         self.prev_x, self.prev_y = self.pos_x, self.pos_y

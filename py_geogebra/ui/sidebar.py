@@ -1,4 +1,5 @@
 import tkinter as tk
+from types import LambdaType, prepare_class
 from ..tools.load_image import load_icon
 from ..tools.utils import delete_object, set_cursor
 from .. import state
@@ -6,6 +7,7 @@ from ..ui.point import Point
 from ..ui.line import Line
 from ..ui.segment import Segment
 from ..ui.polyline import Polyline
+from ..ui.ray import Ray
 
 
 class Sidebar:
@@ -31,6 +33,24 @@ class Sidebar:
                     font=self.font,
                 )
                 text.pack(padx=10, pady=10, anchor="nw")
+            elif isinstance(item, Line):
+                a, b, c = item.prescription
+                sign_a = "-" if a < 0 else ""
+                sign_b = "-" if b < 0 else "+"
+                text = tk.Label(
+                    self.frame,
+                    text=(
+                        f"{item.lower_label}: Line({item.point_1.label}, {item.point_2.label})\n"
+                        f"= {sign_a}{abs(a)}x {sign_b} {abs(b)}y = {c}"
+                    ),
+                    fg="black",
+                    bg="#dddddd",
+                    justify="left",
+                    anchor="nw",
+                    font=self.font,
+                )
+                text.pack(padx=10, pady=10, anchor="nw")
+
             elif isinstance(item, Segment):
                 text = tk.Label(
                     self.frame,
@@ -45,6 +65,24 @@ class Sidebar:
                     font=self.font,
                 )
                 text.pack(padx=10, pady=10, anchor="nw")
+            elif isinstance(item, Ray):
+                a, b, c = item.prescription
+                sign_a = "-" if a < 0 else ""
+                sign_b = "-" if b < 0 else "+"
+                text = tk.Label(
+                    self.frame,
+                    text=(
+                        f"{item.lower_label}: Ray({item.point_1.label}, {item.point_2.label})\n"
+                        f"= {sign_a}{abs(a)}x {sign_b} {abs(b)}y = {c}"
+                    ),
+                    fg="black",
+                    bg="#dddddd",
+                    justify="left",
+                    anchor="nw",
+                    font=self.font,
+                )
+                text.pack(padx=10, pady=10, anchor="nw")
+
             elif isinstance(item, Polyline):
                 text = tk.Label(
                     self.frame,

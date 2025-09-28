@@ -81,10 +81,14 @@ def pressing(root, canvas, sidebar, objects, axes):
             p = Point(
                 root,
                 canvas,
+                objects,
+                axes,
+                e,
                 label=label,
                 unit_size=axes.unit_size,
                 pos_x=world_x,
                 pos_y=world_y,
+                sidebar=sidebar,
             )
 
             if l is not None:
@@ -103,8 +107,6 @@ def pressing(root, canvas, sidebar, objects, axes):
                 polyline.update()
 
             objects.register(p)
-            sidebar.items.append(p)
-            sidebar.update()
 
         elif state.selected_tool == "intersect":
             l = find_line_at_position(objects, e, canvas, r=2)
@@ -165,10 +167,14 @@ def pressing(root, canvas, sidebar, objects, axes):
                 p = Point(
                     root,
                     canvas,
+                    objects,
+                    axes,
+                    e,
                     label=label,
                     unit_size=axes.unit_size,
                     pos_x=world_x,
                     pos_y=world_y,
+                    sidebar=sidebar,
                 )
                 objects.register(p)
             if len(state.points_for_obj) < 2:
@@ -184,6 +190,8 @@ def pressing(root, canvas, sidebar, objects, axes):
             else:
                 state.points_for_obj[1].point_2 = p
                 state.points_for_obj[1].update()
+                sidebar.items.append(state.points_for_obj[1])
+                sidebar.update()
                 state.points_for_obj = []
 
         elif state.selected_tool == "segment":
@@ -196,10 +204,14 @@ def pressing(root, canvas, sidebar, objects, axes):
                 p = Point(
                     root,
                     canvas,
+                    objects,
+                    axes,
+                    e,
                     label=label,
                     unit_size=axes.unit_size,
                     pos_x=world_x,
                     pos_y=world_y,
+                    sidebar=sidebar,
                 )
                 objects.register(p)
             if len(state.points_for_obj) < 2:
@@ -213,6 +225,8 @@ def pressing(root, canvas, sidebar, objects, axes):
                     lower_label=lower_label,
                 )
                 objects.register(segment)
+                lower_label = get_lower_label(state)
+                segment.lower_label = lower_label
                 state.points_for_obj.append(p)
                 state.points_for_obj.append(segment)
 
@@ -233,13 +247,15 @@ def pressing(root, canvas, sidebar, objects, axes):
                 p = Point(
                     root,
                     canvas,
+                    objects,
+                    axes,
+                    e,
                     label=label,
                     unit_size=axes.unit_size,
                     pos_x=world_x,
                     pos_y=world_y,
+                    sidebar=sidebar,
                 )
-                sidebar.items.append(p)
-                sidebar.update()
                 objects.register(p)
             if len(state.points_for_obj) < 2:
                 ray = Ray(
@@ -254,6 +270,9 @@ def pressing(root, canvas, sidebar, objects, axes):
             else:
                 state.points_for_obj[1].point_2 = p
                 state.points_for_obj[1].update()
+                sidebar.items.append(state.points_for_obj[1])
+                sidebar.update()
+
                 state.points_for_obj = []
 
         elif state.selected_tool == "polyline":
@@ -270,10 +289,14 @@ def pressing(root, canvas, sidebar, objects, axes):
                 p = Point(
                     root,
                     canvas,
+                    objects,
+                    axes,
+                    e,
                     label=label,
                     unit_size=axes.unit_size,
                     pos_x=world_x,
                     pos_y=world_y,
+                    sidebar=sidebar,
                 )
 
                 state.current_polyline.line_points.append(p)
@@ -285,8 +308,6 @@ def pressing(root, canvas, sidebar, objects, axes):
                 state.current_polyline.last_not_set = False
                 state.current_polyline.lower_label = get_lower_label(state)
                 state.current_polyline.update(e)
-                sidebar.items.append(state.current_polyline)
-                sidebar.update()
                 state.current_polyline = None
             else:
                 if p in state.current_polyline.line_points:
@@ -303,14 +324,16 @@ def pressing(root, canvas, sidebar, objects, axes):
                 p = Point(
                     root,
                     canvas,
+                    objects,
+                    axes,
+                    e,
                     label=label,
                     unit_size=axes.unit_size,
                     pos_x=world_x,
                     pos_y=world_y,
+                    sidebar=sidebar,
                 )
-                sidebar.items.append(p)
                 objects.register(p)
-
             length = (
                 simpledialog.askfloat(
                     "Dĺžka úsečky",
@@ -326,13 +349,15 @@ def pressing(root, canvas, sidebar, objects, axes):
             p2 = Point(
                 root,
                 canvas,
+                objects,
+                axes,
+                e=None,
                 label=label,
                 unit_size=axes.unit_size,
                 pos_x=world_x,
                 pos_y=world_y,
+                sidebar=sidebar,
             )
-            sidebar.items.append(p2)
-            sidebar.update()
             objects.register(p2)
 
             swl = Segment_with_length(
@@ -345,6 +370,9 @@ def pressing(root, canvas, sidebar, objects, axes):
                 angle=0,
                 objects=objects,
             )
+            lower_label = get_lower_label(state)
+            swl.lower_label = lower_label
+
             objects.register(swl)
             objects.refresh()
 
@@ -356,10 +384,14 @@ def pressing(root, canvas, sidebar, objects, axes):
                 p = Point(
                     root,
                     canvas,
+                    objects,
+                    axes,
+                    e,
                     label=label,
                     unit_size=axes.unit_size,
                     pos_x=world_x,
                     pos_y=world_y,
+                    sidebar=sidebar,
                 )
                 objects.register(p)
             p.select()
