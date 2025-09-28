@@ -10,7 +10,7 @@ def to_dict() -> dict:
         and not inspect.isfunction(val)
         and not inspect.isclass(val)
         and not inspect.ismodule(val)
-        and name not in "points_for_obj"
+        and name not in ["points_for_obj", "selected_point"]
     }
 
 
