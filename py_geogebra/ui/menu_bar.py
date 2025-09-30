@@ -1,9 +1,10 @@
 import tkinter as tk
 import time
 from tkinter import ttk, messagebox
+from typing import MutableMapping
 from ..tools.language import change_lang
 from ..tools.check_version import handle_version
-from .dialogs import ask_for_update
+from .dialogs import ask_for_update, open_from_file, save_file
 from .. import globals
 
 
@@ -31,6 +32,12 @@ def run_fps_test(root):
 
 def menu(root, widgets):
     menu_bar = tk.Menu(root)
+    file_selection = tk.Menu(menu_bar, tearoff=0)
+    menu_bar.add_cascade(label=_("Súbor"), menu=file_selection)
+    file_selection.add_command(
+        label=_("Otvoriť súbor"), command=lambda: open_from_file(root)
+    )
+    file_selection.add_command(label=_("Uložiť ako"), command=lambda: save_file(root))
     language_selection = tk.Menu(menu_bar, tearoff=0)
     menu_bar.add_cascade(label=_("Language"), menu=language_selection)
     language_selection.add_command(
