@@ -13,6 +13,7 @@ class Axes:
         self.offset_x = 0.0
         self.offset_y = 0.0
         self.scale = 1.0
+        self.current_step = 1.0
         self.unit_size = unit_size
 
     def to_dict(self) -> dict:
@@ -22,6 +23,7 @@ class Axes:
             "scale": self.scale,
             "offset_x": self.offset_x,
             "offset_y": self.offset_y,
+            "current_step": self.current_step,
         }
 
     @classmethod
@@ -32,6 +34,7 @@ class Axes:
         axes.scale = data.get("scale", 1.0)
         axes.offset_x = data.get("offset_x", 0)
         axes.offset_y = data.get("offset_y", 0)
+        axes.current_step = data.get("current_step", 1.0)
         axes.update()
         return axes
 
@@ -62,6 +65,7 @@ class Axes:
         self.canvas.create_line(cx, 0, cx, height, fill="black", width=2, tags="axes")
 
         step_world = self.nice_step()
+        self.current_step = step_world
         step_px = step_world * self.unit_size * self.scale
 
         # X

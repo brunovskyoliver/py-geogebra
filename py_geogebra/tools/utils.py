@@ -57,9 +57,9 @@ def screen_to_world(e):
 
 def snap(e):
     world_x, world_y = screen_to_world(e)
-    step = g().axes.nice_step()
-    world_x = math.floor(world_x / step + 0.5) * step
-    world_y = math.floor(world_y / step + 0.5) * step
+    step = g().axes.current_step
+    world_x = round(world_x / step) * step
+    world_y = round(world_y / step) * step
     return world_x, world_y
 
 

@@ -33,7 +33,6 @@ def run_app():
     globals.canvas = canvas
     objects = Objects()
     globals.objects = objects
-    state.shift_pressed = False
     tool_bar = toolbar(root)
     tool_bar.pack(side="top", fill="x")
     main_area.pack(side="top", fill="both", expand=True)
@@ -52,5 +51,6 @@ def run_app():
     canvas.focus_set()
     menu_bar = menu(root, widgets)
     root.config(menu=menu_bar)
+    state.shift_pressed = False
 
     root.mainloop()
