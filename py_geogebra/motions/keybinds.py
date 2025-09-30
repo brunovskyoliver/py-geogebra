@@ -2,6 +2,7 @@ import json
 from .. import state
 from ..tools.utils import delete_object
 from .. import globals
+from ..ui.dialogs import save_file, open_from_file
 
 
 def keybinds(root):
@@ -16,13 +17,9 @@ def keybinds(root):
             state.shift_pressed = True
 
         elif e.keysym.lower() == "s" and is_command:
-            globals.objects.to_json("scene_full.json")
-            print("saved")
-        elif e.keysym.lower() == "l" and is_command:
-            with open("scene_full.json", "r", encoding="utf-8") as f:
-                data = json.load(f)
-            globals.objects.load_from_dict(root, data)
-            print("loaded")
+            save_file(root)
+        elif e.keysym.lower() == "o" and is_command:
+            open_from_file(root)
 
     def keyreleased(e):
         if e.keysym == "Shift_L":

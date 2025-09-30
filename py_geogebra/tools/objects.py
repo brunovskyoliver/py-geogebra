@@ -110,6 +110,7 @@ class Objects:
             json.dump(self.to_dict(), f, indent=2)
 
     def load_from_dict(self, root, data: dict):
+        globals.canvas.delete("all")
         view = data.get("view", {})
         self.offset_x = view.get("offset_x", 0)
         self.offset_y = view.get("offset_y", 0)
