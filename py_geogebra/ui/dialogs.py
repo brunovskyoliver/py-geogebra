@@ -33,8 +33,9 @@ def open_from_file(root):
         base_path = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
 
     file = filedialog.askopenfile(defaultextension="json", initialdir=base_path)
-    data = json.load(file)
-    globals.objects.load_from_dict(root, data)
+    if file:
+        data = json.load(file)
+        globals.objects.load_from_dict(root, data)
 
 
 def save_file(root):
@@ -46,5 +47,5 @@ def save_file(root):
         base_path = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
 
     file = filedialog.asksaveasfilename(defaultextension="json", initialdir=base_path)
-
-    globals.objects.to_json(file)
+    if file:
+        globals.objects.to_json(file)

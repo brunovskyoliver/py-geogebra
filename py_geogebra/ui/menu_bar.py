@@ -34,10 +34,22 @@ def menu(root, widgets):
     menu_bar = tk.Menu(root)
     file_selection = tk.Menu(menu_bar, tearoff=0)
     menu_bar.add_cascade(label=_("Súbor"), menu=file_selection)
+    file_selection_index = menu_bar.index("end")
+    widgets.register(
+        lambda: menu_bar.entryconfig(file_selection_index, label=_("Súbor"))
+    )
     file_selection.add_command(
         label=_("Otvoriť súbor"), command=lambda: open_from_file(root)
     )
+    open_file_index = file_selection.index("end")
+    widgets.register(
+        lambda: file_selection.entryconfig(open_file_index, label=_("Otvoriť súbor"))
+    )
     file_selection.add_command(label=_("Uložiť ako"), command=lambda: save_file(root))
+    save_as_index = file_selection.index("end")
+    widgets.register(
+        lambda: file_selection.entryconfig(save_as_index, label=_("Uložiť ako"))
+    )
     language_selection = tk.Menu(menu_bar, tearoff=0)
     menu_bar.add_cascade(label=_("Language"), menu=language_selection)
     language_selection.add_command(

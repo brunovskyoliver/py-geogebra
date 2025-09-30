@@ -1,8 +1,8 @@
 {
   "version": 1,
   "view": {
-    "offset_x": -148,
-    "offset_y": -107,
+    "offset_x": -68,
+    "offset_y": -198,
     "scale": 1.0,
     "unit_size": 40
   },
@@ -11,28 +11,56 @@
       "type": "Axes",
       "unit_size": 40,
       "scale": 1.0,
-      "offset_x": -148,
-      "offset_y": -107
+      "offset_x": -68,
+      "offset_y": -198
     },
     {
       "type": "Point",
       "label": "A",
-      "pos_x": -1.95,
-      "pos_y": -0.05,
+      "pos_x": -5.8,
+      "pos_y": -5.825,
       "color": "blue",
       "unit_size": 40,
       "scale": 1.0,
       "is_drawable": true,
       "translation": 0,
-      "offset_x": -148,
-      "offset_y": -107,
+      "offset_x": -68,
+      "offset_y": -198,
       "tag": "point_4625032848"
+    },
+    {
+      "type": "Point",
+      "label": "B",
+      "pos_x": 4.1,
+      "pos_y": -2.075,
+      "color": "blue",
+      "unit_size": 40,
+      "scale": 1.0,
+      "is_drawable": true,
+      "translation": 0,
+      "offset_x": -68,
+      "offset_y": -198,
+      "tag": "point_4625032800"
+    },
+    {
+      "type": "Point",
+      "label": "C",
+      "pos_x": 7.338054607508533,
+      "pos_y": -0.8484641638225252,
+      "color": "#349AFF",
+      "unit_size": 40,
+      "scale": 1.0,
+      "is_drawable": true,
+      "translation": 1.32707622298066,
+      "offset_x": -68,
+      "offset_y": -198,
+      "tag": "point_4625033664"
     },
     {
       "type": "Lower Label",
       "unit_size": 40,
       "scale": 1.0,
-      "tag": "lower_label_4625033040",
+      "tag": "lower_label_4393374768",
       "parent_tag": "line_4310217120"
     },
     {
@@ -43,8 +71,8 @@
       "unit_size": 40,
       "scale": 1.0,
       "is_drawable": true,
-      "offset_x": -148,
-      "offset_y": -107,
+      "offset_x": -68,
+      "offset_y": -198,
       "tag": "line_4310217120",
       "points": [
         "A",
@@ -54,45 +82,17 @@
       "point_1": "A",
       "point_2": "B",
       "prescription": [
-        6.0,
-        -8.5,
-        -11.28
+        3.75,
+        -9.9,
+        35.92
       ]
-    },
-    {
-      "type": "Point",
-      "label": "B",
-      "pos_x": 6.55,
-      "pos_y": 5.95,
-      "color": "blue",
-      "unit_size": 40,
-      "scale": 1.0,
-      "is_drawable": true,
-      "translation": 0,
-      "offset_x": -148,
-      "offset_y": -107,
-      "tag": "point_4625032800"
-    },
-    {
-      "type": "Point",
-      "label": "C",
-      "pos_x": 2.4756928406466505,
-      "pos_y": 3.0740184757505773,
-      "color": "#349AFF",
-      "unit_size": 40,
-      "scale": 1.0,
-      "is_drawable": true,
-      "translation": 0.5206697459584295,
-      "offset_x": -148,
-      "offset_y": -107,
-      "tag": "point_4625033664"
     }
   ],
   "state": {
-    "selected_tool": "point",
+    "selected_tool": "arrow",
     "start_pos": {
-      "x": 296,
-      "y": 286
+      "x": 255,
+      "y": 467
     },
     "scale": 1.0,
     "current_pen": null,
@@ -108,8 +108,8 @@
     "drag_target": null,
     "deleted_point_label": null,
     "center": [
-      197,
-      409
+      277,
+      318
     ],
     "sidebar_resizing": false,
     "selected_intersect": null,
