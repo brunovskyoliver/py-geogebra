@@ -2,6 +2,8 @@ import tkinter as tk
 import time
 from tkinter import ttk, messagebox
 from typing import MutableMapping
+
+from py_geogebra import state
 from ..tools.language import change_lang
 from ..tools.check_version import handle_version
 from .dialogs import ask_for_update, open_from_file, save_file
@@ -31,6 +33,7 @@ def run_fps_test(root):
 
 
 def menu(root, widgets):
+    assert state.shift_pressed == False
     menu_bar = tk.Menu(root)
     file_selection = tk.Menu(menu_bar, tearoff=0)
     menu_bar.add_cascade(label=_("Súbor"), menu=file_selection)
