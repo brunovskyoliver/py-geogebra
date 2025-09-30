@@ -12,6 +12,7 @@ from ..ui.segment_with_lenght import Segment_with_length
 from ..ui.midpoint_or_center import Midpoint_or_center
 from ..ui.segment import Segment
 from ..ui.polyline import Polyline
+from ..ui.intersect import Intersect
 from .. import globals
 
 
@@ -44,7 +45,7 @@ def dragging(root):
                     globals.objects.unit_size * globals.objects.scale
                 )
 
-                if state.shift_pressed:
+                if state.shift_pressed and not isinstance(state.drag_target, Intersect):
                     state.drag_target.snap_point(e)
                 else:
                     state.drag_target.pos_x = world_x

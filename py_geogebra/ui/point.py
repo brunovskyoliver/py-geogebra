@@ -62,6 +62,7 @@ class Point:
             "unit_size": self.unit_size,
             "scale": self.scale,
             "is_drawable": self.is_drawable,
+            "translation": self.translation,
             "offset_x": self.offset_x,
             "offset_y": self.offset_y,
             "tag": self.tag,
@@ -83,6 +84,7 @@ class Point:
         p.offset_x = data.get("offset_x", 0)
         p.offset_y = data.get("offset_y", 0)
         p.tag = data.get("tag", "")
+        p.translation = data.get("translation", 0)
         cx, cy = state.center
         p.cx = cx
         p.cy = cy

@@ -33,6 +33,7 @@ def run_app():
     globals.canvas = canvas
     objects = Objects()
     globals.objects = objects
+    state.shift_pressed = False
     tool_bar = toolbar(root)
     tool_bar.pack(side="top", fill="x")
     main_area.pack(side="top", fill="both", expand=True)

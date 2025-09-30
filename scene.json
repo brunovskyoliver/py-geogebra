@@ -1,0 +1,50 @@
+{
+  "version": 1,
+  "view": {
+    "offset_x": 0,
+    "offset_y": 0,
+    "scale": 1.0,
+    "unit_size": 40
+  },
+  "objects": [
+    {
+      "type": "Axes",
+      "unit_size": 40,
+      "scale": 1.0,
+      "offset_x": 0,
+      "offset_y": 0
+    }
+  ],
+  "state": {
+    "selected_tool": "arrow",
+    "start_pos": {
+      "x": 0,
+      "y": 0
+    },
+    "scale": 1.0,
+    "current_pen": null,
+    "current_polyline": null,
+    "label_counter": 0,
+    "lower_label_counter": 0,
+    "label_unused": [],
+    "lower_label_unused": [],
+    "freehand_last_pos": {
+      "x": 0,
+      "y": 0
+    },
+    "drag_target": null,
+    "deleted_point_label": null,
+    "center": [
+      345,
+      516
+    ],
+    "sidebar_resizing": false,
+    "selected_intersect": null,
+    "shift_pressed": false
+  },
+  "sidebar": {
+    "type": "Sidebar",
+    "width": 200,
+    "order": []
+  }
+}
