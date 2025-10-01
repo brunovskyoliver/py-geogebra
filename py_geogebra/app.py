@@ -52,5 +52,6 @@ def run_app():
     menu_bar = menu(root, widgets)
     root.config(menu=menu_bar)
     state.shift_pressed = False
+    # test
 
     root.mainloop()
