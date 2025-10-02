@@ -1,6 +1,5 @@
 import tkinter as tk
 import math
-from ..tools.utils import center, world_to_screen
 from .. import state
 from .. import globals
 

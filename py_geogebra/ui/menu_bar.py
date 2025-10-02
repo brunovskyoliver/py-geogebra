@@ -1,7 +1,5 @@
 import tkinter as tk
 import time
-from tkinter import ttk, messagebox
-from typing import MutableMapping
 
 from py_geogebra import state
 from ..tools.language import change_lang

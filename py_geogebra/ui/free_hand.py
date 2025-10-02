@@ -1,6 +1,4 @@
 import tkinter as tk
-from ..tools.utils import center
-from .. import state
 from .. import globals
 
 

@@ -1,6 +1,5 @@
 import tkinter as tk
 from ..tools.utils import (
-    center,
     world_to_screen,
     snap_to_line,
     get_linear_fuction_prescription,

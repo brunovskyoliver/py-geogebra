@@ -1,6 +1,4 @@
-from os import confstr
 import tkinter as tk
-from typing import ChainMap
 from ..tools.load_image import load_icon
 from ..tools.utils import delete_object, set_cursor, deselect_all
 from .. import state
