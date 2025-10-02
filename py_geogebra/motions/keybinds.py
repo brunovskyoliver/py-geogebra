@@ -1,7 +1,5 @@
-import json
 from .. import state
 from ..tools.utils import delete_object
-from .. import globals
 from ..ui.dialogs import save_file, open_from_file
 
 

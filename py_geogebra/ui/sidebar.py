@@ -1,8 +1,4 @@
 import tkinter as tk
-from types import LambdaType, prepare_class
-from ..tools.load_image import load_icon
-from ..tools.utils import delete_object, set_cursor
-from .. import state
 from ..ui.point import Point
 from ..ui.line import Line
 from ..ui.segment import Segment

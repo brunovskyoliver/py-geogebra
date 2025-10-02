@@ -1,6 +1,5 @@
 import tkinter as tk
 from ..tools.utils import (
-    center,
     world_to_screen,
     snap_to_line,
     get_linear_fuction_prescription,
@@ -9,7 +8,6 @@ from .. import state
 from .lower_label import Lower_label
 import math
 from .. import globals
-from py_geogebra.ui import lower_label
 
 
 class Line:

@@ -1,11 +1,9 @@
 from .. import state
 from ..tools.utils import (
-    center,
     set_cursor,
     find_translation,
     find_translation_polyline,
 )
-from ..ui.free_hand import FreeHand
 from ..ui.line import Line
 from ..ui.ray import Ray
 from ..ui.segment_with_lenght import Segment_with_length

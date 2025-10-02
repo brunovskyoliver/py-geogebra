@@ -1,9 +1,8 @@
 import tkinter as tk
-from ..tools.utils import center, world_to_screen, distance, snap_to_polyline
+from ..tools.utils import distance, snap_to_polyline
 from .. import state
 from .. import globals
 from .lower_label import Lower_label
-import math
 
 
 class Polyline:

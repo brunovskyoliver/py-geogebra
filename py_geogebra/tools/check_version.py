@@ -7,7 +7,7 @@ import tarfile
 import subprocess
 import sys
 from ..config import __version__
-from ..ui.dialogs import ask_for_update, no_need_to_update, ran_from_python
+from ..ui.dialogs import no_need_to_update, ran_from_python
 
 
 url = "https://api.github.com/repos/brunovskyoliver/py-geogebra/releases/latest"

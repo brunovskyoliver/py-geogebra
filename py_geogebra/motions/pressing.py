@@ -11,12 +11,9 @@ from ..ui.segment_with_lenght import Segment_with_length
 from ..ui.polyline import Polyline
 from ..tools.utils import (
     delete_object,
-    g,
     get_lower_label,
-    number_to_ascii,
     center,
     set_cursor,
-    snap,
     get_label,
     screen_to_world,
     deselect_all,
@@ -28,7 +25,7 @@ from ..tools.utils import (
     find_translation_polyline,
     snap_to_polyline,
 )
-from tkinter import CURRENT, simpledialog
+from tkinter import simpledialog
 from .. import globals
 
 

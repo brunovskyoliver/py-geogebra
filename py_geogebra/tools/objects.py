@@ -1,12 +1,9 @@
-from types import FunctionType
 from typing import List, Protocol
-import tkinter as tk
 
 from py_geogebra.ui.lower_label import Lower_label
 from .utils import center
 from .. import state
 import json
-import inspect
 from ..ui.point import Point
 from ..ui.axes import Axes
 from ..ui.line import Line
@@ -16,7 +13,6 @@ from ..ui.segment_with_lenght import Segment_with_length
 from ..ui.polyline import Polyline
 from ..ui.lower_label import Lower_label
 from .. import globals
-from py_geogebra.ui import polyline
 
 
 class Drawable(Protocol):

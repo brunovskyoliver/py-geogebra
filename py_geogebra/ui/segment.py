@@ -1,8 +1,7 @@
 import tkinter as tk
-from ..tools.utils import center, world_to_screen, distance, snap_to_line
+from ..tools.utils import world_to_screen, distance, snap_to_line
 from .. import state
 from .lower_label import Lower_label
-import math
 from .. import globals
 
 
