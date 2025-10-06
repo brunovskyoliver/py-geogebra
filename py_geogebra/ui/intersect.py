@@ -189,7 +189,7 @@ class Intersect:
             find_translation(self, self.line_2)
             if self.translation < 0:
                 self.is_drawable = False
-        elif isinstance(self.line_1, Polyline):
+        elif isinstance(self.line_2, Polyline):
             find_translation_between_points(self, self.points[2], self.points[3])
             if self.translation > 1 or self.translation < 0:
                 self.is_drawable = False
