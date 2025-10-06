@@ -24,6 +24,8 @@ from ..tools.utils import (
     find_polyline_at_position,
     find_translation_polyline,
     snap_to_polyline,
+    detach_point,
+    attach_point,
 )
 from tkinter import simpledialog
 from .. import globals
@@ -72,6 +74,7 @@ def pressing(root):
             world_x, world_y = screen_to_world(e)
 
             l = find_line_at_position(e, r=2)
+            polyline = find_polyline_at_position(e, r=2)
 
             label = get_label(state)
             p = Point(
@@ -82,24 +85,77 @@ def pressing(root):
                 pos_x=world_x,
                 pos_y=world_y,
             )
+            
 
             if l is not None:
+                p.is_detachable = True
+                p.is_atachable = False
+                p.parent_line = l
                 find_translation(p, l)
                 l.points.append(p)
                 snap_to_line(p, l)
                 p.color = "#349AFF"
                 l.update()
-
-            polyline = find_polyline_at_position(e, r=2)
-            if polyline is not None:
+            elif polyline is not None:
+                p.is_detachable = True
+                p.is_atachable = False
+                p.parent_line = polyline
                 find_translation_polyline(p, polyline)
                 polyline.points.append(p)
                 snap_to_polyline(p, polyline)
                 p.color = "#349AFF"
                 polyline.update()
 
+
             globals.objects.register(p)
 
+        elif state.selected_tool == "attach_detach_point":
+            point_obj = find_point_at_position(e)
+            
+            if point_obj and point_obj.is_detachable and point_obj.parent_line:
+                detach_point(point_obj, point_obj.parent_line)
+                point_obj.parent_line.points.remove(point_obj)
+                point_obj.parent_line = None
+                point_obj.is_detachable = False
+                point_obj .is_atachable = True
+            elif not point_obj and not state.line_to_attach:
+                l = find_line_at_position(e, r=2)
+                if l is None:
+                    l = find_polyline_at_position(e, r=2)
+                    if l is None:
+                        return
+                l.select()
+                state.line_to_attach = l
+                
+            elif not state.point_to_attach and point_obj:
+                state.point_to_attach = point_obj
+                point_obj.select()
+            
+            else:
+                state.point_to_attach.deselect()
+                state.line_to_attach.deselect()
+                state.point_to_attach = None
+                state.line_to_attach = None
+
+                
+            
+            
+            if state.line_to_attach and state.point_to_attach:
+                attach_point(state.point_to_attach, state.line_to_attach)
+                state.point_to_attach.is_atachable = False
+                state.point_to_attach.is_detachable = True
+                state.point_to_attach.deselect()
+                state.line_to_attach.deselect()
+                state.line_to_attach.points.append(state.point_to_attach)
+                state.point_to_attach.parent_line = state.line_to_attach
+                state.point_to_attach = None
+                state.line_to_attach = None
+                
+
+                
+            
+                
+        
         elif state.selected_tool == "intersect":
             l = find_line_at_position(e, r=2)
             if l is None:
@@ -127,7 +183,6 @@ def pressing(root):
                     
                     state.selected_intersect_line_1 = l
                     l.select()
-
 
         elif state.selected_tool == "pen":
             cx, cy = state.center
