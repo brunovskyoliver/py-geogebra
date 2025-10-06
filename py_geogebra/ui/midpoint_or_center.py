@@ -30,6 +30,8 @@ class Midpoint_or_center:
         self.offset_y = 0.0
         self.scale = 1.0  # zoom factor
         self.unit_size = unit_size
+        
+        self.is_drawable = True
 
         self.cx = 0
         self.cy = 0
@@ -62,36 +64,44 @@ class Midpoint_or_center:
         visual_scale = min(max(1, self.scale**0.5), 1.9)
 
         r = 6.0 * visual_scale
+        
+        if not self.point_2:
+            self.is_drawable = True
+        elif self.point_1.is_drawable and self.point_2.is_drawable:
+            self.is_drawable = True
+        else:
+            self.is_drawable = False
 
-        if self.selected:
-            r_h = r * 1.4
+        if self.is_drawable:
+            if self.selected:
+                r_h = r * 1.4
+                self.canvas.create_oval(
+                    self.x - r_h,
+                    self.y - r_h,
+                    self.x + r_h,
+                    self.y + r_h,
+                    outline=self.color,
+                    width=2,
+                    fill="",  # no fill so it looks like a ring
+                    tags=(self.highlight_tag,),  # must be a tuple
+                )
+
             self.canvas.create_oval(
-                self.x - r_h,
-                self.y - r_h,
-                self.x + r_h,
-                self.y + r_h,
-                outline=self.color,
+                self.x - r,
+                self.y - r,
+                self.x + r,
+                self.y + r,
+                fill=self.color,
                 width=2,
-                fill="",  # no fill so it looks like a ring
-                tags=(self.highlight_tag,),  # must be a tuple
+                tags=(self.tag, "point"),
             )
 
-        self.canvas.create_oval(
-            self.x - r,
-            self.y - r,
-            self.x + r,
-            self.y + r,
-            fill=self.color,
-            width=2,
-            tags=(self.tag, "point"),
-        )
-
-        if self.label:
-            self.canvas.create_text(
-                self.x + 10 * visual_scale,
-                self.y - 15 * visual_scale,
-                text=self.label,
-                font=("Arial", int(12 * visual_scale)),
-                fill="blue",
-                tags=self.tag,
-            )
+            if self.label:
+                self.canvas.create_text(
+                    self.x + 10 * visual_scale,
+                    self.y - 15 * visual_scale,
+                    text=self.label,
+                    font=("Arial", int(12 * visual_scale)),
+                    fill="blue",
+                    tags=self.tag,
+                )
