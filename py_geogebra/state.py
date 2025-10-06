@@ -37,5 +37,5 @@ drag_target = None
 deleted_point_label = None
 center = (0, 0)
 sidebar_resizing = False
-selected_intersect = None
+selected_intersect_line_1 = None
 shift_pressed = False

@@ -1,6 +1,6 @@
 from .. import state
 from ..ui.point import Point
-from ..ui.intersect import Intersect
+from ..ui.intersect import Create_Intersect
 from ..ui.midpoint_or_center import Midpoint_or_center
 from ..ui.pen import Pen
 from ..ui.line import Line
@@ -102,34 +102,32 @@ def pressing(root):
 
         elif state.selected_tool == "intersect":
             l = find_line_at_position(e, r=2)
-            if l is None and state.selected_intersect:
-                state.selected_intersect.line_1.deselect()
-                state.selected_intersect = None
+            if l is None:
+                l = find_polyline_at_position(e, r=2)
+            if l is None and state.selected_intersect_line_1:
+                state.selected_intersect_line_1.deselect()
+                state.selected_intersect_line_1 = None
                 return
             elif l is None:
                 return
             else:
-                if state.selected_intersect:
-                    if state.selected_intersect.line_1 == l:
+                if state.selected_intersect_line_1:
+                    if state.selected_intersect_line_1 == l:
                         return
-                    if not state.selected_intersect.line_2:
-                        state.selected_intersect.line_2 = l
-                        state.selected_intersect.line_1.deselect()
-                        state.selected_intersect.update()
-                        state.selected_intersect = None
-                else:
-                    label = get_label(state)
-                    world_x, world_y = screen_to_world(e)
-                    i = Intersect(
+                    else:
+                        i = Create_Intersect(
+                        state.selected_intersect_line_1,
+                        l,
                         root,
-                        label=label,
                         unit_size=globals.axes.unit_size,
-                    )
-                    i.line_1 = l
-                    i.line_1.select()
-                    globals.objects.register(i)
-                    i.update()
-                    state.selected_intersect = i
+                        )
+                        state.selected_intersect_line_1 = None
+                else:
+                    world_x, world_y = screen_to_world(e)
+                    
+                    state.selected_intersect_line_1 = l
+                    l.select()
+
 
         elif state.selected_tool == "pen":
             cx, cy = state.center
