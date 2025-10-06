@@ -289,6 +289,18 @@ def find_translation(point, line):
     p_dist = distance(x1, y1, px, py)
 
     point.translation = (p_dist * math.cos(beta)) / dist
+    
+def find_translation_between_points(point, point_1, point_2):
+    x1, y1 = point_1.pos_x, point_1.pos_y
+    x2, y2 = point_2.pos_x, point_2.pos_y
+    px, py = point.pos_x, point.pos_y
+    alpha = math.atan2(y2 - y1, x2 - x1)
+    gama = math.atan2(px - x1, py - y1)
+    beta = math.pi / 2 - alpha - gama
+    dist = distance(x1, y1, x2, y2)
+    p_dist = distance(x1, y1, px, py)
+
+    point.translation = (p_dist * math.cos(beta)) / dist
 
 
 def find_translation_polyline(point, polyline):
@@ -333,22 +345,22 @@ def find_translation_polyline(point, polyline):
     point.translation = (p_dist * math.cos(beta)) / dist
 
 
-def find_2lines_intersection(line_1, line_2):
+def find_2lines_intersection(points):
     x1, y1 = (
-        line_1.point_1.pos_x,
-        line_1.point_1.pos_y,
+        points[0].pos_x,
+        points[0].pos_y,
     )
     x2, y2 = (
-        line_1.point_2.pos_x,
-        line_1.point_2.pos_y,
+        points[1].pos_x,
+        points[1].pos_y,
     )
     x3, y3 = (
-        line_2.point_1.pos_x,
-        line_2.point_1.pos_y,
+        points[2].pos_x,
+        points[2].pos_y,
     )
     x4, y4 = (
-        line_2.point_2.pos_x,
-        line_2.point_2.pos_y,
+        points[3].pos_x,
+        points[3].pos_y,
     )
 
     px = ((x1 * y2 - y1 * x2) * (x3 - x4) - (x1 - x2) * (x3 * y4 - y3 * x4)) / (
