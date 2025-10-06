@@ -102,9 +102,11 @@ def pressing(root):
 
         elif state.selected_tool == "intersect":
             l = find_line_at_position(e, r=2)
-            if l is None:
+            if l is None and state.selected_intersect:
                 state.selected_intersect.line_1.deselect()
                 state.selected_intersect = None
+                return
+            elif l is None:
                 return
             else:
                 if state.selected_intersect:
