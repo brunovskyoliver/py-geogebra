@@ -44,6 +44,10 @@ class Point:
         self.translation = 0
 
         self.is_drawable = True
+        self.is_detachable = False
+        self.is_atachable = True
+        
+        self.parent_line = None
 
         self.tag = f"point_{id(self)}"
         self.selected = False

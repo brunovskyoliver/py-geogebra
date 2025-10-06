@@ -39,3 +39,5 @@ center = (0, 0)
 sidebar_resizing = False
 selected_intersect_line_1 = None
 shift_pressed = False
+line_to_attach = None
+point_to_attach = None

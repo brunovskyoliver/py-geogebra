@@ -139,6 +139,7 @@ class Intersect:
         
         self.translation = 0
         self.is_drawable = True
+        self.is_detatchable = False
 
         self.tag = f"intersect_{id(self)}"
         self.selected = False

@@ -32,6 +32,7 @@ class Midpoint_or_center:
         self.unit_size = unit_size
         
         self.is_drawable = True
+        self.is_detachable = False
 
         self.cx = 0
         self.cy = 0

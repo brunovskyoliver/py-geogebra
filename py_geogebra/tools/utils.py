@@ -378,3 +378,20 @@ def get_linear_fuction_prescription(x1, y1, x2, y2):
     b = x1 - x2
     c = x2 * y1 - x1 * y2
     return round(a, 2), round(b, 2), round(-c, 2)
+
+def detach_point(point, line, distance=1.0):
+    dx = line.point_2.pos_x - line.point_1.pos_x
+    dy = line.point_2.pos_y - line.point_1.pos_y
+
+    length = math.hypot(dx, dy)
+
+    perp_x = -dy / length
+    perp_y = dx / length
+
+    point.pos_x += perp_x * distance
+    point.pos_y += perp_y * distance
+    
+def attach_point(point, line):
+    find_translation(point, line)
+    snap_to_line(point, line)
+    
