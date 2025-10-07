@@ -132,8 +132,10 @@ def pressing(root):
                 point_obj.select()
             
             else:
-                state.point_to_attach.deselect()
-                state.line_to_attach.deselect()
+                if state.point_to_attach:
+                    state.point_to_attach.deselect()
+                if state.line_to_attach:
+                    state.line_to_attach.deselect()
                 state.point_to_attach = None
                 state.line_to_attach = None
 
