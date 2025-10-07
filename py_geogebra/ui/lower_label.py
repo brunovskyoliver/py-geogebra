@@ -122,9 +122,14 @@ class Lower_label:
             middle_y = (
                 self.obj.point_1.y - (self.obj.point_1.y - self.obj.point_2.y) / 2
             )
+            dx = self.obj.point_2.x - self.obj.point_1.x
+            dy = self.obj.point_2.y - self.obj.point_1.y
+            length = math.hypot(dx, dy)
+            perp_x = -dy / length
+            perp_y = dx / length
             self.canvas.create_text(
-                middle_x + 1 * visual_scale,
-                middle_y - 15 * visual_scale,
+                middle_x + perp_x * visual_scale * 15,
+                middle_y + perp_y * visual_scale * 15,
                 text=self.obj.lower_label,
                 font=("Arial", int(12 * visual_scale)),
                 fill="blue",
