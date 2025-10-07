@@ -379,19 +379,60 @@ def get_linear_fuction_prescription(x1, y1, x2, y2):
     c = x2 * y1 - x1 * y2
     return round(a, 2), round(b, 2), round(-c, 2)
 
-def detach_point(point, line, distance=1.0):
-    dx = line.point_2.pos_x - line.point_1.pos_x
-    dy = line.point_2.pos_y - line.point_1.pos_y
+def detach_point(point, line):
+    from ..ui.polyline import Polyline
+    if not isinstance(line, Polyline):
+        dx = line.point_2.pos_x - line.point_1.pos_x
+        dy = line.point_2.pos_y - line.point_1.pos_y
+
+    else:
+        smallest_dist = float("inf")
+        for i in range(len(line.line_points) - 1):
+            dist = (
+                distance(
+                    point.pos_x,
+                    point.pos_y,
+                    line.line_points[i].pos_x,
+                    line.line_points[i].pos_y,
+                )
+                + distance(
+                    point.pos_x,
+                    point.pos_y,
+                    line.line_points[i + 1].pos_x,
+                    line.line_points[i + 1].pos_y,
+                )
+                - distance(
+                    line.line_points[i].pos_x,
+                    line.line_points[i].pos_y,
+                    line.line_points[i + 1].pos_x,
+                    line.line_points[i + 1].pos_y,
+                )
+            )
+            if dist < smallest_dist:
+                smallest_dist = dist
+                index_1 = i
+                index_2 = i + 1
+
+        x1, y1 = line.line_points[index_1].pos_x, line.line_points[index_1].pos_y
+        x2, y2 = line.line_points[index_2].pos_x, line.line_points[index_2].pos_y
+        
+        dx = x2 - x1
+        dy = y2 - y1
 
     length = math.hypot(dx, dy)
-
     perp_x = -dy / length
     perp_y = dx / length
+    
 
-    point.pos_x += perp_x * distance
-    point.pos_y += perp_y * distance
+    point.pos_x += perp_x
+    point.pos_y += perp_y
     
 def attach_point(point, line):
-    find_translation(point, line)
-    snap_to_line(point, line)
+    from ..ui.polyline import Polyline
+    if not isinstance(line, Polyline):
+        find_translation(point, line)
+        snap_to_line(point, line)
+    else: 
+        find_translation_polyline(point, line)
+        snap_to_polyline(point, line)
     
