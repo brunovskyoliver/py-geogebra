@@ -9,6 +9,7 @@ from ..ui.ray import Ray
 from ..ui.segment_with_lenght import Segment_with_length
 from ..ui.midpoint_or_center import Midpoint_or_center
 from ..ui.segment import Segment
+from ..ui.vector import Vector
 from ..ui.polyline import Polyline
 from ..ui.intersect import Intersect
 from .. import globals
@@ -57,6 +58,7 @@ def dragging(root):
                         or isinstance(obj, Ray)
                         or isinstance(obj, Segment_with_length)
                         or isinstance(obj, Midpoint_or_center)
+                        or isinstance(obj, Vector)
                     ):
                         if (
                             obj.point_1 is state.drag_target

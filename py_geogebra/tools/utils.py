@@ -202,6 +202,7 @@ def find_line_at_position(e, r=1):
                 or "ray" in obj.tag
                 or "segment" in obj.tag
                 or "segment_with_length" in obj.tag
+                or "vector" in obj.tag
             ):
                 line = obj
                 break

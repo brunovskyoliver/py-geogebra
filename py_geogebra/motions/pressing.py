@@ -6,6 +6,7 @@ from ..ui.pen import Pen
 from ..ui.line import Line
 from ..ui.ray import Ray
 from ..ui.segment import Segment
+from ..ui.vector import Vector
 from ..ui.free_hand import FreeHand
 from ..ui.segment_with_lenght import Segment_with_length
 from ..ui.polyline import Polyline
@@ -432,6 +433,42 @@ def pressing(root):
                 )
 
                 globals.objects.register(midpoint)
+                state.points_for_obj = []
+
+        elif state.selected_tool == "vector":
+            state.start_pos["x"] = e.x
+            state.start_pos["y"] = e.y
+            world_x, world_y = screen_to_world(e)
+            p = find_point_at_position(e)
+            if p == None:
+                label = get_label(state)
+                p = Point(
+                    root,
+                    e,
+                    label=label,
+                    unit_size=globals.axes.unit_size,
+                    pos_x=world_x,
+                    pos_y=world_y,
+                )
+                globals.objects.register(p)
+            if len(state.points_for_obj) < 2:
+                lower_label = get_lower_label(state)
+                vector = Vector(
+                    root,
+                    unit_size=globals.axes.unit_size,
+                    point_1=p,
+                    lower_label=lower_label,
+                )
+                globals.objects.register(vector)
+                vector.lower_label = lower_label
+                state.points_for_obj.append(p)
+                state.points_for_obj.append(vector)
+
+            else:
+                state.points_for_obj[1].point_2 = p
+                state.points_for_obj[1].update()
+                globals.sidebar.items.append(state.points_for_obj[1])
+                globals.sidebar.update()
                 state.points_for_obj = []
 
     def middle_click_pressed(e):
