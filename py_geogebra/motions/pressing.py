@@ -7,6 +7,7 @@ from ..ui.line import Line
 from ..ui.ray import Ray
 from ..ui.segment import Segment
 from ..ui.vector import Vector
+from ..ui.vector_from_point import Vector_from_point
 from ..ui.free_hand import FreeHand
 from ..ui.segment_with_lenght import Segment_with_length
 from ..ui.polyline import Polyline
@@ -460,7 +461,6 @@ def pressing(root):
                     lower_label=lower_label,
                 )
                 globals.objects.register(vector)
-                vector.lower_label = lower_label
                 state.points_for_obj.append(p)
                 state.points_for_obj.append(vector)
 
@@ -470,6 +470,48 @@ def pressing(root):
                 globals.sidebar.items.append(state.points_for_obj[1])
                 globals.sidebar.update()
                 state.points_for_obj = []
+        
+        elif state.selected_tool == "vector_from_point":
+            state.start_pos["x"] = e.x
+            state.start_pos["y"] = e.y
+            world_x, world_y = screen_to_world(e)
+            p = find_point_at_position(e)
+            if p == None:
+                l = find_line_at_position(e)
+                if isinstance(l, Vector):
+                    state.selected_vector = l
+                    l.select()
+            else:
+                state.selected_point = p
+                p.select()
+                
+            if state.selected_point and state.selected_vector:
+                lower_label = get_lower_label(state)
+                label = get_label(state)
+                p = Point(
+                    root,
+                    e,
+                    label=label,
+                    unit_size=globals.axes.unit_size,
+                    pos_x=state.selected_point.pos_x + (state.selected_vector.point_2.pos_x - state.selected_vector.point_1.pos_x),
+                    pos_y=state.selected_point.pos_y + (state.selected_vector.point_2.pos_y - state.selected_vector.point_1.pos_y),
+                )
+                vector = Vector_from_point(
+                    root,
+                    unit_size=globals.axes.unit_size,
+                    point_1=state.selected_point,
+                    lower_label=lower_label,
+                )
+                vector.parent_vector = state.selected_vector
+                vector.point_2 = p
+                globals.objects.register(vector)
+                globals.objects.register(p)
+                state.selected_vector.child_vectors.append(vector)
+                state.selected_vector.deselect()
+                state.selected_point.deselect()
+                state.selected_point = None
+                state.selected_vector = None
+                   
 
     def middle_click_pressed(e):
         state.start_pos["x"] = e.x

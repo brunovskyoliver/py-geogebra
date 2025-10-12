@@ -5,7 +5,7 @@ from .lower_label import Lower_label
 from .. import globals
 
 
-class Vector:
+class Vector_from_point:
     def __init__(
         self,
         root: tk.Tk,
@@ -30,6 +30,8 @@ class Vector:
 
         self.cx = 0
         self.cy = 0
+        
+        self.parent_vector = None
 
         self.selected = False
 
@@ -43,12 +45,11 @@ class Vector:
         self.objects.register(self.lower_label_obj)
 
         self.points = [self.point_1]
-        self.child_vectors = []
         self.canvas.bind("<Configure>", lambda e: self.update())
 
     def to_dict(self) -> dict:
         return {
-            "type": "Vector",
+            "type": "Vector_from_point",
             "lower_label": self.lower_label,
             "pos_x": self.pos_x,
             "pos_y": self.pos_y,
@@ -61,7 +62,7 @@ class Vector:
             "points": [p.label for p in self.points],
             "point_1": self.point_1.label if self.point_1 else None,
             "point_2": self.point_2.label if self.point_2 else None,
-            "child_vectors" : [vector.lower_label for vector in self.child_vectors]
+            "parent_vector": self.parent_vector.lower_label,
         }
 
     @classmethod
@@ -92,7 +93,7 @@ class Vector:
         vector.pos_x = data.get("pos_x", 0)
         vector.pos_y = data.get("pos_y", 0)
         vector.points = [find_point(lbl) for lbl in data.get("points", []) if lbl]
-        vector.child_vectors = [find_vector(lower_label) for lower_label in data.get("child_vectors", []) if lower_label]
+        vector.parent_vector = find_vector(data.get("parent_vector", None))
         cx, cy = state.center
         vector.cx = cx
         vector.cy = cy
@@ -109,6 +110,8 @@ class Vector:
 
     def update(self, e=None):
         self.canvas.delete(self.tag)
+        
+        
 
         visual_scale = min(max(1, self.scale**0.5), 1.9)
 
@@ -158,6 +161,8 @@ class Vector:
                 x2 = (e.x - cx) / (self.unit_size * self.scale)
                 y2 = (cy - e.y) / (self.unit_size * self.scale)
             else:
+                self.point_2.pos_x=self.point_1.pos_x + (self.parent_vector.point_2.pos_x - self.parent_vector.point_1.pos_x)
+                self.point_2.pos_y=self.point_1.pos_y + (self.parent_vector.point_2.pos_y - self.parent_vector.point_1.pos_y)
                 x2, y2 = self.point_2.pos_x, self.point_2.pos_y
                 self.length = distance(x1, y1, x2, y2, 2)
                 self.lower_label_obj.update()
@@ -195,9 +200,6 @@ class Vector:
 
         for p in self.points:
             self.canvas.tag_raise(p.tag)
-            
-        for obj in self.child_vectors:
-            if obj:
-                obj.update()
+            p.update()
 
         self.prev_x, self.prev_y = self.pos_x, self.pos_y
