@@ -9,6 +9,8 @@ from ..ui.axes import Axes
 from ..ui.line import Line
 from ..ui.ray import Ray
 from ..ui.segment import Segment
+from ..ui.vector import Vector
+from ..ui.vector_from_point import Vector_from_point
 from ..ui.segment_with_lenght import Segment_with_length
 from ..ui.polyline import Polyline
 from ..ui.lower_label import Lower_label
@@ -142,6 +144,12 @@ class Objects:
             elif od["type"] == "Polyline":
                 polyline = Polyline.from_dict(root, od)
                 self.register(polyline)
+            elif od["type"] == "Vector":
+                vector = Vector.from_dict(root, od)
+                self.register(vector)
+            elif od["type"] == "Vector_from_point":
+                vector = Vector_from_point.from_dict(root, od)
+                self.register(vector)
 
         for od in data.get("objects", []):
             if od["type"] == "Lower_label":
