@@ -41,6 +41,7 @@ class Vector_from_point:
         self.point_1 = point_1
         self.point_2 = None
         self.lower_label = lower_label
+        print(self.lower_label)
         self.lower_label_obj = Lower_label(self.root, obj=self)
         self.objects.register(self.lower_label_obj)
 
@@ -93,7 +94,8 @@ class Vector_from_point:
         vector.pos_x = data.get("pos_x", 0)
         vector.pos_y = data.get("pos_y", 0)
         vector.points = [find_point(lbl) for lbl in data.get("points", []) if lbl]
-        vector.parent_vector = find_vector(data.get("parent_vector", None))
+        vector.parent_vector = find_vector(data.get("parent_vector", ""))
+        vector.parent_vector.loaded_children = False
         cx, cy = state.center
         vector.cx = cx
         vector.cy = cy

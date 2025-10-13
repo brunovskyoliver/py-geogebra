@@ -44,6 +44,8 @@ class Vector:
 
         self.points = [self.point_1]
         self.child_vectors = []
+        self.child_vectors_labels = []
+        self.loaded_children = True
         self.canvas.bind("<Configure>", lambda e: self.update())
 
     def to_dict(self) -> dict:
@@ -61,7 +63,8 @@ class Vector:
             "points": [p.label for p in self.points],
             "point_1": self.point_1.label if self.point_1 else None,
             "point_2": self.point_2.label if self.point_2 else None,
-            "child_vectors" : [vector.lower_label for vector in self.child_vectors]
+            "child_vectors_labels" : [label for label in self.child_vectors_labels],
+            "loaded_children" : False
         }
 
     @classmethod
@@ -71,11 +74,7 @@ class Vector:
                 if getattr(obj, "label", None) == label:
                     return obj
             return None
-        def find_vector(label):
-            for obj in globals.objects._objects:
-                if getattr(obj, "lower_label", None) == label:
-                    return obj
-            return None
+        
 
         p1 = find_point(data.get("point_1"))
         p2 = find_point(data.get("point_2"))
@@ -88,16 +87,23 @@ class Vector:
         vector.lower_label = data.get("lower_label", "")
         vector.tag = data.get("tag", "")
         vector.lower_label_obj = Lower_label(root, obj=vector)
-        globals.objects.register(vector.lower_label_obj)
         vector.pos_x = data.get("pos_x", 0)
         vector.pos_y = data.get("pos_y", 0)
         vector.points = [find_point(lbl) for lbl in data.get("points", []) if lbl]
-        vector.child_vectors = [find_vector(lower_label) for lower_label in data.get("child_vectors", []) if lower_label]
+        vector.child_vectors_labels = [lower_label for lower_label in data.get("child_vectors_labels", []) if lower_label]
+        vector.loaded_children = data.get("loaded_childs", False)
+        globals.objects.register(vector.lower_label_obj)
         cx, cy = state.center
         vector.cx = cx
         vector.cy = cy
         vector.update()
         return vector
+    
+    def find_vector(self, label):
+            for obj in globals.objects._objects:
+                if getattr(obj, "lower_label", None) == label:
+                    return obj
+            return None
 
     def select(self):
         self.selected = True
@@ -111,6 +117,16 @@ class Vector:
         self.canvas.delete(self.tag)
 
         visual_scale = min(max(1, self.scale**0.5), 1.9)
+        
+        if not self.loaded_children:
+            self.child_vectors = []
+            for label in self.child_vectors_labels:
+                self.child_vectors.append(self.find_vector(label))
+                
+            print(self.child_vectors)
+            
+            self.loaded_children = True
+            
 
         if state.drag_target is self:
 

@@ -59,6 +59,7 @@ class Lower_label:
         from .ray import Ray
         from .segment import Segment
         from .vector import Vector
+        from .vector_from_point import Vector_from_point
         from .segment_with_lenght import Segment_with_length
         from .polyline import Polyline
 
@@ -113,7 +114,7 @@ class Lower_label:
                 fill="blue",
                 tags=(self.obj.tag, self.tag),
             )
-        elif isinstance(self.obj, Segment) or isinstance(self.obj, Segment_with_length) or isinstance(self.obj, Vector):
+        elif isinstance(self.obj, Segment) or isinstance(self.obj, Segment_with_length) or isinstance(self.obj, Vector) or isinstance(self.obj, Vector_from_point):
             if self.obj.point_2 is None:
                 return
             middle_x = (

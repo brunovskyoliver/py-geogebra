@@ -506,7 +506,8 @@ def pressing(root):
                 vector.point_2 = p
                 globals.objects.register(vector)
                 globals.objects.register(p)
-                state.selected_vector.child_vectors.append(vector)
+                state.selected_vector.child_vectors_labels.append(lower_label)
+                state.selected_vector.loaded_children = False
                 state.selected_vector.deselect()
                 state.selected_point.deselect()
                 state.selected_point = None
