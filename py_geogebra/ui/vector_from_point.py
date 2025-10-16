@@ -41,7 +41,6 @@ class Vector_from_point:
         self.point_1 = point_1
         self.point_2 = None
         self.lower_label = lower_label
-        print(self.lower_label)
         self.lower_label_obj = Lower_label(self.root, obj=self)
         self.objects.register(self.lower_label_obj)
 

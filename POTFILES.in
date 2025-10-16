@@ -1,5 +1,6 @@
 py_geogebra/ui/sidebar.py
 py_geogebra/ui/menu_bar.py
+py_geogebra/ui/vector.py
 py_geogebra/ui/segment_with_lenght.py
 py_geogebra/ui/lower_label.py
 py_geogebra/ui/midpoint_or_center.py
@@ -15,6 +16,7 @@ py_geogebra/ui/segment.py
 py_geogebra/ui/dialogs.py
 py_geogebra/ui/axes.py
 py_geogebra/ui/pen.py
+py_geogebra/ui/vector_from_point.py
 py_geogebra/tools/compute_runtime.py
 py_geogebra/tools/__init__.py
 py_geogebra/tools/load_image.py

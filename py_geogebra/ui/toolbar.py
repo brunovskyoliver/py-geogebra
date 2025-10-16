@@ -144,6 +144,21 @@ def toolbar(root):
             {"name": _("Vektor z bodu"), "icon": "vector_from_point"},
         ],
     )
+    tool_menu_init(
+        root,
+        bar,
+        def_icon="perpendicular_line",
+        buttons=[
+            {"name": _("Kolmica"), "icon": "perpendicular_line"},
+            {"name": _("Rovnobežka"), "icon": "parallel_line"},
+            {"name": _("Os úsečky"), "icon": "perpendicular_bisector"},
+            {"name": _("Os uhla"), "icon": "angle_bisector"},
+            {"name": _("Dotyčnice"), "icon": "tangents"},
+            {"name": _("Polárna priamka alebo priemer"), "icon": "polar_or_diameter_line"},
+            {"name": _("lineárna regresia"), "icon": "best_fit_line"},
+            {"name": _("Množina bodov"), "icon": "locus"},
+        ],
+    )
     state.selected_tool = "arrow"
 
     return bar
