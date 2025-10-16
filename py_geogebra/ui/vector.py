@@ -122,8 +122,6 @@ class Vector:
             self.child_vectors = []
             for label in self.child_vectors_labels:
                 self.child_vectors.append(self.find_vector(label))
-                
-            print(self.child_vectors)
             
             self.loaded_children = True
             
