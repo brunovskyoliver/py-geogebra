@@ -4,6 +4,7 @@ from ..ui.intersect import Create_Intersect
 from ..ui.midpoint_or_center import Midpoint_or_center
 from ..ui.pen import Pen
 from ..ui.line import Line
+from ..ui.perpendicular_line import Perpendicular_line
 from ..ui.ray import Ray
 from ..ui.segment import Segment
 from ..ui.vector import Vector
@@ -157,7 +158,6 @@ def pressing(root):
                 
 
                 
-            
                 
         
         elif state.selected_tool == "intersect":
@@ -482,10 +482,10 @@ def pressing(root):
                     state.selected_vector = l
                     l.select()
             else:
-                state.selected_point = p
+                state.selected_vector_point = p
                 p.select()
                 
-            if state.selected_point and state.selected_vector:
+            if state.selected_vector_point and state.selected_vector:
                 lower_label = get_lower_label(state)
                 label = get_label(state)
                 p = Point(
@@ -493,13 +493,13 @@ def pressing(root):
                     e,
                     label=label,
                     unit_size=globals.axes.unit_size,
-                    pos_x=state.selected_point.pos_x + (state.selected_vector.point_2.pos_x - state.selected_vector.point_1.pos_x),
-                    pos_y=state.selected_point.pos_y + (state.selected_vector.point_2.pos_y - state.selected_vector.point_1.pos_y),
+                    pos_x=state.selected_vector_point.pos_x + (state.selected_vector.point_2.pos_x - state.selected_vector.point_1.pos_x),
+                    pos_y=state.selected_vector_point.pos_y + (state.selected_vector.point_2.pos_y - state.selected_vector.point_1.pos_y),
                 )
                 vector = Vector_from_point(
                     root,
                     unit_size=globals.axes.unit_size,
-                    point_1=state.selected_point,
+                    point_1=state.selected_vector_point,
                     lower_label=lower_label,
                 )
                 vector.parent_vector = state.selected_vector
@@ -509,10 +509,63 @@ def pressing(root):
                 state.selected_vector.child_vectors_labels.append(lower_label)
                 state.selected_vector.loaded_children = False
                 state.selected_vector.deselect()
-                state.selected_point.deselect()
-                state.selected_point = None
+                state.selected_vector_point.deselect()
+                state.selected_vector_point = None
                 state.selected_vector = None
                    
+
+        
+        elif state.selected_tool == "perpendicular_line":
+            state.start_pos["x"] = e.x
+            state.start_pos["y"] = e.y
+            world_x, world_y = screen_to_world(e)
+            p = find_point_at_position(e)
+            if p is None:
+                l = find_line_at_position(e)
+                if l is not None:
+                    state.selected_perpendicular_line = l
+                    l.select()
+                else:
+                    label = get_label(state)
+                    p = Point(
+                        root,
+                        e,
+                        label=label,
+                        unit_size=globals.axes.unit_size,
+                        pos_x=world_x,
+                        pos_y=world_y,
+                    )
+                    p.select()
+                    state.selected_perpendicular_point = p
+                    globals.objects.register(p)
+            else:
+                state.selected_perpendicular_point = p
+                p.select()
+                globals.objects.register(p)
+                
+                
+            if state.selected_perpendicular_line and state.selected_perpendicular_point:
+                l = Perpendicular_line(
+                    root,
+                )
+                l.point_1 = state.selected_perpendicular_point
+                if l.point_1 is state.selected_perpendicular_line.point_1:
+                    l.parent_line_free_point = state.selected_perpendicular_line.point_2
+                elif l.point_1 is state.selected_perpendicular_line.point_2:
+                    l.parent_line_free_point = state.selected_perpendicular_line.point_1
+                else:
+                    l.parent_line_free_point = state.selected_perpendicular_line.point_1
+                    
+                globals.objects.register(l)
+                state.selected_perpendicular_line.child_lines.append(l)
+                state.selected_perpendicular_line.deselect()
+                state.selected_perpendicular_point.deselect()
+                state.selected_perpendicular_line = None
+                state.selected_perpendicular_point = None
+                
+            
+            
+
 
     def middle_click_pressed(e):
         state.start_pos["x"] = e.x

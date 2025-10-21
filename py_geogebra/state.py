@@ -42,4 +42,6 @@ shift_pressed = False
 line_to_attach = None
 point_to_attach = None
 selected_vector = None
-
+selected_vector_point = None
+selected_perpendicular_point = None
+selected_perpendicular_line = None

@@ -8,14 +8,14 @@ from .. import state
 from .lower_label import Lower_label
 import math
 from .. import globals
+from .blank_point import Blank_point
 
 
-class Line:
+class Perpendicular_line:
     def __init__(
         self,
         root: tk.Tk,
         unit_size: int = 40,
-        point_1=None,
     ):
         self.root = root
         self.canvas = globals.canvas
@@ -36,13 +36,14 @@ class Line:
 
         self.is_drawable = True
 
-        self.tag = f"line_{id(self)}"
-        self.point_1 = point_1
-        self.point_2 = None
+        self.tag = f"perpendicular_line_{id(self)}"
+        self.point_1 = None
+        self.point_2 = Blank_point(root)
         self.selected = False
+        
+        self.parent_line_free_point = None
 
-        self.points = [self.point_1]
-        self.child_lines = []
+        self.points = []
         self.lower_label = ""
         self.lower_label_obj = Lower_label(self.root, obj=self)
         self.objects.register(self.lower_label_obj)
@@ -64,10 +65,10 @@ class Line:
             "offset_y": self.offset_y,
             "tag": self.tag,
             "points": [p.label for p in self.points],
-            "child_lines": [l.lower_label for l in self.child_lines],
             "point_1": self.point_1.label if self.point_1 else None,
             "point_2": self.point_2.label if self.point_2 else None,
             "prescription": [p for p in self.prescription],
+            "parent_line_free_point": self.parent_line_free_point.label if self.parent_line_free_point else None,
         }
 
     @classmethod
@@ -75,12 +76,6 @@ class Line:
         def find_point(label):
             for obj in globals.objects._objects:
                 if getattr(obj, "label", None) == label:
-                    return obj
-            return None
-        
-        def find_line(label):
-            for obj in globals.objects._objects:
-                if getattr(obj, "lower_label", None) == label:
                     return obj
             return None
 
@@ -97,11 +92,11 @@ class Line:
         line.pos_x = data.get("pos_x", 0)
         line.pos_y = data.get("pos_y", 0)
         line.points = [find_point(lbl) for lbl in data.get("points", []) if lbl]
-        line.child_lines = [find_line(lbl) for lbl in data.get("child_lines", []) if lbl]
         cx, cy = state.center
         line.cx = cx
         line.cy = cy
         line.prescription = data.get("prescription", {})
+        line.parent_line_free_point = data.get("parent_line_free_point", {})
         line.update()
         return line
 
@@ -115,6 +110,9 @@ class Line:
 
     def update(self, e=None):
         self.canvas.delete(self.tag)
+        self.point_2.pos_x = self.point_1.pos_x + (self.point_1.pos_y - self.parent_line_free_point.pos_y)
+        self.point_2.pos_y = self.point_1.pos_y - (self.point_1.pos_x - self.parent_line_free_point.pos_x)
+        self.point_2.update()
 
         visual_scale = min(max(1, self.scale**0.5), 1.9)
 
@@ -137,7 +135,7 @@ class Line:
         else:
             x1, y1 = self.point_1.pos_x, self.point_1.pos_y
 
-            if self.point_2 is None and e is None:
+            if self.point_1 is None:
                 return
 
             if self.point_2 is None:
@@ -173,9 +171,7 @@ class Line:
         x1, y1 = world_to_screen(x1, y1)
         x2, y2 = world_to_screen(x2, y2)
 
-        if not self.point_2:
-            self.is_drawable = True
-        elif self.point_1.is_drawable and self.point_2.is_drawable:
+        if self.point_1.is_drawable:
             self.is_drawable = True
         else:
             self.is_drawable = False
@@ -203,15 +199,9 @@ class Line:
                 tags=self.tag,
             )
         self.canvas.tag_raise(self.point_1.tag)
-        if self.point_2 is not None:
-            self.canvas.tag_raise(self.point_2.tag)
-            if self.point_2 not in self.points:
-                self.points.append(self.point_2)
+
 
         for p in self.points:
             self.canvas.tag_raise(p.tag)
-        for l in self.child_lines:
-            if l:
-                l.update()
         self.prev_x, self.prev_y = self.pos_x, self.pos_y
         self.canvas.tag_raise(self.lower_label_obj.tag)
