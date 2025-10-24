@@ -1,5 +1,9 @@
 import tkinter as tk
-from ..tools.utils import world_to_screen, snap_to_line
+from ..tools.utils import (
+    world_to_screen,
+    snap_to_line,
+    calculate_vector
+)
 from .. import state
 import math
 from .lower_label import Lower_label
@@ -49,6 +53,8 @@ class Segment_with_length:
         self.lower_label = lower_label
         self.lower_label_obj = Lower_label(self.root, obj=self)
         self.objects.register(self.lower_label_obj)
+        self.vector = (0,0)
+        self.child_lines = []
 
         self.canvas.bind("<Configure>", lambda e: self.update())
 
@@ -165,8 +171,10 @@ class Segment_with_length:
         else:
             self.is_drawable = False
 
-        if self.is_drawable and self.point_2 is not None:
+        if self.point_2 is not None:
             self.lower_label_obj.update()
+            
+            self.vector = calculate_vector(self.point_1, self.point_2)
 
         if self.is_drawable:
             if self.selected:
@@ -200,3 +208,8 @@ class Segment_with_length:
         self.point_2.update()
         for p in self.points:
             self.canvas.tag_raise(p.tag)
+            
+        for l in self.child_lines:
+            if l:
+                l.parent_vector = self.vector
+                l.update()

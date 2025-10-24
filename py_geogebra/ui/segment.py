@@ -1,5 +1,10 @@
 import tkinter as tk
-from ..tools.utils import world_to_screen, distance, snap_to_line
+from ..tools.utils import (
+    world_to_screen, 
+    distance, 
+    snap_to_line, 
+    calculate_vector
+)
 from .. import state
 from .lower_label import Lower_label
 from .. import globals
@@ -41,6 +46,8 @@ class Segment:
         self.lower_label = lower_label
         self.lower_label_obj = Lower_label(self.root, obj=self)
         self.objects.register(self.lower_label_obj)
+        self.vector = (0,0)
+        self.child_lines = []
 
         self.points = [self.point_1]
         self.canvas.bind("<Configure>", lambda e: self.update())
@@ -136,6 +143,11 @@ class Segment:
                 obj.translation = 0
             snap_to_line(obj, self)
             obj.update()
+            
+        if self.point_2 is not None:
+            self.lower_label_obj.update()
+            
+            self.vector = calculate_vector(self.point_1, self.point_2)
 
         if not self.point_2:
             self.is_drawable = True
@@ -157,7 +169,6 @@ class Segment:
             x1, y1 = world_to_screen(x1, y1)
             x2, y2 = world_to_screen(x2, y2)
             
-            self.lower_label_obj.update()
 
             if self.selected:
                 self.canvas.create_line(
@@ -187,5 +198,10 @@ class Segment:
 
         for p in self.points:
             self.canvas.tag_raise(p.tag)
+            
+        for l in self.child_lines:
+            if l:
+                l.parent_vector = self.vector
+                l.update()
 
         self.prev_x, self.prev_y = self.pos_x, self.pos_y

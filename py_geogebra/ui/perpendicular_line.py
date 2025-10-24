@@ -206,6 +206,7 @@ class Perpendicular_line:
             self.canvas.tag_raise(p.tag)
         for l in self.child_lines:
             if l:
+                l.parent_vector = self.vector
                 l.update()
         self.prev_x, self.prev_y = self.pos_x, self.pos_y
         self.canvas.tag_raise(self.lower_label_obj.tag)

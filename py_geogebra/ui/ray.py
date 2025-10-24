@@ -3,6 +3,7 @@ from ..tools.utils import (
     world_to_screen,
     snap_to_line,
     get_linear_fuction_prescription,
+    calculate_vector,
 )
 from .. import state
 from .. import globals
@@ -48,6 +49,8 @@ class Ray:
         self.objects.register(self.lower_label_obj)
         self.prescription = ()
         self.angle = 0
+        self.vector = (0,0)
+        self.child_lines = []
 
         self.canvas.bind("<Configure>", lambda e: self.update())
 
@@ -153,6 +156,8 @@ class Ray:
 
         if self.point_2 is not None:
             self.lower_label_obj.update()
+            
+            self.vector = calculate_vector(self.point_1, self.point_2)
 
         span = (
             max(self.canvas.winfo_width(), self.canvas.winfo_height())
@@ -207,6 +212,11 @@ class Ray:
 
         for p in self.points:
             self.canvas.tag_raise(p.tag)
+            
+        for l in self.child_lines:
+            if l:
+                l.parent_vector = self.vector
+                l.update()
 
         self.prev_x, self.prev_y = self.pos_x, self.pos_y
         self.canvas.tag_raise(self.lower_label_obj.tag)
