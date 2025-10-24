@@ -8,6 +8,7 @@ from ..ui.point import Point
 from ..ui.axes import Axes
 from ..ui.line import Line
 from ..ui.perpendicular_line import Perpendicular_line
+from ..ui.parallel_line import Parallel_line
 from ..ui.ray import Ray
 from ..ui.segment import Segment
 from ..ui.vector import Vector
@@ -153,6 +154,9 @@ class Objects:
                 self.register(vector)
             elif od["type"] == "Perpendicular_line":
                 vector = Perpendicular_line.from_dict(root, od)
+                self.register(vector)
+            elif od["type"] == "Paralle_line":
+                vector = Parallel_line.from_dict(root, od)
                 self.register(vector)
 
         for od in data.get("objects", []):

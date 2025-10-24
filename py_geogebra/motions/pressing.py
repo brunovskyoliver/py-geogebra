@@ -6,6 +6,7 @@ from ..ui.midpoint_or_center import Midpoint_or_center
 from ..ui.pen import Pen
 from ..ui.line import Line
 from ..ui.perpendicular_line import Perpendicular_line
+from ..ui.parallel_line import Parallel_line
 from ..ui.ray import Ray
 from ..ui.segment import Segment
 from ..ui.vector import Vector
@@ -547,6 +548,53 @@ def pressing(root):
                 
             if state.selected_perpendicular_line and state.selected_perpendicular_point:
                 l = Perpendicular_line(
+                    root,
+                )
+                lower_label = get_lower_label(state)
+                l.lower_label = lower_label
+                l.parent_vector = state.selected_perpendicular_line.vector
+                l.point_1 = state.selected_perpendicular_point
+                    
+                globals.objects.register(l)
+                state.selected_perpendicular_line.child_lines.append(l)
+                state.selected_perpendicular_line.deselect()
+                state.selected_perpendicular_point.deselect()
+                state.selected_perpendicular_line = None
+                state.selected_perpendicular_point = None
+                
+
+        
+        elif state.selected_tool == "parallel_line":
+            state.start_pos["x"] = e.x
+            state.start_pos["y"] = e.y
+            world_x, world_y = screen_to_world(e)
+            p = find_point_at_position(e)
+            if p is None:
+                l = find_line_at_position(e)
+                if l:
+                    state.selected_perpendicular_line = l
+                    l.select()
+                else:
+                    label = get_label(state)
+                    p = Point(
+                        root,
+                        e,
+                        label=label,
+                        unit_size=globals.axes.unit_size,
+                        pos_x=world_x,
+                        pos_y=world_y,
+                    )
+                    p.select()
+                    state.selected_perpendicular_point = p
+                    globals.objects.register(p)
+            else:
+                state.selected_perpendicular_point = p
+                p.select()
+                globals.objects.register(p)
+                
+                
+            if state.selected_perpendicular_line and state.selected_perpendicular_point:
+                l = Parallel_line(
                     root,
                 )
                 lower_label = get_lower_label(state)
