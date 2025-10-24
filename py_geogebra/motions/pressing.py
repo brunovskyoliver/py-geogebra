@@ -1,5 +1,6 @@
 from .. import state
 from ..ui.point import Point
+from ..ui.blank_point import Blank_point
 from ..ui.intersect import Create_Intersect
 from ..ui.midpoint_or_center import Midpoint_or_center
 from ..ui.pen import Pen
@@ -522,7 +523,7 @@ def pressing(root):
             p = find_point_at_position(e)
             if p is None:
                 l = find_line_at_position(e)
-                if l is not None:
+                if l:
                     state.selected_perpendicular_line = l
                     l.select()
                 else:
@@ -548,13 +549,8 @@ def pressing(root):
                 l = Perpendicular_line(
                     root,
                 )
+                l.parent_vector = state.selected_perpendicular_line.vector
                 l.point_1 = state.selected_perpendicular_point
-                if l.point_1 is state.selected_perpendicular_line.point_1:
-                    l.parent_line_free_point = state.selected_perpendicular_line.point_2
-                elif l.point_1 is state.selected_perpendicular_line.point_2:
-                    l.parent_line_free_point = state.selected_perpendicular_line.point_1
-                else:
-                    l.parent_line_free_point = state.selected_perpendicular_line.point_1
                     
                 globals.objects.register(l)
                 state.selected_perpendicular_line.child_lines.append(l)

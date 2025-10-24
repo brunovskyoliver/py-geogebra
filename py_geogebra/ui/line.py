@@ -3,6 +3,7 @@ from ..tools.utils import (
     world_to_screen,
     snap_to_line,
     get_linear_fuction_prescription,
+    calculate_vector,
 )
 from .. import state
 from .lower_label import Lower_label
@@ -48,6 +49,7 @@ class Line:
         self.objects.register(self.lower_label_obj)
         self.prescription = ()
         self.angle = 0
+        self.vector = (0, 0)
 
         self.canvas.bind("<Configure>", lambda e: self.update())
 
@@ -161,6 +163,8 @@ class Line:
 
         if self.point_2 is not None:
             self.lower_label_obj.update()
+            
+            self.vector = calculate_vector(self.point_1, self.point_2)
 
         self.prescription = get_linear_fuction_prescription(x1, y1, x2, y2)
 
@@ -172,6 +176,8 @@ class Line:
 
         x1, y1 = world_to_screen(x1, y1)
         x2, y2 = world_to_screen(x2, y2)
+        
+        
 
         if not self.point_2:
             self.is_drawable = True
@@ -212,6 +218,7 @@ class Line:
             self.canvas.tag_raise(p.tag)
         for l in self.child_lines:
             if l:
+                l.parent_vector = self.vector
                 l.update()
         self.prev_x, self.prev_y = self.pos_x, self.pos_y
         self.canvas.tag_raise(self.lower_label_obj.tag)
