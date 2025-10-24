@@ -1,5 +1,10 @@
 import tkinter as tk
-from ..tools.utils import world_to_screen, distance, snap_to_line
+from ..tools.utils import (
+    world_to_screen,
+    distance,
+    snap_to_line,
+    calculate_vector
+)
 from .. import state
 from .lower_label import Lower_label
 from .. import globals
@@ -41,6 +46,9 @@ class Vector:
         self.lower_label = lower_label
         self.lower_label_obj = Lower_label(self.root, obj=self)
         self.objects.register(self.lower_label_obj)
+        
+        self.vector = (0,0)
+        self.child_lines = []
 
         self.points = [self.point_1]
         self.child_vectors = []
@@ -148,6 +156,11 @@ class Vector:
 
         if self.point_2 is None and e is None:
             return
+        
+        if self.point_2 is not None:
+            self.lower_label_obj.update()
+            
+            self.vector = calculate_vector(self.point_1, self.point_2)
 
         for obj in self.points:
             if (obj is self.point_1) or (obj is self.point_2):
@@ -213,5 +226,10 @@ class Vector:
         for obj in self.child_vectors:
             if obj:
                 obj.update()
+                
+        for l in self.child_lines:
+            if l:
+                l.parent_vector = self.vector
+                l.update()
 
         self.prev_x, self.prev_y = self.pos_x, self.pos_y
