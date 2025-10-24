@@ -2,7 +2,8 @@ import tkinter as tk
 from ..tools.utils import (
     world_to_screen,
     snap_to_line,
-    calculate_vector
+    calculate_vector,
+    load_lines_from_labels,
 )
 from .. import state
 import math
@@ -55,6 +56,8 @@ class Segment_with_length:
         self.objects.register(self.lower_label_obj)
         self.vector = (0,0)
         self.child_lines = []
+        self.child_lines_labels = []
+        
 
         self.canvas.bind("<Configure>", lambda e: self.update())
 
@@ -75,6 +78,8 @@ class Segment_with_length:
             "point_2": self.point_2.label if self.point_2 else None,
             "length": self.length,
             "angle": self.angle,
+            "vector": self.vector,
+            "child_lines_labels": [l.lower_label for l in self.child_lines]
         }
 
     @classmethod
@@ -103,6 +108,8 @@ class Segment_with_length:
         swl.cy = cy
         swl.length = data.get("length", 1.0)
         swl.angle = data.get("angle", 0.0)
+        swl.vector = data.get("vector")
+        swl.child_lines_labels = [lbl for lbl in data.get("child_lines_labels", [])]
         globals.sidebar.items.append(swl)
         swl.update()
         return swl
@@ -206,6 +213,10 @@ class Segment_with_length:
 
         self.point_2.is_drawable = self.point_1.is_drawable
         self.point_2.update()
+        
+        if len(self.child_lines) == 0:
+            self.child_lines = load_lines_from_labels(self.child_lines_labels)
+        
         for p in self.points:
             self.canvas.tag_raise(p.tag)
             

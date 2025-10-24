@@ -1,0 +1,715 @@
+{
+  "version": 1,
+  "view": {
+    "offset_x": 0,
+    "offset_y": 0,
+    "scale": 1.0,
+    "unit_size": 40
+  },
+  "objects": [
+    {
+      "type": "Axes",
+      "unit_size": 40,
+      "scale": 1.0,
+      "offset_x": 0,
+      "offset_y": 0,
+      "current_step": 1
+    },
+    {
+      "type": "Point",
+      "label": "A",
+      "pos_x": -19.975,
+      "pos_y": 11.975,
+      "color": "blue",
+      "unit_size": 40,
+      "scale": 1.0,
+      "is_drawable": true,
+      "translation": 0,
+      "offset_x": 0,
+      "offset_y": 0,
+      "tag": "point_4597631360"
+    },
+    {
+      "type": "Lower Label",
+      "unit_size": 40,
+      "scale": 1.0,
+      "tag": "lower_label_4597632368",
+      "parent_tag": "line_4597632032"
+    },
+    {
+      "type": "Line",
+      "lower_label": "a",
+      "pos_x": 0.0,
+      "pos_y": 0.0,
+      "unit_size": 40,
+      "scale": 1.0,
+      "is_drawable": true,
+      "offset_x": 0,
+      "offset_y": 0,
+      "tag": "line_4597632032",
+      "points": [
+        "A",
+        "B"
+      ],
+      "child_lines": [
+        "g"
+      ],
+      "point_1": "A",
+      "point_2": "B",
+      "prescription": [
+        -0.6,
+        -17.83,
+        -201.47
+      ],
+      "vector": [
+        -17.825000000000003,
+        0.5999999999999996
+      ],
+      "child_lines_labels": [
+        "g"
+      ]
+    },
+    {
+      "type": "Point",
+      "label": "B",
+      "pos_x": -2.15,
+      "pos_y": 11.375,
+      "color": "blue",
+      "unit_size": 40,
+      "scale": 1.0,
+      "is_drawable": true,
+      "translation": 0,
+      "offset_x": 0,
+      "offset_y": 0,
+      "tag": "point_4597164752"
+    },
+    {
+      "type": "Point",
+      "label": "C",
+      "pos_x": -21.225,
+      "pos_y": 10.475,
+      "color": "blue",
+      "unit_size": 40,
+      "scale": 1.0,
+      "is_drawable": true,
+      "translation": 0,
+      "offset_x": 0,
+      "offset_y": 0,
+      "tag": "point_4597165392"
+    },
+    {
+      "type": "Lower Label",
+      "unit_size": 40,
+      "scale": 1.0,
+      "tag": "lower_label_4597165072",
+      "parent_tag": "segment_4597631696"
+    },
+    {
+      "type": "Segment",
+      "lower_label": "b",
+      "pos_x": 0.0,
+      "pos_y": 0.0,
+      "unit_size": 40,
+      "scale": 1.0,
+      "is_drawable": true,
+      "offset_x": 0,
+      "offset_y": 0,
+      "tag": "segment_4597631696",
+      "points": [
+        "C",
+        "D"
+      ],
+      "point_1": "C",
+      "point_2": "D",
+      "vector": [
+        -7.050000000000001,
+        -0.40000000000000036
+      ],
+      "child_lines_labels": [
+        "h"
+      ]
+    },
+    {
+      "type": "Point",
+      "label": "D",
+      "pos_x": -14.175,
+      "pos_y": 10.875,
+      "color": "blue",
+      "unit_size": 40,
+      "scale": 1.0,
+      "is_drawable": true,
+      "translation": 0,
+      "offset_x": 0,
+      "offset_y": 0,
+      "tag": "point_4597616272"
+    },
+    {
+      "type": "Point",
+      "label": "E",
+      "pos_x": -20.475,
+      "pos_y": 8.05,
+      "color": "blue",
+      "unit_size": 40,
+      "scale": 1.0,
+      "is_drawable": true,
+      "translation": 0,
+      "offset_x": 0,
+      "offset_y": 0,
+      "tag": "point_4597616576"
+    },
+    {
+      "type": "Point",
+      "label": "F",
+      "pos_x": -15.515121247626274,
+      "pos_y": 8.682141409616259,
+      "color": "blue",
+      "unit_size": 40,
+      "scale": 1.0,
+      "is_drawable": true,
+      "translation": 0,
+      "offset_x": 0,
+      "offset_y": 0,
+      "tag": "point_4597616880"
+    },
+    {
+      "type": "Lower Label",
+      "unit_size": 40,
+      "scale": 1.0,
+      "tag": "lower_label_4597165712",
+      "parent_tag": "segment_with_length_4597632704"
+    },
+    {
+      "type": "Segment With Length",
+      "lower_label": "c",
+      "pos_x": 0.0,
+      "pos_y": 0.0,
+      "unit_size": 40,
+      "scale": 1.0,
+      "is_drawable": true,
+      "offset_x": 0,
+      "offset_y": 0,
+      "tag": "segment_with_length_4597632704",
+      "points": [
+        "E",
+        "F"
+      ],
+      "point_1": "E",
+      "point_2": "F",
+      "length": 200.0,
+      "angle": 0.12676753510136174,
+      "vector": [
+        -4.9598787523737276,
+        -0.6321414096162581
+      ],
+      "child_lines_labels": [
+        "i"
+      ]
+    },
+    {
+      "type": "Point",
+      "label": "G",
+      "pos_x": -20.8,
+      "pos_y": 6.45,
+      "color": "blue",
+      "unit_size": 40,
+      "scale": 1.0,
+      "is_drawable": true,
+      "translation": 0,
+      "offset_x": 0,
+      "offset_y": 0,
+      "tag": "point_4597617488"
+    },
+    {
+      "type": "Lower Label",
+      "unit_size": 40,
+      "scale": 1.0,
+      "tag": "lower_label_4597617184",
+      "parent_tag": "ray_4597633040"
+    },
+    {
+      "type": "Ray",
+      "lower_label": "d",
+      "pos_x": 0.0,
+      "pos_y": 0.0,
+      "unit_size": 40,
+      "scale": 1.0,
+      "is_drawable": true,
+      "offset_x": 0,
+      "offset_y": 0,
+      "tag": "ray_4597633040",
+      "points": [
+        "G",
+        "H"
+      ],
+      "point_1": "G",
+      "point_2": "H",
+      "prescription": [
+        -1.23,
+        -6.58,
+        -16.93
+      ],
+      "vector": [
+        -6.575000000000001,
+        1.2250000000000005
+      ],
+      "child_lines_labels": [
+        "l"
+      ]
+    },
+    {
+      "type": "Point",
+      "label": "H",
+      "pos_x": -14.225,
+      "pos_y": 5.225,
+      "color": "blue",
+      "unit_size": 40,
+      "scale": 1.0,
+      "is_drawable": true,
+      "translation": 0,
+      "offset_x": 0,
+      "offset_y": 0,
+      "tag": "point_4597617792"
+    },
+    {
+      "type": "Point",
+      "label": "I",
+      "pos_x": -21.3,
+      "pos_y": 1.075,
+      "color": "blue",
+      "unit_size": 40,
+      "scale": 1.0,
+      "is_drawable": true,
+      "translation": 0,
+      "offset_x": 0,
+      "offset_y": 0,
+      "tag": "point_4597618096"
+    },
+    {
+      "type": "Lower Label",
+      "unit_size": 40,
+      "scale": 1.0,
+      "tag": "lower_label_4597618400",
+      "parent_tag": "vector_4597633376"
+    },
+    {
+      "type": "Vector",
+      "lower_label": "e",
+      "pos_x": 0.0,
+      "pos_y": 0.0,
+      "unit_size": 40,
+      "scale": 1.0,
+      "is_drawable": true,
+      "offset_x": 0,
+      "offset_y": 0,
+      "tag": "vector_4597633376",
+      "points": [
+        "I",
+        "J"
+      ],
+      "point_1": "I",
+      "point_2": "J",
+      "child_vectors_labels": [
+        "f"
+      ],
+      "loaded_children": false,
+      "vector": [
+        -9.25,
+        1.2
+      ],
+      "child_lines_labels": [
+        "k"
+      ]
+    },
+    {
+      "type": "Point",
+      "label": "J",
+      "pos_x": -12.05,
+      "pos_y": -0.125,
+      "color": "blue",
+      "unit_size": 40,
+      "scale": 1.0,
+      "is_drawable": true,
+      "translation": 0,
+      "offset_x": 0,
+      "offset_y": 0,
+      "tag": "point_4597618704"
+    },
+    {
+      "type": "Lower Label",
+      "unit_size": 40,
+      "scale": 1.0,
+      "tag": "lower_label_4597263120",
+      "parent_tag": "vector_4597633712"
+    },
+    {
+      "type": "Vector_from_point",
+      "lower_label": "f",
+      "pos_x": 0.0,
+      "pos_y": 0.0,
+      "unit_size": 40,
+      "scale": 1.0,
+      "is_drawable": true,
+      "offset_x": 0,
+      "offset_y": 0,
+      "tag": "vector_4597633712",
+      "points": [
+        "H",
+        "K"
+      ],
+      "point_1": "H",
+      "point_2": "K",
+      "parent_vector": "e",
+      "vector": [
+        -9.25,
+        1.2000000000000002
+      ],
+      "child_lines_labels": [
+        "j"
+      ]
+    },
+    {
+      "type": "Point",
+      "label": "K",
+      "pos_x": -4.975,
+      "pos_y": 4.0249999999999995,
+      "color": "blue",
+      "unit_size": 40,
+      "scale": 1.0,
+      "is_drawable": true,
+      "translation": 0,
+      "offset_x": 0,
+      "offset_y": 0,
+      "tag": "point_4597619008"
+    },
+    {
+      "type": "Point",
+      "label": "L",
+      "pos_x": -0.525,
+      "pos_y": 9.975,
+      "color": "blue",
+      "unit_size": 40,
+      "scale": 1.0,
+      "is_drawable": true,
+      "translation": 0,
+      "offset_x": 0,
+      "offset_y": 0,
+      "tag": "point_4597619312"
+    },
+    {
+      "type": "Lower Label",
+      "unit_size": 40,
+      "scale": 1.0,
+      "tag": "lower_label_4588138800",
+      "parent_tag": "perpendicular_line_4597634048"
+    },
+    {
+      "type": "Perpendicular_line",
+      "lower_label": "g",
+      "pos_x": 0.0,
+      "pos_y": 0.0,
+      "unit_size": 40,
+      "scale": 1.0,
+      "is_drawable": true,
+      "offset_x": 0,
+      "offset_y": 0,
+      "tag": "perpendicular_line_4597634048",
+      "points": [],
+      "point_1": "L",
+      "prescription": [
+        17.83,
+        -0.6,
+        -15.34
+      ],
+      "parent_vector": [
+        -17.825000000000003,
+        0.5999999999999996
+      ],
+      "child_lines_labels": []
+    },
+    {
+      "type": "Point",
+      "label": "N",
+      "pos_x": -16.025,
+      "pos_y": 9.8,
+      "color": "blue",
+      "unit_size": 40,
+      "scale": 1.0,
+      "is_drawable": true,
+      "translation": 0,
+      "offset_x": 0,
+      "offset_y": 0,
+      "tag": "point_4597619616"
+    },
+    {
+      "type": "Lower Label",
+      "unit_size": 40,
+      "scale": 1.0,
+      "tag": "lower_label_4588139072",
+      "parent_tag": "perpendicular_line_4597166032"
+    },
+    {
+      "type": "Perpendicular_line",
+      "lower_label": "h",
+      "pos_x": 0.0,
+      "pos_y": 0.0,
+      "unit_size": 40,
+      "scale": 1.0,
+      "is_drawable": true,
+      "offset_x": 0,
+      "offset_y": 0,
+      "tag": "perpendicular_line_4597166032",
+      "points": [],
+      "point_1": "N",
+      "prescription": [
+        7.05,
+        0.4,
+        -109.06
+      ],
+      "parent_vector": [
+        -7.050000000000001,
+        -0.40000000000000036
+      ],
+      "child_lines_labels": []
+    },
+    {
+      "type": "Point",
+      "label": "P",
+      "pos_x": -15.275,
+      "pos_y": 8.95,
+      "color": "blue",
+      "unit_size": 40,
+      "scale": 1.0,
+      "is_drawable": true,
+      "translation": 0,
+      "offset_x": 0,
+      "offset_y": 0,
+      "tag": "point_4597619920"
+    },
+    {
+      "type": "Lower Label",
+      "unit_size": 40,
+      "scale": 1.0,
+      "tag": "lower_label_4597438032",
+      "parent_tag": "perpendicular_line_4597166672"
+    },
+    {
+      "type": "Perpendicular_line",
+      "lower_label": "i",
+      "pos_x": 0.0,
+      "pos_y": 0.0,
+      "unit_size": 40,
+      "scale": 1.0,
+      "is_drawable": true,
+      "offset_x": 0,
+      "offset_y": 0,
+      "tag": "perpendicular_line_4597166672",
+      "points": [],
+      "point_1": "P",
+      "prescription": [
+        4.96,
+        0.63,
+        -70.1
+      ],
+      "parent_vector": [
+        -4.9598787523737276,
+        -0.6321414096162581
+      ],
+      "child_lines_labels": []
+    },
+    {
+      "type": "Point",
+      "label": "R",
+      "pos_x": -13.95,
+      "pos_y": 7.8,
+      "color": "blue",
+      "unit_size": 40,
+      "scale": 1.0,
+      "is_drawable": true,
+      "translation": 0,
+      "offset_x": 0,
+      "offset_y": 0,
+      "tag": "point_4597620224"
+    },
+    {
+      "type": "Lower Label",
+      "unit_size": 40,
+      "scale": 1.0,
+      "tag": "lower_label_4597437776",
+      "parent_tag": "perpendicular_line_4597167632"
+    },
+    {
+      "type": "Perpendicular_line",
+      "lower_label": "j",
+      "pos_x": 0.0,
+      "pos_y": 0.0,
+      "unit_size": 40,
+      "scale": 1.0,
+      "is_drawable": true,
+      "offset_x": 0,
+      "offset_y": 0,
+      "tag": "perpendicular_line_4597167632",
+      "points": [],
+      "point_1": "R",
+      "prescription": [
+        9.25,
+        -1.2,
+        -138.4
+      ],
+      "parent_vector": [
+        -9.25,
+        1.2000000000000002
+      ],
+      "child_lines_labels": []
+    },
+    {
+      "type": "Point",
+      "label": "T",
+      "pos_x": -11.925,
+      "pos_y": 5.875,
+      "color": "blue",
+      "unit_size": 40,
+      "scale": 1.0,
+      "is_drawable": true,
+      "translation": 0,
+      "offset_x": 0,
+      "offset_y": 0,
+      "tag": "point_4597620832"
+    },
+    {
+      "type": "Lower Label",
+      "unit_size": 40,
+      "scale": 1.0,
+      "tag": "lower_label_4597602240",
+      "parent_tag": "perpendicular_line_4597167952"
+    },
+    {
+      "type": "Perpendicular_line",
+      "lower_label": "k",
+      "pos_x": 0.0,
+      "pos_y": 0.0,
+      "unit_size": 40,
+      "scale": 1.0,
+      "is_drawable": true,
+      "offset_x": 0,
+      "offset_y": 0,
+      "tag": "perpendicular_line_4597167952",
+      "points": [],
+      "point_1": "T",
+      "prescription": [
+        9.25,
+        -1.2,
+        -117.36
+      ],
+      "parent_vector": [
+        -9.25,
+        1.2
+      ],
+      "child_lines_labels": []
+    },
+    {
+      "type": "Point",
+      "label": "V",
+      "pos_x": -5.225,
+      "pos_y": 3.325,
+      "color": "blue",
+      "unit_size": 40,
+      "scale": 1.0,
+      "is_drawable": true,
+      "translation": 0,
+      "offset_x": 0,
+      "offset_y": 0,
+      "tag": "point_4597621440"
+    },
+    {
+      "type": "Lower Label",
+      "unit_size": 40,
+      "scale": 1.0,
+      "tag": "lower_label_4597602480",
+      "parent_tag": "perpendicular_line_4597168272"
+    },
+    {
+      "type": "Perpendicular_line",
+      "lower_label": "l",
+      "pos_x": 0.0,
+      "pos_y": 0.0,
+      "unit_size": 40,
+      "scale": 1.0,
+      "is_drawable": true,
+      "offset_x": 0,
+      "offset_y": 0,
+      "tag": "perpendicular_line_4597168272",
+      "points": [],
+      "point_1": "V",
+      "prescription": [
+        6.58,
+        -1.23,
+        -38.43
+      ],
+      "parent_vector": [
+        -6.575000000000001,
+        1.2250000000000005
+      ],
+      "child_lines_labels": []
+    }
+  ],
+  "state": {
+    "selected_tool": "arrow",
+    "start_pos": {
+      "x": 261,
+      "y": 433
+    },
+    "scale": 1.0,
+    "current_pen": null,
+    "current_polyline": null,
+    "label_counter": 23,
+    "lower_label_counter": 12,
+    "label_unused": [],
+    "lower_label_unused": [],
+    "freehand_last_pos": {
+      "x": 0,
+      "y": 0
+    },
+    "drag_target": null,
+    "deleted_point_label": null,
+    "center": [
+      928,
+      556
+    ],
+    "sidebar_resizing": false,
+    "selected_intersect_line_1": null,
+    "shift_pressed": false,
+    "line_to_attach": null,
+    "point_to_attach": null,
+    "selected_vector": null,
+    "selected_vector_point": null,
+    "selected_perpendicular_point": null,
+    "selected_perpendicular_line": null
+  },
+  "sidebar": {
+    "type": "Sidebar",
+    "width": 200,
+    "order": [
+      "point_4597631360",
+      "point_4597164752",
+      "line_4597632032",
+      "point_4597165392",
+      "point_4597616272",
+      "segment_4597631696",
+      "point_4597616576",
+      "point_4597616880",
+      "point_4597617488",
+      "point_4597617792",
+      "ray_4597633040",
+      "point_4597618096",
+      "point_4597618704",
+      "vector_4597633376",
+      "point_4597619008",
+      "point_4597619312",
+      "point_4597619616",
+      "point_4597619920",
+      "point_4597620224",
+      "point_4597620832",
+      "point_4597621440"
+    ]
+  }
+}

@@ -3,7 +3,8 @@ from ..tools.utils import (
     world_to_screen, 
     distance, 
     snap_to_line, 
-    calculate_vector
+    calculate_vector,
+    load_lines_from_labels,
 )
 from .. import state
 from .lower_label import Lower_label
@@ -48,6 +49,7 @@ class Segment:
         self.objects.register(self.lower_label_obj)
         self.vector = (0,0)
         self.child_lines = []
+        self.child_lines_labels = []
 
         self.points = [self.point_1]
         self.canvas.bind("<Configure>", lambda e: self.update())
@@ -67,6 +69,8 @@ class Segment:
             "points": [p.label for p in self.points],
             "point_1": self.point_1.label if self.point_1 else None,
             "point_2": self.point_2.label if self.point_2 else None,
+            "vector": self.vector,
+            "child_lines_labels": [l.lower_label for l in self.child_lines]
         }
 
     @classmethod
@@ -92,6 +96,8 @@ class Segment:
         segment.pos_x = data.get("pos_x", 0)
         segment.pos_y = data.get("pos_y", 0)
         segment.points = [find_point(lbl) for lbl in data.get("points", []) if lbl]
+        segment.vector = data.get("vector")
+        segment.child_lines_labels = [lbl for lbl in data.get("child_lines_labels", [])]
         cx, cy = state.center
         segment.cx = cx
         segment.cy = cy
@@ -195,6 +201,9 @@ class Segment:
             self.canvas.tag_raise(self.point_2.tag)
             if self.point_2 not in self.points:
                 self.points.append(self.point_2)
+                
+        if len(self.child_lines) == 0:
+            self.child_lines = load_lines_from_labels(self.child_lines_labels)
 
         for p in self.points:
             self.canvas.tag_raise(p.tag)

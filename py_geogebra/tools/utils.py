@@ -439,3 +439,11 @@ def attach_point(point, line):
     
 def calculate_vector(point_1, point_2):
     return (point_1.pos_x - point_2.pos_x, point_1.pos_y - point_2.pos_y)
+
+def load_lines_from_labels(labels):
+    lines = []
+    for label in labels:
+        for obj in g().objects._objects:
+            if getattr(obj, "lower_label", None) == label:
+                lines.append(obj)
+    return lines
