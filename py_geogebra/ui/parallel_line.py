@@ -207,7 +207,7 @@ class Parallel_line:
         self.canvas.tag_raise(self.point_1.tag)
 
         if len(self.child_lines) == 0:
-            load_lines_from_labels(self.child_lines_labels)
+            self.child_lines = load_lines_from_labels(self.child_lines_labels)
 
         for p in self.points:
             self.canvas.tag_raise(p.tag)
