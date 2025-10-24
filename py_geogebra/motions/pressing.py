@@ -549,6 +549,8 @@ def pressing(root):
                 l = Perpendicular_line(
                     root,
                 )
+                lower_label = get_lower_label(state)
+                l.lower_label = lower_label
                 l.parent_vector = state.selected_perpendicular_line.vector
                 l.point_1 = state.selected_perpendicular_point
                     

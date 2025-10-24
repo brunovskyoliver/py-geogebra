@@ -3,6 +3,8 @@ from ..tools.utils import (
     world_to_screen,
     snap_to_line,
     get_linear_fuction_prescription,
+    load_lines_from_labels,
+    get_label,
 )
 from .. import state
 from .lower_label import Lower_label
@@ -38,17 +40,17 @@ class Perpendicular_line:
 
         self.tag = f"perpendicular_line_{id(self)}"
         self.point_1 = None
-        self.point_2 = Blank_point(root)
+        self.point_2 = Blank_point(root, get_label(state))
         self.selected = False
 
         self.child_lines = []
+        self.child_lines_labels = []
         self.points = []
         self.lower_label = ""
         self.lower_label_obj = Lower_label(self.root, obj=self)
         self.objects.register(self.lower_label_obj)
         self.prescription = ()
         self.angle = 0
-        self
         self.vector = (0,0)
         self.parent_vector = (0,0)
 
@@ -56,7 +58,7 @@ class Perpendicular_line:
 
     def to_dict(self) -> dict:
         return {
-            "type": "Line",
+            "type": "Perpendicular_line",
             "lower_label": self.lower_label,
             "pos_x": self.pos_x,
             "pos_y": self.pos_y,
@@ -68,8 +70,9 @@ class Perpendicular_line:
             "tag": self.tag,
             "points": [p.label for p in self.points],
             "point_1": self.point_1.label if self.point_1 else None,
-            "point_2": self.point_2.label if self.point_2 else None,
             "prescription": [p for p in self.prescription],
+            "parent_vector": self.parent_vector,
+            "child_lines_labels": [l.lower_label for l in self.child_lines]
         }
 
     @classmethod
@@ -81,9 +84,9 @@ class Perpendicular_line:
             return None
 
         p1 = find_point(data.get("point_1"))
-        p2 = find_point(data.get("point_2"))
-        line = cls(root=root, point_1=p1, unit_size=data.get("unit_size", 40))
-        line.point_2 = p2
+        line = cls(root=root, unit_size=data.get("unit_size", 40))
+        
+        line.point_1 = p1
         line.scale = data.get("scale", 1.0)
         line.is_drawable = data.get("is_drawable", True)
         line.offset_x = data.get("offset_x", 0)
@@ -93,10 +96,12 @@ class Perpendicular_line:
         line.pos_x = data.get("pos_x", 0)
         line.pos_y = data.get("pos_y", 0)
         line.points = [find_point(lbl) for lbl in data.get("points", []) if lbl]
-        cx, cy = state.center
+        cx, cy = state.center                  
         line.cx = cx
         line.cy = cy
         line.prescription = data.get("prescription", {})
+        line.parent_vector = data.get("parent_vector")
+        line.child_lines_labels = [lbl for lbl in data.get("child_lines_labels", [])]
         line.update()
         return line
 
@@ -201,6 +206,8 @@ class Perpendicular_line:
             )
         self.canvas.tag_raise(self.point_1.tag)
 
+        if len(self.child_lines) == 0:
+            load_lines_from_labels(self.child_lines_labels)
 
         for p in self.points:
             self.canvas.tag_raise(p.tag)

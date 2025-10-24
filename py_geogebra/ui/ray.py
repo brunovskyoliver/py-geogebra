@@ -4,6 +4,7 @@ from ..tools.utils import (
     snap_to_line,
     get_linear_fuction_prescription,
     calculate_vector,
+    load_lines_from_labels,
 )
 from .. import state
 from .. import globals
@@ -51,6 +52,8 @@ class Ray:
         self.angle = 0
         self.vector = (0,0)
         self.child_lines = []
+        self.child_lines_labels = []
+        
 
         self.canvas.bind("<Configure>", lambda e: self.update())
 
@@ -70,6 +73,8 @@ class Ray:
             "point_1": self.point_1.label if self.point_1 else None,
             "point_2": self.point_2.label if self.point_2 else None,
             "prescription": [p for p in self.prescription],
+            "vector": self.vector,
+            "child_lines_labels": [l.lower_label for l in self.child_lines]
         }
 
     @classmethod
@@ -93,6 +98,8 @@ class Ray:
         ray.pos_x = data.get("pos_x", 0)
         ray.pos_y = data.get("pos_y", 0)
         ray.points = [find_point(lbl) for lbl in data.get("points", []) if lbl]
+        ray.vector = data.get("vector")
+        ray.child_lines_labels = [lbl for lbl in data.get("child_lines_labels", [])]
         cx, cy = state.center
         ray.cx = cx
         ray.cy = cy
@@ -210,6 +217,10 @@ class Ray:
             if self.point_2 not in self.points:
                 self.points.append(self.point_2)
 
+        if len(self.child_lines) == 0:
+            self.child_lines = load_lines_from_labels(self.child_lines_labels)
+            
+            
         for p in self.points:
             self.canvas.tag_raise(p.tag)
             

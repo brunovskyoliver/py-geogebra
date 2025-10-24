@@ -4,6 +4,7 @@ from ..tools.utils import (
     snap_to_line,
     get_linear_fuction_prescription,
     calculate_vector,
+    load_lines_from_labels,
 )
 from .. import state
 from .lower_label import Lower_label
@@ -43,6 +44,7 @@ class Line:
         self.selected = False
 
         self.points = [self.point_1]
+        self.child_lines_labels = []
         self.child_lines = []
         self.lower_label = ""
         self.lower_label_obj = Lower_label(self.root, obj=self)
@@ -66,10 +68,11 @@ class Line:
             "offset_y": self.offset_y,
             "tag": self.tag,
             "points": [p.label for p in self.points],
-            "child_lines": [l.lower_label for l in self.child_lines],
             "point_1": self.point_1.label if self.point_1 else None,
             "point_2": self.point_2.label if self.point_2 else None,
             "prescription": [p for p in self.prescription],
+            "vector": self.vector,
+            "child_lines_labels": [l.lower_label for l in self.child_lines]
         }
 
     @classmethod
@@ -99,11 +102,12 @@ class Line:
         line.pos_x = data.get("pos_x", 0)
         line.pos_y = data.get("pos_y", 0)
         line.points = [find_point(lbl) for lbl in data.get("points", []) if lbl]
-        line.child_lines = [find_line(lbl) for lbl in data.get("child_lines", []) if lbl]
         cx, cy = state.center
         line.cx = cx
         line.cy = cy
         line.prescription = data.get("prescription", {})
+        line.vector = data.get("vector")
+        line.child_lines_labels = [lbl for lbl in data.get("child_lines_labels", [])]
         line.update()
         return line
 
@@ -213,6 +217,9 @@ class Line:
             self.canvas.tag_raise(self.point_2.tag)
             if self.point_2 not in self.points:
                 self.points.append(self.point_2)
+                
+        if len(self.child_lines) == 0:
+            self.child_lines = load_lines_from_labels(self.child_lines_labels)
 
         for p in self.points:
             self.canvas.tag_raise(p.tag)

@@ -3,7 +3,8 @@ from ..tools.utils import (
     world_to_screen,
     distance,
     snap_to_line,
-    calculate_vector
+    calculate_vector,
+    load_lines_from_labels,
 )
 from .. import state
 from .lower_label import Lower_label
@@ -50,6 +51,7 @@ class Vector_from_point:
         self.objects.register(self.lower_label_obj)
         self.vector = (0,0)
         self.child_lines = []
+        self.child_lines_labels = []
 
         self.points = [self.point_1]
         self.canvas.bind("<Configure>", lambda e: self.update())
@@ -70,6 +72,8 @@ class Vector_from_point:
             "point_1": self.point_1.label if self.point_1 else None,
             "point_2": self.point_2.label if self.point_2 else None,
             "parent_vector": self.parent_vector.lower_label,
+            "vector": self.vector,
+            "child_lines_labels": [l.lower_label for l in self.child_lines]
         }
 
     @classmethod
@@ -102,6 +106,8 @@ class Vector_from_point:
         vector.points = [find_point(lbl) for lbl in data.get("points", []) if lbl]
         vector.parent_vector = find_vector(data.get("parent_vector", ""))
         vector.parent_vector.loaded_children = False
+        vector.vector = data.get("vector")
+        vector.child_lines_labels = [lbl for lbl in data.get("child_lines_labels", [])]
         cx, cy = state.center
         vector.cx = cx
         vector.cy = cy
@@ -209,6 +215,10 @@ class Vector_from_point:
             self.canvas.tag_raise(self.point_2.tag)
             if self.point_2 not in self.points:
                 self.points.append(self.point_2)
+                
+                
+        if len(self.child_lines) == 0:
+            self.child_lines = load_lines_from_labels(self.child_lines_labels)
 
         for p in self.points:
             self.canvas.tag_raise(p.tag)

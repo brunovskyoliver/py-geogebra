@@ -10,6 +10,7 @@ class Blank_point:
     def __init__(
         self,
         root: tk.Tk,
+        label: str = "",
         unit_size: int = 40,
         color="blue",
     ):
@@ -26,6 +27,7 @@ class Blank_point:
         self.offset_y = 0.0
         self.scale = 1.0  # zoom factor
         self.unit_size = unit_size
+        self.label = label
 
         self.cx = 0
         self.cy = 0
@@ -49,17 +51,15 @@ class Blank_point:
             "scale": self.scale,
             "offset_x": self.offset_x,
             "offset_y": self.offset_y,
+            "label": self.label,
         }
 
     @classmethod
     def from_dict(cls, root, data: dict):
         p = cls(
             root=root,
-            e=None,
             label=data.get("label", ""),
             unit_size=data.get("unit_size", 40),
-            pos_x=data.get("pos_x", 0),
-            pos_y=data.get("pos_y", 0),
             color=data.get("color", "blue"),
         )
         p.scale = data.get("scale", 1.0)
