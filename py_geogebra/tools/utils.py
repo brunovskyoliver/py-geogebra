@@ -437,3 +437,5 @@ def attach_point(point, line):
         find_translation_polyline(point, line)
         snap_to_polyline(point, line)
     
+def calculate_vector(point_1, point_2):
+    return (point_1.pos_x - point_2.pos_x, point_1.pos_y - point_2.pos_y)

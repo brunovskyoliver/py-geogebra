@@ -40,15 +40,17 @@ class Perpendicular_line:
         self.point_1 = None
         self.point_2 = Blank_point(root)
         self.selected = False
-        
-        self.parent_line_free_point = None
 
+        self.child_lines = []
         self.points = []
         self.lower_label = ""
         self.lower_label_obj = Lower_label(self.root, obj=self)
         self.objects.register(self.lower_label_obj)
         self.prescription = ()
         self.angle = 0
+        self
+        self.vector = (0,0)
+        self.parent_vector = (0,0)
 
         self.canvas.bind("<Configure>", lambda e: self.update())
 
@@ -68,7 +70,6 @@ class Perpendicular_line:
             "point_1": self.point_1.label if self.point_1 else None,
             "point_2": self.point_2.label if self.point_2 else None,
             "prescription": [p for p in self.prescription],
-            "parent_line_free_point": self.parent_line_free_point.label if self.parent_line_free_point else None,
         }
 
     @classmethod
@@ -96,7 +97,6 @@ class Perpendicular_line:
         line.cx = cx
         line.cy = cy
         line.prescription = data.get("prescription", {})
-        line.parent_line_free_point = data.get("parent_line_free_point", {})
         line.update()
         return line
 
@@ -110,9 +110,10 @@ class Perpendicular_line:
 
     def update(self, e=None):
         self.canvas.delete(self.tag)
-        self.point_2.pos_x = self.point_1.pos_x + (self.point_1.pos_y - self.parent_line_free_point.pos_y)
-        self.point_2.pos_y = self.point_1.pos_y - (self.point_1.pos_x - self.parent_line_free_point.pos_x)
-        self.point_2.update()
+        self.vector  = (self.parent_vector[1], -self.parent_vector[0])
+        self.point_2.pos_x = self.point_1.pos_x + self.vector[0]
+        self.point_2.pos_y = self.point_1.pos_y + self.vector[1]
+        
 
         visual_scale = min(max(1, self.scale**0.5), 1.9)
 
@@ -203,5 +204,8 @@ class Perpendicular_line:
 
         for p in self.points:
             self.canvas.tag_raise(p.tag)
+        for l in self.child_lines:
+            if l:
+                l.update()
         self.prev_x, self.prev_y = self.pos_x, self.pos_y
         self.canvas.tag_raise(self.lower_label_obj.tag)

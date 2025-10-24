@@ -31,6 +31,9 @@ class Blank_point:
         self.cy = 0
         self.x = 0
         self.y = 0
+        
+        self.pos_x = 0
+        self.pos_y = 0
 
         
         self.parent_line = None
