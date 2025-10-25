@@ -103,6 +103,7 @@ def delete_object(object_to_delete, state):
     from ..ui.segment import Segment
     from ..ui.segment_with_lenght import Segment_with_length
     from ..ui.polyline import Polyline
+    from ..ui.perpendicular_bisector import Perpendicular_bisector
     from ..tools.utils import reconfigure_label_order
 
     if state.points_for_obj:
@@ -124,6 +125,7 @@ def delete_object(object_to_delete, state):
                 or isinstance(obj, Ray)
                 or isinstance(obj, Segment_with_length)
                 or isinstance(obj, Midpoint_or_center)
+                or isinstance(obj,Perpendicular_bisector)
             ) and (obj.point_1 is object_to_delete or obj.point_2 is object_to_delete):
                 g().objects.unregister(obj)
                 g().canvas.delete(obj.tag)
@@ -290,7 +292,7 @@ def find_translation(point, line):
     p_dist = distance(x1, y1, px, py)
 
     point.translation = (p_dist * math.cos(beta)) / dist
-    
+
 def find_translation_between_points(point, point_1, point_2):
     x1, y1 = point_1.pos_x, point_1.pos_y
     x2, y2 = point_2.pos_x, point_2.pos_y
@@ -416,27 +418,27 @@ def detach_point(point, line):
 
         x1, y1 = line.line_points[index_1].pos_x, line.line_points[index_1].pos_y
         x2, y2 = line.line_points[index_2].pos_x, line.line_points[index_2].pos_y
-        
+
         dx = x2 - x1
         dy = y2 - y1
 
     length = math.hypot(dx, dy)
     perp_x = -dy / length
     perp_y = dx / length
-    
+
 
     point.pos_x += perp_x
     point.pos_y += perp_y
-    
+
 def attach_point(point, line):
     from ..ui.polyline import Polyline
     if not isinstance(line, Polyline):
         find_translation(point, line)
         snap_to_line(point, line)
-    else: 
+    else:
         find_translation_polyline(point, line)
         snap_to_polyline(point, line)
-    
+
 def calculate_vector(point_1, point_2):
     return (point_1.pos_x - point_2.pos_x, point_1.pos_y - point_2.pos_y)
 
