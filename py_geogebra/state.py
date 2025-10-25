@@ -45,3 +45,4 @@ selected_vector = None
 selected_vector_point = None
 selected_perpendicular_point = None
 selected_perpendicular_line = None
+selected_angle_bisector_points = []
