@@ -4,4 +4,6 @@ build/
 py_geogebra/__pycache__/
 __pycache__/
 *.py[cod]
+.env
+*.env
 

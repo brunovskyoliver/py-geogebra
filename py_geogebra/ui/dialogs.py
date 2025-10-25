@@ -1,7 +1,8 @@
-import tkinter as tk
 from tkinter import messagebox, filedialog, simpledialog
 import sys, json, os
 from .. import globals
+from libsql_client import create_client_sync
+from ..tools.auth_config import TURSO_URL, TURSO_AUTH_TOKEN
 
 
 def ask_for_update(widgets):
@@ -51,7 +52,40 @@ def save_file(root):
         globals.objects.to_json(file)
 
 def save_db(root):
-    name = simpledialog.askstring(title="Zadaj nazov sceny", prompt="Prosim zadaj nazov pre ulozenie sceny")
+    from ..tools.auth0_handler import Auth0Handler
+    auth = Auth0Handler()
+    user_info = auth.get_user_info()
+    if not user_info:
+        access_token = auth.authenticate()
+        if not access_token:
+            messagebox.showerror(_("Chyba"), _("Nepodarilo sa authentikovať"))
+            return
+        user_info = auth.get_user_info()
+        if not user_info:
+            return
+    print(user_info)
+    name = simpledialog.askstring(title=_("Zadaj názov scény"), prompt=_("Prosím zadaj názov pre uloženie scény"))
     if name:
         scene = globals.objects.to_dict()
+        try:
+            client = create_client_sync(url = TURSO_URL, auth_token = TURSO_AUTH_TOKEN)
+            client.execute("""
+CREATE TABLE IF NOT EXISTS scenes (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    nickname TEXT NOT NULL,
+    name TEXT NOT NULL,
+    data TEXT NOT NULL,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    UNIQUE(nickname, name)
+);
+        """)
+            client.execute(
+        "INSERT INTO scenes (nickname, name, data) VALUES (?, ?, ?)",
+        (user_info["nickname"], name, json.dumps(scene)))
+            client.close()
+
+            messagebox.showinfo(_("OK"), _("Scéna bola uložená"))
+        except Exception as e:
+            messagebox.showerror(_("Chyba spojenia s DB"), str(e))
+
 
