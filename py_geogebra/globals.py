@@ -1,5 +1,5 @@
 from typing import TYPE_CHECKING, Optional
-from tkinter import Canvas, Frame
+from tkinter import Canvas, Frame, Tk
 
 if TYPE_CHECKING:
     from .tools.objects import Objects
@@ -15,3 +15,4 @@ canvas: Optional[Canvas] = None
 main_area: Optional[Frame] = None
 widgets: Optional["Widgets"] = None
 auth: Optional["Auth0Handler"] = None
+root: Optional[Tk] = None

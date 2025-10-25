@@ -20,8 +20,6 @@ import threading
 def run_flask():
     app.run(host="127.0.0.1", port=5000, debug=False, use_reloader=False)
 
-
-
 def run_app():
     global widgets
     set_language("sk")
@@ -32,6 +30,7 @@ def run_app():
     auth = Auth0Handler()
     globals.auth = auth
     root = tk.Tk()
+    globals.root = root
     root.geometry("1280x720")
     widgets.register(lambda: root.title(_("Geogebra ale lepsia") + f" v{__version__}"))
 

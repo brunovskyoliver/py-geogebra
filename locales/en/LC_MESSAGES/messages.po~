@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-10-25 17:49+0200\n"
+"POT-Creation-Date: 2025-10-25 17:52+0200\n"
 "PO-Revision-Date: 2025-09-13 23:35+0200\n"
 "Last-Translator: Automatically generated\n"
 "Language-Team: none\n"
@@ -28,6 +28,10 @@ msgstr "Open file"
 #: py_geogebra/ui/menu_bar.py:49 py_geogebra/ui/menu_bar.py:52
 msgid "Uložiť ako"
 msgstr "Save as"
+
+#: py_geogebra/ui/menu_bar.py:54 py_geogebra/ui/menu_bar.py:57
+msgid "Uložiť do DB"
+msgstr "Save to the DB"
 
 #: py_geogebra/ui/menu_bar.py:60
 msgid "Language"
@@ -124,6 +128,10 @@ msgstr "Perpendicular line"
 #: py_geogebra/ui/toolbar.py:155
 msgid "Rovnobežka"
 msgstr "Parallel line"
+
+#: py_geogebra/ui/toolbar.py:156
+msgid "Os úsečky"
+msgstr "Segment"
 
 #: py_geogebra/ui/toolbar.py:157
 msgid "Os uhla"

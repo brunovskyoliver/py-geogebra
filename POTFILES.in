@@ -1,3 +1,4 @@
+py_geogebra/flask/app.py
 py_geogebra/ui/sidebar.py
 py_geogebra/ui/menu_bar.py
 py_geogebra/ui/vector.py

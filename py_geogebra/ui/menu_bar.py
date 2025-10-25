@@ -4,7 +4,7 @@ import time
 from py_geogebra import state
 from ..tools.language import change_lang
 from ..tools.check_version import handle_version
-from .dialogs import ask_for_update, open_from_file, save_file, save_db
+from .dialogs import ask_for_update, open_from_file, save_file, save_db, load_db
 from .. import globals
 
 
@@ -55,6 +55,11 @@ def menu(root, widgets):
     save_db_index = file_selection.index("end")
     widgets.register(
         lambda: file_selection.entryconfig(save_db_index, label=_("Uložiť do DB"))
+    )
+    file_selection.add_command(label=_("Otvoriť z DB"), command=lambda: load_db(root))
+    load_db_index = file_selection.index("end")
+    widgets.register(
+        lambda: file_selection.entryconfig(load_db_index, label=_("Otvoriť z DB"))
     )
     language_selection = tk.Menu(menu_bar, tearoff=0)
     menu_bar.add_cascade(label=_("Language"), menu=language_selection)
