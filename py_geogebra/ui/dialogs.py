@@ -1,5 +1,5 @@
 import tkinter as tk
-from tkinter import messagebox, filedialog
+from tkinter import messagebox, filedialog, simpledialog
 import sys, json, os
 from .. import globals
 
@@ -49,3 +49,9 @@ def save_file(root):
     file = filedialog.asksaveasfilename(defaultextension="json", initialdir=base_path)
     if file:
         globals.objects.to_json(file)
+
+def save_db(root):
+    name = simpledialog.askstring(title="Zadaj nazov sceny", prompt="Prosim zadaj nazov pre ulozenie sceny")
+    if name:
+        scene = globals.objects.to_dict()
+
