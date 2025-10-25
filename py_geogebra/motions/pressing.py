@@ -15,6 +15,7 @@ from ..ui.free_hand import FreeHand
 from ..ui.segment_with_lenght import Segment_with_length
 from ..ui.polyline import Polyline
 from ..ui.perpendicular_bisector import Perpendicular_bisector
+from ..ui.angle_bisector import Angle_bisector
 from ..tools.utils import (
     delete_object,
     get_lower_label,
@@ -637,6 +638,31 @@ def pressing(root):
                 globals.sidebar.items.append(state.points_for_obj[1])
                 globals.sidebar.update()
                 state.points_for_obj = []
+                
+        elif state.selected_tool == "angle_bisector":
+            state.start_pos["x"] = e.x
+            state.start_pos["y"] = e.y
+            world_x, world_y = screen_to_world(e)
+            p = find_point_at_position(e)
+            if p is None:
+                return
+            p.select()
+            state.selected_angle_bisector_points.append(p)
+            
+            if len(state.selected_angle_bisector_points) == 3:
+                ag = Angle_bisector(
+                    root
+                )
+                ag.point_1 = state.selected_angle_bisector_points[1]
+                ag.angle_point_1 = state.selected_angle_bisector_points[0]
+                ag.angle_point_2 = state.selected_angle_bisector_points[2]
+                globals.objects.register(ag)
+                for p in state.selected_angle_bisector_points:
+                    p.deselect()
+                    
+                state.selected_angle_bisector_points.clear()
+
+            
 
 
 
