@@ -8,6 +8,7 @@ def changing_screen_size(root):
         cy = e.height // 2 + globals.objects.offset_y
         state.center = (cx, cy)
         globals.objects.refresh()
+        globals.axes.update()
 
     def refrershing_sidebar(e):
         state.sidebar_width = e.width

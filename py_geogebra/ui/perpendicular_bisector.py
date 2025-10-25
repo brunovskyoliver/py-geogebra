@@ -55,6 +55,7 @@ class Perpendicular_bisector:
         self.angle = 0
         self.vector = (0, 0)
         self.parent_vector = (0,0)
+        self.middle = (0,0)
 
         self.canvas.bind("<Configure>", lambda e: self.update())
 
@@ -76,6 +77,7 @@ class Perpendicular_bisector:
             "prescription": [p for p in self.prescription],
             "vector": self.vector,
             "parent_vector": self.parent_vector,
+            "middle": self.middle,
             "child_lines_labels": [l.lower_label for l in self.child_lines]
         }
 
@@ -106,6 +108,7 @@ class Perpendicular_bisector:
         pb.prescription = data.get("prescription", {})
         pb.vector = data.get("vector")
         pb.parent_vector = data.get("parent_vector")
+        pb.middle = data.get("middle")
         pb.child_lines_labels = [lbl for lbl in data.get("child_lines_labels", [])]
         pb.update()
         return pb
@@ -150,10 +153,7 @@ class Perpendicular_bisector:
                 cx, cy = state.center
                 x2 = (e.x - cx) / (self.unit_size * self.scale)
                 y2 = (cy - e.y) / (self.unit_size * self.scale)
-                point2 = SimpleNamespace(pos_x=x2,pos_y=y2)
-                self.parent_vector = calculate_vector(self.point_1,point2)
             else:
-                self.parent_vector = calculate_vector(self.point_1,self.point_2)
                 x2, y2 = self.point_2.pos_x, self.point_2.pos_y
 
         for obj in self.points:
@@ -161,32 +161,33 @@ class Perpendicular_bisector:
                 snap_to_line(obj, self)
                 obj.update()
 
-        self.vector = (-self.parent_vector[1], self.parent_vector[0])
-        x1,y1 = (x2 - x1) / 2 + x1, (y2-y1) / 2 + y1
-        x2,y2 = x1 + self.vector[0], y1 + self.vector[1]
-        self.angle = math.atan2(y2 - y1, x2 - x1)
+        vx, vy = x2 - x1, y2 - y1
+        l = math.hypot(vx, vy)
+        if l == 0:
+            return
+        rotated_x, rotated_y = -vy / l, vx / l
+        mid_x = (x1 + x2) / 2
+        mid_y = (y1 + y2) / 2
+
+        self.middle = (mid_x,mid_y)
+
         span = max(self.canvas.winfo_width(), self.canvas.winfo_height()) / (
             self.unit_size * self.scale
-        )
-        cos_a = math.cos(self.angle)
-        sin_a = math.sin(self.angle)
+        ) * 10
 
-        if self.point_2 is not None:
-            self.lower_label_obj.update()
+        x1, y1 = mid_x - rotated_x * span, mid_y - rotated_y * span
+        x2, y2 = mid_x + rotated_x * span, mid_y + rotated_y * span
 
-            self.vector = calculate_vector(self.point_1, self.point_2)
-
+        self.angle = math.atan2(rotated_y, rotated_x)
+        self.vector = (rotated_x, rotated_y)
         self.prescription = get_linear_fuction_prescription(x1, y1, x2, y2)
 
-        span *= 10
-        x1 -= span * cos_a
-        y1 -= span * sin_a
-        x2 += span * cos_a
-        y2 += span * sin_a
 
         x1, y1 = world_to_screen(x1, y1)
         x2, y2 = world_to_screen(x2, y2)
 
+        if self.point_2 is not None:
+            self.lower_label_obj.update()
 
 
         if not self.point_2:

@@ -1,9 +1,11 @@
 import tkinter as tk
+from tkinter import font as tkfont
 from ..ui.point import Point
 from ..ui.line import Line
 from ..ui.segment import Segment
 from ..ui.polyline import Polyline
 from ..ui.ray import Ray
+from ..ui.perpendicular_bisector import Perpendicular_bisector
 
 
 class Sidebar:
@@ -13,7 +15,11 @@ class Sidebar:
 
         self.resizing = False
         self.items = []
-        self.font = ("mathsans, Calibri, sans-serif", 16)
+        self.base_font_size = 16
+        self.font_family = "Calibri, mathsans, sans-serif"
+        self.font = tkfont.Font(family=self.font_family, size=self.base_font_size)
+
+        self.frame.bind("<Configure>", self._on_resize)
 
     def to_dict(self) -> dict:
         return {
@@ -32,6 +38,16 @@ class Sidebar:
         self.frame.configure(width=width)
         self.frame.pack_propagate(False)
         self.frame.update_idletasks()
+
+    def _on_resize(self, event):
+        new_width = event.width
+        base_width = 200
+        scale = new_width / base_width
+        new_size = max(10, int(self.base_font_size * scale))
+        self.font.configure(size=new_size)
+
+        for widget in self.frame.winfo_children():
+            widget.configure(font=self.font)
 
     def update(self):
         for widget in self.frame.winfo_children():
@@ -79,6 +95,7 @@ class Sidebar:
                     font=self.font,
                 )
                 text.pack(padx=10, pady=10, anchor="nw")
+
             elif isinstance(item, Ray):
                 a, b, c = item.prescription
                 sign_a = "-" if a < 0 else ""
@@ -101,7 +118,7 @@ class Sidebar:
                 text = tk.Label(
                     self.frame,
                     text=(
-                        f"{item.lower_label} = Polyline({", ".join(p.label for p in item.line_points)})\n"
+                        f"{item.lower_label} = Polyline({', '.join(p.label for p in item.line_points)})\n"
                         f"{' ' * (len(item.lower_label)-1)}= {round(item.length, 2)}"
                     ),
                     fg="black",
@@ -111,3 +128,22 @@ class Sidebar:
                     font=self.font,
                 )
                 text.pack(padx=10, pady=10, anchor="nw")
+
+            elif isinstance(item, Perpendicular_bisector):
+                a, b, c = item.prescription
+                sign_a = "-" if a < 0 else ""
+                sign_b = "-" if b < 0 else "+"
+                text = tk.Label(
+                    self.frame,
+                    text=(
+                        f"{item.lower_label}: PerpendicularBisector({item.point_1.label}, {item.point_2.label})\n"
+                        f"= {sign_a}{abs(a)}x {sign_b} {abs(b)}y = {c}"
+                    ),
+                    fg="black",
+                    bg="#dddddd",
+                    justify="left",
+                    anchor="nw",
+                    font=self.font,
+                )
+                text.pack(padx=10, pady=10, anchor="nw")
+

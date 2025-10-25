@@ -1,4 +1,6 @@
 import tkinter as tk
+from types import NoneType
+
 from ..tools.utils import world_to_screen
 from .. import globals
 import math
@@ -61,18 +63,17 @@ class Lower_label:
         from .vector import Vector
         from .vector_from_point import Vector_from_point
         from .segment_with_lenght import Segment_with_length
+        from .perpendicular_bisector import Perpendicular_bisector
         from .polyline import Polyline
 
-        if isinstance(self.obj, Line) or isinstance(self.obj, Ray):
+        if isinstance(self.obj, Line) or isinstance(self.obj, Ray) or isinstance(self.obj, Perpendicular_bisector):
             if self.obj.point_2 is None:
                 return
-            x1, y1 = self.obj.point_1.pos_x, self.obj.point_1.pos_y
             x2, y2 = self.obj.point_2.pos_x, self.obj.point_2.pos_y
             angle = self.obj.angle
-            span = max(self.canvas.winfo_width(), self.canvas.winfo_height()) / (
-                self.unit_size * self.scale
-            )
             x, y = world_to_screen(x2, y2)
+            if isinstance(self.obj, Perpendicular_bisector):
+                x,y = world_to_screen(*self.obj.middle)
             width, height = self.canvas.winfo_width(), self.canvas.winfo_height()
             if angle > 0:
                 if 0 < angle < math.pi / 2:
@@ -126,6 +127,8 @@ class Lower_label:
             dx = self.obj.point_2.x - self.obj.point_1.x
             dy = self.obj.point_2.y - self.obj.point_1.y
             length = math.hypot(dx, dy)
+            if length == 0:
+                return
             perp_x = -dy / length
             perp_y = dx / length
             self.canvas.create_text(
