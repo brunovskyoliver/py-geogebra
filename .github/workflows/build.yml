@@ -57,7 +57,7 @@ jobs:
               --name py-geogebra${{ matrix.suffix }} \
               --add-data "locales:locales" \
               --add-data "resources:resources" \
-              --add-data ".env:." \
+              --add-data ".env:.env"
               --add-data "py_geogebra/flask/templates:py_geogebra/flask/templates" \
               --hidden-import=requests \
               --hidden-import=dotenv \
