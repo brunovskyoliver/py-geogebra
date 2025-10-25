@@ -15,7 +15,6 @@ build:
 		--add-data "resources:resources" \
 		--add-data ".env:." \
 		--add-data "py_geogebra/flask/templates:py_geogebra/flask/templates" \
-		--add-data "py_geogebra/flask/static:py_geogebra/flask/static" \
 		--hidden-import=requests \
 		--hidden-import=struct \
 		--hidden-import=_struct \
