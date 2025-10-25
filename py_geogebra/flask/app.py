@@ -1,12 +1,21 @@
+import os
+import sys
 from flask import Flask, render_template, jsonify
 from libsql_client import create_client_sync
 from ..tools.auth_config import TURSO_URL, TURSO_AUTH_TOKEN
 from ..tools.utils import handle_auth
-import json
 from .. import globals
-import threading
+import json, threading
 
-app = Flask(__name__)
+if getattr(sys, 'frozen', False):
+    base_path = sys._MEIPASS
+else:
+    base_path = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
+
+template_dir = os.path.join(base_path, "py_geogebra", "flask", "templates")
+static_dir   = os.path.join(base_path, "py_geogebra", "flask", "static")
+
+app = Flask(__name__, template_folder=template_dir, static_folder=static_dir)
 
 @app.route("/api/scene/<name>")
 def open_scene(name):
