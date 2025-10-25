@@ -1,5 +1,6 @@
 import tkinter as tk
 import math
+from tkinter import messagebox
 
 from .. import state
 
@@ -449,3 +450,17 @@ def load_lines_from_labels(labels):
             if getattr(obj, "lower_label", None) == label:
                 lines.append(obj)
     return lines
+
+def handle_auth() -> dict | None:
+    auth = g().auth
+    user_info = auth.get_user_info()
+    if not user_info:
+        access_token = auth.authenticate()
+        if not access_token:
+            messagebox.showerror(_("Chyba"), _("Nepodarilo sa authentikovať"))
+            return None
+        user_info = auth.get_user_info()
+        if not user_info:
+            return None
+    return user_info
+
