@@ -63,7 +63,6 @@ def save_db(root):
         user_info = auth.get_user_info()
         if not user_info:
             return
-    print(user_info)
     name = simpledialog.askstring(title=_("Zadaj názov scény"), prompt=_("Prosím zadaj názov pre uloženie scény"))
     if name:
         scene = globals.objects.to_dict()
