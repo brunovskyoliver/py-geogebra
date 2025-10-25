@@ -71,16 +71,17 @@ def save_db(root):
             client.execute("""
 CREATE TABLE IF NOT EXISTS scenes (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
+    user_id TEXT NOT NULL,
     nickname TEXT NOT NULL,
     name TEXT NOT NULL,
     data TEXT NOT NULL,
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-    UNIQUE(nickname, name)
+    UNIQUE(user_id, name)
 );
         """)
             client.execute(
-        "INSERT INTO scenes (nickname, name, data) VALUES (?, ?, ?)",
-        (user_info["nickname"], name, json.dumps(scene)))
+        "INSERT INTO scenes (user_id, nickname, name, data) VALUES (?,?, ?, ?)",
+        (user_info["sub"], user_info["nickname"], name, json.dumps(scene)))
             client.close()
 
             messagebox.showinfo(_("OK"), _("Scéna bola uložená"))

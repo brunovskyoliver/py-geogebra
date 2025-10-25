@@ -5,7 +5,7 @@ import sys
 if getattr(sys, 'frozen', False) and hasattr(sys, '_MEIPASS'):
     env_path = os.path.join(sys._MEIPASS, '.env')
 else:
-    env_path = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
+    env_path = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..", ".env"))
 
 
 load_dotenv(env_path)
