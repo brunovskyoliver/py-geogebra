@@ -90,6 +90,7 @@ def dragging(root):
                         else:
                             globals.objects.refresh()
                 globals.sidebar.update()
+                globals.objects.refresh()
 
         elif state.selected_tool == "pen" and state.current_pen is not None:
             cx, cy = state.center
