@@ -17,7 +17,7 @@ jobs:
             ext: ''
           - os: macos-latest
             suffix: -darwin
-            ext: '.app'
+            ext: ''
           - os: windows-latest
             suffix: -windows
             ext: '.exe'
@@ -26,12 +26,12 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Setup Python
+      - name: Python
         uses: actions/setup-python@v5
         with:
           python-version: '3.12'
 
-      - name: Install dependencies
+      - name: Install deps
         run: |
           python -m pip install --upgrade pip
           pip install pyinstaller -r requirements.txt
@@ -46,61 +46,28 @@ jobs:
           echo "TURSO_AUTH_TOKEN=${{ secrets.TURSO_AUTH_TOKEN }}" >> .env
           echo "TURSO_URL=${{ secrets.TURSO_URL }}" >> .env
 
-
-      - name: Build with PyInstaller
-        shell: bash
+      - name: build
         run: |
-          if [ "${{ matrix.os }}" = "macos-latest" ]; then
-            python -m PyInstaller \
-              --windowed \
-              --noconfirm \
-              --name py-geogebra${{ matrix.suffix }} \
-              --add-data "locales:locales" \
-              --add-data "resources:resources" \
-              --add-data ".env:.env" \
-              --add-data "py_geogebra/flask/templates:py_geogebra/flask/templates" \
-              --hidden-import=requests \
-              --hidden-import=dotenv \
-              --hidden-import=libsql_client \
-              --hidden-import=flask \
-              --hidden-import=threading \
-              main.py
-          else
-            python -m PyInstaller \
-              --onefile \
-              --noconsole \
-              --noconfirm \
-              --name py-geogebra${{ matrix.suffix }} \
-              --add-data "locales${{ runner.os == 'Windows' && ';' || ':' }}locales" \
-              --add-data "resources:resources" \
-              --add-data ".env:." \
-              --add-data "py_geogebra/flask/templates:py_geogebra/flask/templates" \
-              --hidden-import=requests \
-              --hidden-import=dotenv \
-              --hidden-import=libsql_client \
-              --hidden-import=flask \
-              --hidden-import=threading \
-              main.py
-          fi
+          python -m PyInstaller --onefile --noconsole --noconfirm --hidden-import struct --hidden-import _struct --add-data "locales${{ runner.os == 'Windows' && ';' || ':' }}locales" --name py-geogebra${{ matrix.suffix }} --add-data "resources:resources" --hidden-import=requests --hidden-import=dotenv --hidden-import=libsql_client --hidden-import=requests --hidden-import=flask --hidden-import=threading --add-data ".env:." --add-data "py_geogebra/flask/templates:py_geogebra/flask/templates" main.py
 
-      - name: Upload artifact
+      - name: Upload
         uses: actions/upload-artifact@v4
         with:
           name: py-geogebra${{ matrix.suffix }}
-          path: dist/**
+          path: dist/py-geogebra${{ matrix.suffix }}${{ matrix.ext }}
           if-no-files-found: error
+
 
   release:
     needs: build
     runs-on: ubuntu-latest
-
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
 
-      - name: Download artifacts
+      - name: Get mf files
         uses: actions/download-artifact@v4
         with:
           path: dist
@@ -109,37 +76,26 @@ jobs:
         run: |
           echo "version=$(python -c 'import py_geogebra.config as v; print(v.__version__)')" >> $GITHUB_ENV
 
-      - name: Make executables runnable (Linux/macOS)
-        shell: bash
+      - name: Chmod it
+        run: chmod +x dist/**/py-geogebra*-linux dist/**/py-geogebra*-darwin || true
+
+      - name: Create tars
         run: |
-          chmod +x dist/**/py-geogebra*-linux || true
-          find dist -path "*/py-geogebra*-darwin.app/Contents/MacOS/*" -type f -exec chmod +x {} \; || true
-
-      - name: Package releases
-        run: |
-          mkdir -p packaged
-          for f in dist/**/py-geogebra*-linux; do
-            [ -f "$f" ] && tar -czf "packaged/$(basename $f).tar.gz" -C "$(dirname "$f")" "$(basename "$f")"
+          for f in dist/**/py-geogebra*-linux dist/**/py-geogebra*-darwin; do
+            [ -f "$f" ] && tar -czf "$f.tar.gz" -C "$(dirname "$f")" "$(basename "$f")"
           done
 
-          for d in dist/**/py-geogebra*-darwin.app; do
-            [ -d "$d" ] && zip -r "packaged/$(basename $d).zip" "$d"
-          done
-
-          for f in dist/**/py-geogebra*-windows.exe; do
-            [ -f "$f" ] && cp "$f" packaged/
-          done
-
-      - name: Publish GitHub release
+      - name: Upload to GitHub
         uses: softprops/action-gh-release@v2
         with:
           tag_name: v${{ env.version }}
           name: "PyGeoGebra v${{ env.version }}"
           make_latest: true
           files: |
-            packaged/py-geogebra*-windows.exe
-            packaged/py-geogebra*-darwin*.zip
-            packaged/py-geogebra*-linux*.tar.gz
+            dist/**/py-geogebra*-windows.exe
+            dist/**/py-geogebra*-darwin.tar.gz
+            dist/**/py-geogebra*-linux.tar.gz
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
 
