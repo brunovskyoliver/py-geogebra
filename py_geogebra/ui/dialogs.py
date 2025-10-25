@@ -55,6 +55,8 @@ def save_file(root):
         globals.objects.to_json(file)
 
 def save_db(root):
+    import ssl
+    ssl._create_default_https_context = ssl._create_unverified_context
     user_info = handle_auth()
     if user_info is None:
         return
@@ -62,7 +64,7 @@ def save_db(root):
     if name:
         scene = globals.objects.to_dict()
         try:
-            client = create_client_sync(url = TURSO_URL, auth_token = TURSO_AUTH_TOKEN)
+            client = create_client_sync(url = TURSO_URL, auth_token = TURSO_AUTH_TOKEN, insecure=True)
 #             client.execute("""
 # CREATE TABLE IF NOT EXISTS scenes (
 #     id INTEGER PRIMARY KEY AUTOINCREMENT,
