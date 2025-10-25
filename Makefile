@@ -19,6 +19,9 @@ build:
 		--hidden-import=_struct \
 		--hidden-import=dotenv \
 		--hidden-import=libsql_client \
+		--hidden-import=requests\
+		--hidden-import=flask\
+		--hidden-import=threading\
 		$(APP)
 
 clean:
