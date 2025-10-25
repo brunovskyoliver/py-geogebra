@@ -6,7 +6,7 @@ a = Analysis(
     pathex=[],
     binaries=[],
     datas=[('locales', 'locales'), ('resources', 'resources'), ('.env', '.')],
-    hiddenimports=['requests', '_struct', 'struct'],
+    hiddenimports=['requests', 'struct', '_struct', 'dotenv', 'libsql_client'],
     hookspath=[],
     hooksconfig={},
     runtime_hooks=[],
@@ -22,7 +22,7 @@ exe = EXE(
     a.binaries,
     a.datas,
     [],
-    name='main',
+    name='py-geogebra',
     debug=False,
     bootloader_ignore_signals=False,
     strip=False,
@@ -38,7 +38,7 @@ exe = EXE(
 )
 app = BUNDLE(
     exe,
-    name='main.app',
+    name='py-geogebra.app',
     icon=None,
     bundle_identifier=None,
 )
