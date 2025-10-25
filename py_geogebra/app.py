@@ -12,8 +12,14 @@ from .ui.axes import Axes
 from py_geogebra.motions import motions
 from . import state
 from .ui.sidebar import Sidebar
-import json
 from . import globals
+from .tools.auth0_handler import Auth0Handler
+from .flask.app import app
+import threading
+
+def run_flask():
+    app.run(host="127.0.0.1", port=5000, debug=False, use_reloader=False)
+
 
 
 def run_app():
@@ -21,7 +27,10 @@ def run_app():
     set_language("sk")
     widgets = Widgets()
     globals.widgets = widgets
-
+    flask_process = threading.Thread(target=run_flask, daemon=True)
+    flask_process.start()
+    auth = Auth0Handler()
+    globals.auth = auth
     root = tk.Tk()
     root.geometry("1280x720")
     widgets.register(lambda: root.title(_("Geogebra ale lepsia") + f" v{__version__}"))

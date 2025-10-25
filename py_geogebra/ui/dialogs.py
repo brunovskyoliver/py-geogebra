@@ -1,5 +1,7 @@
 from tkinter import messagebox, filedialog, simpledialog
 import sys, json, os
+
+from py_geogebra.tools.utils import handle_auth
 from .. import globals
 from libsql_client import create_client_sync
 from ..tools.auth_config import TURSO_URL, TURSO_AUTH_TOKEN
@@ -52,33 +54,25 @@ def save_file(root):
         globals.objects.to_json(file)
 
 def save_db(root):
-    from ..tools.auth0_handler import Auth0Handler
-    auth = Auth0Handler()
-    user_info = auth.get_user_info()
-    if not user_info:
-        access_token = auth.authenticate()
-        if not access_token:
-            messagebox.showerror(_("Chyba"), _("Nepodarilo sa authentikovať"))
-            return
-        user_info = auth.get_user_info()
-        if not user_info:
-            return
+    user_info = handle_auth()
+    if user_info is None:
+        return
     name = simpledialog.askstring(title=_("Zadaj názov scény"), prompt=_("Prosím zadaj názov pre uloženie scény"))
     if name:
         scene = globals.objects.to_dict()
         try:
             client = create_client_sync(url = TURSO_URL, auth_token = TURSO_AUTH_TOKEN)
-            client.execute("""
-CREATE TABLE IF NOT EXISTS scenes (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    user_id TEXT NOT NULL,
-    nickname TEXT NOT NULL,
-    name TEXT NOT NULL,
-    data TEXT NOT NULL,
-    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-    UNIQUE(user_id, name)
-);
-        """)
+#             client.execute("""
+# CREATE TABLE IF NOT EXISTS scenes (
+#     id INTEGER PRIMARY KEY AUTOINCREMENT,
+#     user_id TEXT NOT NULL,
+#     nickname TEXT NOT NULL,
+#     name TEXT NOT NULL,
+#     data TEXT NOT NULL,
+#     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+#     UNIQUE(user_id, name)
+# );
+#         """)
             client.execute(
         "INSERT INTO scenes (user_id, nickname, name, data) VALUES (?,?, ?, ?)",
         (user_info["sub"], user_info["nickname"], name, json.dumps(scene)))
