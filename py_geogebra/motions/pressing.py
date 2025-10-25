@@ -614,16 +614,8 @@ def pressing(root):
             state.start_pos["y"] = e.y
             world_x, world_y = screen_to_world(e)
             p = find_point_at_position(e)
-            if p is None and not state.points_for_obj:
-                label = get_label(state)
-                p = Point(
-                    root,
-                    e,
-                    label=label,
-                    unit_size=globals.axes.unit_size,
-                    pos_x=world_x,
-                    pos_y=world_y,
-                )
+            if p is None:
+                return
             p.select()
             state.points_for_obj.append(p)
             globals.objects.register(p)
@@ -642,6 +634,8 @@ def pressing(root):
                 state.points_for_obj[1].point_2 = p
                 state.points_for_obj[1].update()
                 deselect_all()
+                globals.sidebar.items.append(state.points_for_obj[1])
+                globals.sidebar.update()
                 state.points_for_obj = []
 
 
