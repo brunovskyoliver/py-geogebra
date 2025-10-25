@@ -2,8 +2,8 @@ name: Build
 
 on:
   push:
-    # branches:
-    #   - main
+    branches:
+      - main
     tags:
       - 'v*'
 
@@ -48,7 +48,7 @@ jobs:
 
       - name: build
         run: |
-          python -m PyInstaller --onefile --noconsole --noconfirm --hidden-import struct --hidden-import _struct --add-data "locales${{ runner.os == 'Windows' && ';' || ':' }}locales" --name py-geogebra${{ matrix.suffix }} --add-data "resources:resources" --hidden-import=requests --hidden-import=dotenv --hidden-import=libsql_client --add-data ".env:." main.py
+          python -m PyInstaller --onefile --noconsole --noconfirm --hidden-import struct --hidden-import _struct --add-data "locales${{ runner.os == 'Windows' && ';' || ':' }}locales" --name py-geogebra${{ matrix.suffix }} --add-data "resources:resources" --hidden-import=requests --hidden-import=dotenv --hidden-import=libsql_client --hidden-import=requests --hidden-import=flask --hidden-import=threading --add-data ".env:." main.py
 
       - name: Upload
         uses: actions/upload-artifact@v4
