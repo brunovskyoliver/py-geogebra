@@ -33,6 +33,9 @@ def scenes():
 
 @app.route("/load_scene/<name>")
 def load_scene(name):
+    user_info = handle_auth()
+    if user_info is None:
+        return jsonify({"error":"No Access"}), 402
     threading.Thread(
         target=lambda: globals.objects.load_scene_from_server(globals.root, name),
         daemon=True
