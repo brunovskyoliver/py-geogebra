@@ -5,7 +5,7 @@ a = Analysis(
     ['main.py'],
     pathex=[],
     binaries=[],
-    datas=[('locales', 'locales'), ('resources', 'resources'), ('.env', '.')],
+    datas=[('locales', 'locales'), ('resources', 'resources'), ('.env', '.'), ('py_geogebra/flask/templates', 'py_geogebra/flask/templates')],
     hiddenimports=['requests', 'struct', '_struct', 'dotenv', 'libsql_client', 'requests', 'flask', 'threading'],
     hookspath=[],
     hooksconfig={},
