@@ -1,19 +1,89 @@
 <!DOCTYPE html>
-<html>
+<html lang="sk">
 
 <head>
-    <title>Scenes</title>
+    <meta charset="UTF-8">
+    <title>Uložené scény</title>
+    <style>
+        body {
+            /* rovnaky font ako sidebar */
+            font-family: "Segoe UI", "Helvetica Neue", sans-serif;
+            background: white;
+            color: #333;
+            margin: 0;
+            padding: 40px;
+        }
+
+        h1 {
+            color: #222;
+            text-align: center;
+            font-size: 2em;
+            margin-bottom: 30px;
+        }
+
+        ul {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+            border-radius: 12px;
+            list-style: decimal inside;
+        }
+
+        li {
+            font-size: 1.1em;
+            padding: 10px 0;
+            border-bottom: 1px solid #eee;
+            transition: background 0.2s ease;
+        }
+
+        li:last-child {
+            border-bottom: none;
+        }
+
+        li:hover {
+            background: #f2f5f9;
+        }
+
+        .empty {
+            text-align: center;
+            color: #777;
+            font-style: italic;
+            padding: 40px;
+        }
+    </style>
 </head>
 
 <body>
+    <h1>Uložené scény</h1>
 
-    <ol>
-        {%for i in range(0, len)%}
-
-        <li>{{l[i]}}</li>
-        {%endfor%}
-
-    </ol>
+    {% if len == 0 %}
+    <div class="empty">Žiadne scény neboli nájdené.</div>
+    {% else %}
+    <ul>
+        {% for name in scenes %}
+        <li onclick="loadScene('{{ name }}')">{{ name }}</li>
+        {% endfor %}
+    </ul>
+    {% endif %}
+    <!-- https://auth0.com/blog/url-uri-urn-differences/ -->
+    <script>
+        function loadScene(name) {
+            // tento prvy fetch v skutocnosti robit nemusime, je to iba overenie auth
+            fetch(`/api/scene/${encodeURIComponent(name)}`)
+                .then(r => r.json()) // tu nas zaujima ze pride 200
+                .then(data => { // data ignorujeme
+                    fetch(`/load_scene/${encodeURIComponent(name)}`)
+                        .then(r => r.json())
+                        .then(resp => {
+                            if (resp.status === "ok") {
+                                alert("Scéna bola nahratá v aplikácií");
+                            } else {
+                                alert("Chyba: " + resp.message);
+                            }
+                        })
+                })
+        }
+    </script>
 
 </body>
 

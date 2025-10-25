@@ -18,6 +18,7 @@ from ..ui.segment_with_lenght import Segment_with_length
 from ..ui.polyline import Polyline
 from ..ui.lower_label import Lower_label
 from .. import globals
+import requests
 
 
 class Drawable(Protocol):
@@ -109,6 +110,13 @@ class Objects:
     def to_json(self, path):
         with open(path, "w", encoding="utf-8") as f:
             json.dump(self.to_dict(), f, indent=2)
+
+    def load_scene_from_server(self,root,name):
+        response = requests.get(f"http://127.0.0.1:5000/api/scene/{name}")
+        response.raise_for_status()
+        data = response.json()
+        self.load_from_dict(root, data)
+
 
     def load_from_dict(self, root, data: dict):
         globals.canvas.delete("all")

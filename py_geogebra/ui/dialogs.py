@@ -5,6 +5,7 @@ from py_geogebra.tools.utils import handle_auth
 from .. import globals
 from libsql_client import create_client_sync
 from ..tools.auth_config import TURSO_URL, TURSO_AUTH_TOKEN
+import webbrowser
 
 
 def ask_for_update(widgets):
@@ -82,4 +83,6 @@ def save_db(root):
         except Exception as e:
             messagebox.showerror(_("Chyba spojenia s DB"), str(e))
 
+def load_db(root):
+    webbrowser.open("http://127.0.0.1:5000/scenes")
 
