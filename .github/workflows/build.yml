@@ -36,6 +36,16 @@ jobs:
           python -m pip install --upgrade pip
           pip install pyinstaller -r requirements.txt
 
+      - name: Create .env file from secrets
+        run: |
+          echo "API_AUDIENCE=${{ secrets.API_AUDIENCE }}" > .env
+          echo "AUTH0_CALLBACK_URL=${{ secrets.AUTH0_CALLBACK_URL }}" >> .env
+          echo "AUTH0_CLIENT_ID=${{ secrets.AUTH0_CLIENT_ID }}" >> .env
+          echo "AUTH0_CLIENT_SECRET=${{ secrets.AUTH0_CLIENT_SECRET }}" >> .env
+          echo "AUTH0_DOMAIN=${{ secrets.AUTH0_DOMAIN }}" >> .env
+          echo "TURSO_AUTH_TOKEN=${{ secrets.TURSO_AUTH_TOKEN }}" >> .env
+          echo "TURSO_URL=${{ secrets.TURSO_URL }}" >> .env
+
       - name: build
         run: |
           python -m PyInstaller --onefile --noconsole --noconfirm --hidden-import struct --hidden-import _struct --add-data "locales${{ runner.os == 'Windows' && ';' || ':' }}locales" --name py-geogebra${{ matrix.suffix }} --add-data "resources:resources" --hidden-import=requests --hidden-import=dotenv --hidden-import=libsql_client --add-data ".env:." main.py
