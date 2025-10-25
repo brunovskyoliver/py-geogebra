@@ -64,7 +64,7 @@ def save_db(root):
     if name:
         scene = globals.objects.to_dict()
         try:
-            client = create_client_sync(url = TURSO_URL, auth_token = TURSO_AUTH_TOKEN, insecure=True)
+            client = create_client_sync(url = TURSO_URL, auth_token = TURSO_AUTH_TOKEN)
 #             client.execute("""
 # CREATE TABLE IF NOT EXISTS scenes (
 #     id INTEGER PRIMARY KEY AUTOINCREMENT,
