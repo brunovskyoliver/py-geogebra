@@ -14,6 +14,7 @@ from ..ui.vector_from_point import Vector_from_point
 from ..ui.free_hand import FreeHand
 from ..ui.segment_with_lenght import Segment_with_length
 from ..ui.polyline import Polyline
+from ..ui.perpendicular_bisector import Perpendicular_bisector
 from ..tools.utils import (
     delete_object,
     get_lower_label,
@@ -78,7 +79,7 @@ def pressing(root):
 
             world_x, world_y = screen_to_world(e)
 
-            l = find_line_at_position(e, r=2)
+            pb = find_line_at_position(e, r=2)
             polyline = find_polyline_at_position(e, r=2)
 
             label = get_label(state)
@@ -90,17 +91,17 @@ def pressing(root):
                 pos_x=world_x,
                 pos_y=world_y,
             )
-            
 
-            if l is not None:
+
+            if pb is not None:
                 p.is_detachable = True
                 p.is_atachable = False
-                p.parent_line = l
-                find_translation(p, l)
-                l.points.append(p)
-                snap_to_line(p, l)
+                p.parent_line = pb
+                find_translation(p, pb)
+                pb.points.append(p)
+                snap_to_line(p, pb)
                 p.color = "#349AFF"
-                l.update()
+                pb.update()
             elif polyline is not None:
                 p.is_detachable = True
                 p.is_atachable = False
@@ -116,7 +117,7 @@ def pressing(root):
 
         elif state.selected_tool == "attach_detach_point":
             point_obj = find_point_at_position(e)
-            
+
             if point_obj and point_obj.is_detachable and point_obj.parent_line:
                 detach_point(point_obj, point_obj.parent_line)
                 point_obj.parent_line.points.remove(point_obj)
@@ -124,18 +125,18 @@ def pressing(root):
                 point_obj.is_detachable = False
                 point_obj .is_atachable = True
             elif not point_obj and not state.line_to_attach:
-                l = find_line_at_position(e, r=2)
-                if l is None:
-                    l = find_polyline_at_position(e, r=2)
-                    if l is None:
+                pb = find_line_at_position(e, r=2)
+                if pb is None:
+                    pb = find_polyline_at_position(e, r=2)
+                    if pb is None:
                         return
-                l.select()
-                state.line_to_attach = l
-                
+                pb.select()
+                state.line_to_attach = pb
+
             elif not state.point_to_attach and point_obj:
                 state.point_to_attach = point_obj
                 point_obj.select()
-            
+
             else:
                 if state.point_to_attach:
                     state.point_to_attach.deselect()
@@ -144,9 +145,9 @@ def pressing(root):
                 state.point_to_attach = None
                 state.line_to_attach = None
 
-                
-            
-            
+
+
+
             if state.line_to_attach and state.point_to_attach:
                 attach_point(state.point_to_attach, state.line_to_attach)
                 state.point_to_attach.is_atachable = False
@@ -157,38 +158,38 @@ def pressing(root):
                 state.point_to_attach.parent_line = state.line_to_attach
                 state.point_to_attach = None
                 state.line_to_attach = None
-                
 
-                
-                
-        
+
+
+
+
         elif state.selected_tool == "intersect":
-            l = find_line_at_position(e, r=2)
-            if l is None:
-                l = find_polyline_at_position(e, r=2)
-            if l is None and state.selected_intersect_line_1:
+            pb = find_line_at_position(e, r=2)
+            if pb is None:
+                pb = find_polyline_at_position(e, r=2)
+            if pb is None and state.selected_intersect_line_1:
                 state.selected_intersect_line_1.deselect()
                 state.selected_intersect_line_1 = None
                 return
-            elif l is None:
+            elif pb is None:
                 return
             else:
                 if state.selected_intersect_line_1:
-                    if state.selected_intersect_line_1 == l:
+                    if state.selected_intersect_line_1 == pb:
                         return
                     else:
                         i = Create_Intersect(
                         state.selected_intersect_line_1,
-                        l,
+                        pb,
                         root,
                         unit_size=globals.axes.unit_size,
                         )
                         state.selected_intersect_line_1 = None
                 else:
                     world_x, world_y = screen_to_world(e)
-                    
-                    state.selected_intersect_line_1 = l
-                    l.select()
+
+                    state.selected_intersect_line_1 = pb
+                    pb.select()
 
         elif state.selected_tool == "pen":
             cx, cy = state.center
@@ -472,26 +473,25 @@ def pressing(root):
                 globals.sidebar.items.append(state.points_for_obj[1])
                 globals.sidebar.update()
                 state.points_for_obj = []
-        
+
         elif state.selected_tool == "vector_from_point":
             state.start_pos["x"] = e.x
             state.start_pos["y"] = e.y
             world_x, world_y = screen_to_world(e)
             p = find_point_at_position(e)
             if p == None:
-                l = find_line_at_position(e)
-                if isinstance(l, Vector):
-                    state.selected_vector = l
-                    l.select()
+                pb = find_line_at_position(e)
+                if isinstance(pb, Vector):
+                    state.selected_vector = pb
+                    pb.select()
             else:
                 state.selected_vector_point = p
                 p.select()
-                
+
             if state.selected_vector_point and state.selected_vector:
                 lower_label = get_lower_label(state)
                 label = get_label(state)
                 p = Point(
-                    root,
                     e,
                     label=label,
                     unit_size=globals.axes.unit_size,
@@ -514,19 +514,19 @@ def pressing(root):
                 state.selected_vector_point.deselect()
                 state.selected_vector_point = None
                 state.selected_vector = None
-                   
 
-        
+
+
         elif state.selected_tool == "perpendicular_line":
             state.start_pos["x"] = e.x
             state.start_pos["y"] = e.y
             world_x, world_y = screen_to_world(e)
             p = find_point_at_position(e)
             if p is None:
-                l = find_line_at_position(e)
-                if l:
-                    state.selected_perpendicular_line = l
-                    l.select()
+                pb = find_line_at_position(e)
+                if pb:
+                    state.selected_perpendicular_line = pb
+                    pb.select()
                 else:
                     label = get_label(state)
                     p = Point(
@@ -544,36 +544,36 @@ def pressing(root):
                 state.selected_perpendicular_point = p
                 p.select()
                 globals.objects.register(p)
-                
-                
+
+
             if state.selected_perpendicular_line and state.selected_perpendicular_point:
-                l = Perpendicular_line(
+                pb = Perpendicular_line(
                     root,
                 )
                 lower_label = get_lower_label(state)
-                l.lower_label = lower_label
-                l.parent_vector = state.selected_perpendicular_line.vector
-                l.point_1 = state.selected_perpendicular_point
-                    
-                globals.objects.register(l)
-                state.selected_perpendicular_line.child_lines.append(l)
+                pb.lower_label = lower_label
+                pb.parent_vector = state.selected_perpendicular_line.vector
+                pb.point_1 = state.selected_perpendicular_point
+
+                globals.objects.register(pb)
+                state.selected_perpendicular_line.child_lines.append(pb)
                 state.selected_perpendicular_line.deselect()
                 state.selected_perpendicular_point.deselect()
                 state.selected_perpendicular_line = None
                 state.selected_perpendicular_point = None
-                
 
-        
+
+
         elif state.selected_tool == "parallel_line":
             state.start_pos["x"] = e.x
             state.start_pos["y"] = e.y
             world_x, world_y = screen_to_world(e)
             p = find_point_at_position(e)
             if p is None:
-                l = find_line_at_position(e)
-                if l:
-                    state.selected_perpendicular_line = l
-                    l.select()
+                pb = find_line_at_position(e)
+                if pb:
+                    state.selected_perpendicular_line = pb
+                    pb.select()
                 else:
                     label = get_label(state)
                     p = Point(
@@ -591,26 +591,62 @@ def pressing(root):
                 state.selected_perpendicular_point = p
                 p.select()
                 globals.objects.register(p)
-                
-                
+
+
             if state.selected_perpendicular_line and state.selected_perpendicular_point:
-                l = Parallel_line(
+                pb = Parallel_line(
                     root,
                 )
                 lower_label = get_lower_label(state)
-                l.lower_label = lower_label
-                l.parent_vector = state.selected_perpendicular_line.vector
-                l.point_1 = state.selected_perpendicular_point
-                    
-                globals.objects.register(l)
-                state.selected_perpendicular_line.child_lines.append(l)
+                pb.lower_label = lower_label
+                pb.parent_vector = state.selected_perpendicular_line.vector
+                pb.point_1 = state.selected_perpendicular_point
+
+                globals.objects.register(pb)
+                state.selected_perpendicular_line.child_lines.append(pb)
                 state.selected_perpendicular_line.deselect()
                 state.selected_perpendicular_point.deselect()
                 state.selected_perpendicular_line = None
                 state.selected_perpendicular_point = None
-                
-            
-            
+
+        elif state.selected_tool == "perpendicular_bisector":
+            state.start_pos["x"] = e.x
+            state.start_pos["y"] = e.y
+            world_x, world_y = screen_to_world(e)
+            p = find_point_at_position(e)
+            if p is None and not state.points_for_obj:
+                label = get_label(state)
+                p = Point(
+                    root,
+                    e,
+                    label=label,
+                    unit_size=globals.axes.unit_size,
+                    pos_x=world_x,
+                    pos_y=world_y,
+                )
+            p.select()
+            state.points_for_obj.append(p)
+            globals.objects.register(p)
+
+            if len(state.points_for_obj) < 2:
+                pb = Perpendicular_bisector(
+                    root,
+                    point_1=p
+                )
+                lower_label = get_lower_label(state)
+                pb.lower_label = lower_label
+                state.points_for_obj.append(pb)
+                globals.objects.register(pb)
+                pb.update()
+            else:
+                state.points_for_obj[1].point_2 = p
+                state.points_for_obj[1].update()
+                deselect_all()
+                state.points_for_obj = []
+
+
+
+
 
 
     def middle_click_pressed(e):

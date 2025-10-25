@@ -85,7 +85,7 @@ class Perpendicular_line:
 
         p1 = find_point(data.get("point_1"))
         line = cls(root=root, unit_size=data.get("unit_size", 40))
-        
+
         line.point_1 = p1
         line.scale = data.get("scale", 1.0)
         line.is_drawable = data.get("is_drawable", True)
@@ -96,7 +96,7 @@ class Perpendicular_line:
         line.pos_x = data.get("pos_x", 0)
         line.pos_y = data.get("pos_y", 0)
         line.points = [find_point(lbl) for lbl in data.get("points", []) if lbl]
-        cx, cy = state.center                  
+        cx, cy = state.center
         line.cx = cx
         line.cy = cy
         line.prescription = data.get("prescription", {})
@@ -118,7 +118,7 @@ class Perpendicular_line:
         self.vector  = (self.parent_vector[1], -self.parent_vector[0])
         self.point_2.pos_x = self.point_1.pos_x + self.vector[0]
         self.point_2.pos_y = self.point_1.pos_y + self.vector[1]
-        
+
 
         visual_scale = min(max(1, self.scale**0.5), 1.9)
 

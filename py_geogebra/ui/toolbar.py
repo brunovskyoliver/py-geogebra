@@ -32,6 +32,7 @@ def change_icon(img, btn, tool_name):
             "ray",
             "midpoint_or_center",
             "perpendicular_line",
+            "perpendicular_bisector"
         )
         and state.selected_tool != tool_name
     ):
