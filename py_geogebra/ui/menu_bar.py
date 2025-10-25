@@ -51,7 +51,7 @@ def menu(root, widgets):
     widgets.register(
         lambda: file_selection.entryconfig(save_as_index, label=_("Uložiť ako"))
     )
-    file_selection.add_command(label=_("Uložit do DB"), command=lambda: save_db(root))
+    file_selection.add_command(label=_("Uložiť do DB"), command=lambda: save_db(root))
     save_db_index = file_selection.index("end")
     widgets.register(
         lambda: file_selection.entryconfig(save_db_index, label=_("Uložiť do DB"))
