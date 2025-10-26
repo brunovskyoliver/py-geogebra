@@ -48,7 +48,7 @@ jobs:
 
       - name: build
         run: |
-          python -m PyInstaller --onefile --noconsole --noconfirm --hidden-import struct --hidden-import _struct --add-data "locales${{ runner.os == 'Windows' && ';' || ':' }}locales" --name py-geogebra${{ matrix.suffix }} --add-data "resources:resources" --hidden-import=requests --hidden-import=dotenv --hidden-import=libsql_client --hidden-import=requests --hidden-import=flask --hidden-import=threading --add-data ".env:." --add-data "py_geogebra/flask/templates:py_geogebra/flask/templates" --hidden-import=libsql main.py
+          python -m PyInstaller --onefile --noconsole --noconfirm --hidden-import struct --hidden-import _struct --add-data "locales${{ runner.os == 'Windows' && ';' || ':' }}locales" --name py-geogebra${{ matrix.suffix }} --add-data "resources:resources" --hidden-import=requests --hidden-import=dotenv --hidden-import=libsql_client --hidden-import=requests --hidden-import=flask --hidden-import=threading --add-data ".env:." --add-data "py_geogebra/flask/templates:py_geogebra/flask/templates" --hidden-import=libsql --collect-all libsql main.py
 
       - name: Upload
         uses: actions/upload-artifact@v4

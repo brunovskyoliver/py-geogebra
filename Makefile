@@ -23,6 +23,8 @@ build:
 		--hidden-import=requests\
 		--hidden-import=flask\
 		--hidden-import=threading\
+		--hidden-import=libsql\
+		--collect-all libsql\
 		$(APP)
 
 clean:
