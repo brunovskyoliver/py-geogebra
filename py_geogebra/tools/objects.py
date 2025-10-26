@@ -20,6 +20,7 @@ from ..ui.lower_label import Lower_label
 from ..ui.angle_bisector import Angle_bisector
 from .. import globals
 import requests
+import subprocess
 
 
 class Drawable(Protocol):
@@ -116,6 +117,10 @@ class Objects:
         response = requests.get(f"http://127.0.0.1:5000/api/scene/{name}")
         response.raise_for_status()
         data = response.json()
+        root.lift()
+        cmd = ["osascript", "-e", 'tell application "Python" to activate']
+        subprocess.run(cmd)
+
         self.load_from_dict(root, data)
 
 
