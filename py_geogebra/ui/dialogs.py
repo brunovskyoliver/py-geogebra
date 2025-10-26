@@ -1,9 +1,8 @@
 from tkinter import messagebox, filedialog, simpledialog
 import sys, json, os
-
+import libsql
 from py_geogebra.tools.utils import handle_auth
 from .. import globals
-from libsql_client import create_client_sync
 from ..tools.auth_config import TURSO_URL, TURSO_AUTH_TOKEN
 import webbrowser
 
@@ -55,8 +54,8 @@ def save_file(root):
         globals.objects.to_json(file)
 
 def save_db(root):
-    import ssl
-    ssl_context = ssl._create_unverified_context()
+    # import ssl
+    # ssl_context = ssl._create_unverified_context()
     user_info = handle_auth()
     if user_info is None:
         return
@@ -64,7 +63,11 @@ def save_db(root):
     if name:
         scene = globals.objects.to_dict()
         try:
-            client = create_client_sync(url = TURSO_URL, auth_token = TURSO_AUTH_TOKEN, ssl=ssl_context)
+            #client = create_client_sync(url = TURSO_URL, auth_token = TURSO_AUTH_TOKEN)
+            #client = await create_client(TURSO_URL, auth_token=TURSO_AUTH_TOKEN)
+            conn = libsql.connect("local.db", sync_url=TURSO_URL, auth_token=TURSO_AUTH_TOKEN)
+            conn.sync()
+            client = conn.cursor()
 #             client.execute("""
 # CREATE TABLE IF NOT EXISTS scenes (
 #     id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -80,6 +83,8 @@ def save_db(root):
         "INSERT INTO scenes (user_id, nickname, name, data) VALUES (?,?, ?, ?)",
         (user_info["sub"], user_info["nickname"], name, json.dumps(scene)))
             client.close()
+            conn.commit()
+            conn.close()
 
             messagebox.showinfo(_("OK"), _("Scéna bola uložená"))
         except Exception as e:
