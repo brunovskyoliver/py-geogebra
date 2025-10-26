@@ -1,12 +1,19 @@
 # -*- mode: python ; coding: utf-8 -*-
+from PyInstaller.utils.hooks import collect_all
+
+datas = [('locales', 'locales'), ('resources', 'resources'), ('.env', '.'), ('py_geogebra/flask/templates', 'py_geogebra/flask/templates')]
+binaries = []
+hiddenimports = ['requests', 'struct', '_struct', 'dotenv', 'libsql_client', 'requests', 'flask', 'threading', 'libsql']
+tmp_ret = collect_all('libsql')
+datas += tmp_ret[0]; binaries += tmp_ret[1]; hiddenimports += tmp_ret[2]
 
 
 a = Analysis(
     ['main.py'],
     pathex=[],
-    binaries=[],
-    datas=[('locales', 'locales'), ('resources', 'resources'), ('.env', '.'), ('py_geogebra/flask/templates', 'py_geogebra/flask/templates')],
-    hiddenimports=['requests', 'struct', '_struct', 'dotenv', 'libsql_client', 'requests', 'flask', 'threading'],
+    binaries=binaries,
+    datas=datas,
+    hiddenimports=hiddenimports,
     hookspath=[],
     hooksconfig={},
     runtime_hooks=[],
