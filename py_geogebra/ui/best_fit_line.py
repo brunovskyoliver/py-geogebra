@@ -46,12 +46,13 @@ class Best_fit_line:
         self.fit_points = []
         self.child_lines_labels = []
         self.child_lines = []
-        self.lower_label = ""
-        self.lower_label_obj = Lower_label(self.root, obj=self)
-        self.objects.register(self.lower_label_obj)
         self.prescription = ()
         self.angle = 0
         self.vector = (0, 0)
+        
+        self.lower_label = ""
+        self.lower_label_obj = Lower_label(self.root, obj=self)
+        self.objects.register(self.lower_label_obj)
 
         self.canvas.bind("<Configure>", lambda e: self.update())
 
@@ -63,16 +64,14 @@ class Best_fit_line:
             "pos_y": self.pos_y,
             "unit_size": self.unit_size,
             "scale": self.scale,
-            "is_drawable": self.is_drawable,
             "offset_x": self.offset_x,
             "offset_y": self.offset_y,
             "tag": self.tag,
             "points": [p.label for p in self.points],
-            "point_1": self.point_1.label if self.point_1 else None,
-            "point_2": self.point_2.label if self.point_2 else None,
             "prescription": [p for p in self.prescription],
             "vector": self.vector,
-            "child_lines_labels": [l.lower_label for l in self.child_lines]
+            "child_lines_labels": [l.lower_label for l in self.child_lines],
+            "fit_points": [p.label for p in self.fit_points],
         }
 
     @classmethod
@@ -83,12 +82,8 @@ class Best_fit_line:
                     return obj
             return None
 
-        p1 = find_point(data.get("point_1"))
-        p2 = find_point(data.get("point_2"))
-        line = cls(root=root, point_1=p1, unit_size=data.get("unit_size", 40))
-        line.point_2 = p2
+        line = cls(root=root, unit_size=data.get("unit_size", 40))
         line.scale = data.get("scale", 1.0)
-        line.is_drawable = data.get("is_drawable", True)
         line.offset_x = data.get("offset_x", 0)
         line.offset_y = data.get("offset_y", 0)
         line.lower_label = data.get("lower_label", "")
@@ -96,6 +91,7 @@ class Best_fit_line:
         line.pos_x = data.get("pos_x", 0)
         line.pos_y = data.get("pos_y", 0)
         line.points = [find_point(lbl) for lbl in data.get("points", []) if lbl]
+        line.fit_points = [find_point(lbl) for lbl in data.get("fit_points", []) if lbl]
         cx, cy = state.center
         line.cx = cx
         line.cy = cy

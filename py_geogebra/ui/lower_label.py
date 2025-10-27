@@ -64,9 +64,18 @@ class Lower_label:
         from .vector_from_point import Vector_from_point
         from .segment_with_lenght import Segment_with_length
         from .perpendicular_bisector import Perpendicular_bisector
+        from .parallel_line import Parallel_line
+        from .perpendicular_line import Perpendicular_line
+        from .best_fit_line import Best_fit_line
         from .polyline import Polyline
 
-        if isinstance(self.obj, Line) or isinstance(self.obj, Ray) or isinstance(self.obj, Perpendicular_bisector):
+        if (isinstance(self.obj, Line)
+            or isinstance(self.obj, Ray)
+            or isinstance(self.obj, Perpendicular_bisector)
+            or isinstance(self.obj, Parallel_line)
+            or isinstance(self.obj, Perpendicular_line)
+            or isinstance(self.obj, Best_fit_line)
+            ):
             if self.obj.point_2 is None:
                 return
             x2, y2 = self.obj.point_2.pos_x, self.obj.point_2.pos_y
