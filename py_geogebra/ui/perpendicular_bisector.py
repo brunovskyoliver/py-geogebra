@@ -9,6 +9,7 @@ from ..tools.utils import (
 )
 from .. import state
 from .lower_label import Lower_label
+from .blank_point import Blank_point
 import math
 from types import SimpleNamespace
 from .. import globals
@@ -19,7 +20,7 @@ class Perpendicular_bisector:
         self,
         root: tk.Tk,
         unit_size: int = 40,
-        point_1=None,
+        perp_point_1=None,
     ):
         self.root = root
         self.canvas = globals.canvas
@@ -40,22 +41,27 @@ class Perpendicular_bisector:
 
         self.is_drawable = True
 
-        self.tag = f"line_{id(self)}"
-        self.point_1 = point_1
-        self.point_2 = None
+        self.tag = f"perpendicular_bisector_{id(self)}"
+        self.point_1 = Blank_point(root)
+        self.point_2 = Blank_point(root)
+        self.perp_point_1 = perp_point_1
+        self.perp_point_2 = None
         self.selected = False
+        
 
-        self.points = [self.point_1]
+        self.angle = 0
+        self.points = [self.perp_point_1]
         self.child_lines_labels = []
         self.child_lines = []
-        self.lower_label = ""
-        self.lower_label_obj = Lower_label(self.root, obj=self)
-        self.objects.register(self.lower_label_obj)
         self.prescription = ()
-        self.angle = 0
         self.vector = (0, 0)
         self.parent_vector = (0,0)
         self.middle = (0,0)
+        
+        self.lower_label = ""
+        self.lower_label_obj = Lower_label(self.root, obj=self)
+        self.objects.register(self.lower_label_obj)
+
 
         self.canvas.bind("<Configure>", lambda e: self.update())
 
@@ -72,8 +78,8 @@ class Perpendicular_bisector:
             "offset_y": self.offset_y,
             "tag": self.tag,
             "points": [p.label for p in self.points],
-            "point_1": self.point_1.label if self.point_1 else None,
-            "point_2": self.point_2.label if self.point_2 else None,
+            "perp_point_1": self.perp_point_1.label if self.perp_point_1 else None,
+            "perp_point_2": self.perp_point_2.label if self.perp_point_2 else None,
             "prescription": [p for p in self.prescription],
             "vector": self.vector,
             "parent_vector": self.parent_vector,
@@ -89,10 +95,10 @@ class Perpendicular_bisector:
                     return obj
             return None
 
-        p1 = find_point(data.get("point_1"))
-        p2 = find_point(data.get("point_2"))
-        pb = cls(root=root, point_1=p1, unit_size=data.get("unit_size", 40))
-        pb.point_2 = p2
+        p1 = find_point(data.get("perp_point_1"))
+        p2 = find_point(data.get("perp_point_2"))
+        pb = cls(root=root, perp_point_1=p1, unit_size=data.get("unit_size", 40))
+        pb.perp_point_2 = p2
         pb.scale = data.get("scale", 1.0)
         pb.is_drawable = data.get("is_drawable", True)
         pb.offset_x = data.get("offset_x", 0)
@@ -127,37 +133,22 @@ class Perpendicular_bisector:
 
         visual_scale = min(max(1, self.scale**0.5), 1.9)
 
-        if state.drag_target is self:
 
-            x_dif, y_dif = self.prev_x - self.pos_x, self.prev_y - self.pos_y
-            x1, y1 = self.point_1.pos_x, self.point_1.pos_y
-            x2, y2 = self.point_2.pos_x, self.point_2.pos_y
 
-            for obj in self.points:
-                if (obj is self.point_1) or (obj is self.point_2):
-                    obj.pos_x -= x_dif
-                    obj.pos_y -= y_dif
-                    x1 -= x_dif
-                    y1 -= y_dif
-                    x2 -= x_dif
-                    y2 -= y_dif
-                    continue
+        x1, y1 = self.perp_point_1.pos_x, self.perp_point_1.pos_y
 
+        if self.perp_point_2 is None and e is None:
+            return
+
+        if self.perp_point_2 is None:
+            cx, cy = state.center
+            x2 = (e.x - cx) / (self.unit_size * self.scale)
+            y2 = (cy - e.y) / (self.unit_size * self.scale)
         else:
-            x1, y1 = self.point_1.pos_x, self.point_1.pos_y
-
-            if self.point_2 is None and e is None:
-                return
-
-            if self.point_2 is None:
-                cx, cy = state.center
-                x2 = (e.x - cx) / (self.unit_size * self.scale)
-                y2 = (cy - e.y) / (self.unit_size * self.scale)
-            else:
-                x2, y2 = self.point_2.pos_x, self.point_2.pos_y
+            x2, y2 = self.perp_point_2.pos_x, self.perp_point_2.pos_y
 
         for obj in self.points:
-            if (obj is not self.point_1) and (obj is not self.point_2):
+            if (obj is not self.perp_point_1) and (obj is not self.perp_point_2):
                 snap_to_line(obj, self)
                 obj.update()
 
@@ -177,6 +168,9 @@ class Perpendicular_bisector:
 
         x1, y1 = mid_x - rotated_x * span, mid_y - rotated_y * span
         x2, y2 = mid_x + rotated_x * span, mid_y + rotated_y * span
+        
+        self.point_1.pos_x, self.point_1.pos_y = x1, y1
+        self.point_2.pos_x, self.point_2.pos_y = x2, y2
 
         self.angle = math.atan2(rotated_y, rotated_x)
         self.vector = (rotated_x, rotated_y)
@@ -186,13 +180,13 @@ class Perpendicular_bisector:
         x1, y1 = world_to_screen(x1, y1)
         x2, y2 = world_to_screen(x2, y2)
 
-        if self.point_2 is not None:
+        if self.perp_point_2 is not None:
             self.lower_label_obj.update()
 
 
-        if not self.point_2:
+        if not self.perp_point_2:
             self.is_drawable = True
-        elif self.point_1.is_drawable and self.point_2.is_drawable:
+        elif self.perp_point_1.is_drawable and self.perp_point_2.is_drawable:
             self.is_drawable = True
         else:
             self.is_drawable = False
@@ -219,11 +213,11 @@ class Perpendicular_bisector:
                 width=2 * visual_scale,
                 tags=self.tag,
             )
-        self.canvas.tag_raise(self.point_1.tag)
-        if self.point_2 is not None:
-            self.canvas.tag_raise(self.point_2.tag)
-            if self.point_2 not in self.points:
-                self.points.append(self.point_2)
+        self.canvas.tag_raise(self.perp_point_1.tag)
+        if self.perp_point_2 is not None:
+            self.canvas.tag_raise(self.perp_point_2.tag)
+            if self.perp_point_2 not in self.points:
+                self.points.append(self.perp_point_2)
 
         if len(self.child_lines) == 0:
             self.child_lines = load_lines_from_labels(self.child_lines_labels)

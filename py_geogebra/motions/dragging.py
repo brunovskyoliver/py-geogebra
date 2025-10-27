@@ -12,7 +12,10 @@ from ..ui.segment import Segment
 from ..ui.vector import Vector
 from ..ui.polyline import Polyline
 from ..ui.intersect import Intersect
+from ..ui.angle_bisector import Angle_bisector
 from ..ui.perpendicular_bisector import Perpendicular_bisector
+from ..ui.perpendicular_line import Perpendicular_line
+from ..ui.parallel_line import Parallel_line
 from .. import globals
 
 
@@ -61,6 +64,9 @@ def dragging(root):
                         or isinstance(obj, Midpoint_or_center)
                         or isinstance(obj, Vector)
                         or isinstance(obj, Perpendicular_bisector)
+                        or isinstance(obj, Perpendicular_line)
+                        or isinstance(obj, Parallel_line)
+                        or isinstance(obj, Angle_bisector)
                     ):
                         if (
                             obj.point_1 is state.drag_target

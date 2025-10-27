@@ -624,7 +624,7 @@ def pressing(root):
             if len(state.points_for_obj) < 2:
                 pb = Perpendicular_bisector(
                     root,
-                    point_1=p
+                    perp_point_1=p
                 )
                 lower_label = get_lower_label(state)
                 pb.lower_label = lower_label
@@ -632,7 +632,7 @@ def pressing(root):
                 globals.objects.register(pb)
                 pb.update()
             else:
-                state.points_for_obj[1].point_2 = p
+                state.points_for_obj[1].perp_point_2 = p
                 state.points_for_obj[1].update()
                 deselect_all()
                 globals.sidebar.items.append(state.points_for_obj[1])
