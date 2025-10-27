@@ -16,6 +16,7 @@ from ..ui.segment_with_lenght import Segment_with_length
 from ..ui.polyline import Polyline
 from ..ui.perpendicular_bisector import Perpendicular_bisector
 from ..ui.angle_bisector import Angle_bisector
+from ..ui.best_fit_line import Best_fit_line
 from ..tools.utils import (
     delete_object,
     get_lower_label,
@@ -493,6 +494,7 @@ def pressing(root):
                 lower_label = get_lower_label(state)
                 label = get_label(state)
                 p = Point(
+                    root,
                     e,
                     label=label,
                     unit_size=globals.axes.unit_size,
@@ -563,8 +565,6 @@ def pressing(root):
                 state.selected_perpendicular_line = None
                 state.selected_perpendicular_point = None
 
-
-
         elif state.selected_tool == "parallel_line":
             state.start_pos["x"] = e.x
             state.start_pos["y"] = e.y
@@ -619,7 +619,6 @@ def pressing(root):
                 return
             p.select()
             state.points_for_obj.append(p)
-            globals.objects.register(p)
 
             if len(state.points_for_obj) < 2:
                 pb = Perpendicular_bisector(
@@ -662,6 +661,28 @@ def pressing(root):
                     
                 state.selected_angle_bisector_points.clear()
 
+        elif state.selected_tool == "best_fit_line":
+            state.start_pos["x"] = e.x
+            state.start_pos["y"] = e.y
+            world_x, world_y = screen_to_world(e)
+            p = find_point_at_position(e)
+            if not p:
+                for obj in state.points_for_obj:
+                    obj.deselect()
+                state.points_for_obj = []
+                state.best_fit_line = None
+                return
+            state.points_for_obj.append(p)
+            p.select()
+            if not state.best_fit_line and len(state.points_for_obj) >= 2:
+                state.best_fit_line = Best_fit_line(
+                    root,
+                )
+                globals.objects.register(state.best_fit_line)
+            if state.best_fit_line:
+                state.best_fit_line.fit_points = state.points_for_obj[:]
+                
+            
             
 
 
