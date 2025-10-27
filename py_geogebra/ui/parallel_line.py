@@ -46,13 +46,13 @@ class Parallel_line:
         self.child_lines = []
         self.child_lines_labels = []
         self.points = []
-        self.lower_label = ""
-        self.lower_label_obj = Lower_label(self.root, obj=self)
-        self.objects.register(self.lower_label_obj)
         self.prescription = ()
         self.angle = 0
         self.vector = (0,0)
         self.parent_vector = (0,0)
+        self.lower_label = ""
+        self.lower_label_obj = Lower_label(self.root, obj=self)
+        self.objects.register(self.lower_label_obj)
 
         self.canvas.bind("<Configure>", lambda e: self.update())
 

@@ -678,6 +678,8 @@ def pressing(root):
                 state.best_fit_line = Best_fit_line(
                     root,
                 )
+                lower_label = get_lower_label(state)
+                state.best_fit_line.lower_label = lower_label
                 globals.objects.register(state.best_fit_line)
             if state.best_fit_line:
                 state.best_fit_line.fit_points = state.points_for_obj[:]

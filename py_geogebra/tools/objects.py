@@ -18,6 +18,7 @@ from ..ui.segment_with_lenght import Segment_with_length
 from ..ui.polyline import Polyline
 from ..ui.lower_label import Lower_label
 from ..ui.angle_bisector import Angle_bisector
+from ..ui.best_fit_line import Best_fit_line
 from .. import globals
 import requests
 import subprocess
@@ -178,6 +179,9 @@ class Objects:
                 self.register(vector)
             elif od["type"] == "Angle_bisector":
                 vector = Angle_bisector.from_dict(root, od)
+                self.register(vector)
+            elif od["type"] == "Best_fit_line":
+                vector = Best_fit_line.from_dict(root, od)
                 self.register(vector)
 
         for od in data.get("objects", []):
