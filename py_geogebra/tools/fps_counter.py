@@ -5,7 +5,7 @@ from .. import globals
 class FPSCounter:
     def __init__(self, x=10, y=10):
         self.canvas = globals.canvas
-        self.text_id = canvas.create_text(
+        self.text_id = self.canvas.create_text(
             x,
             y,
             text="FPS: 0",

@@ -45,6 +45,7 @@ def change_icon(img, btn, tool_name):
 
     deselect_all()
     state.selected_tool = tool_name
+    state.points_for_obj = []
 
     if tool_name in ("pen", "freehand"):
         cursor = "crosshair"  # pencil nefunguje spravne na macu z nejakeho dovodu

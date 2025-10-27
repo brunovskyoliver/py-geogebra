@@ -16,6 +16,7 @@ from ..ui.angle_bisector import Angle_bisector
 from ..ui.perpendicular_bisector import Perpendicular_bisector
 from ..ui.perpendicular_line import Perpendicular_line
 from ..ui.parallel_line import Parallel_line
+from ..ui.best_fit_line import Best_fit_line
 from .. import globals
 
 
@@ -67,6 +68,7 @@ def dragging(root):
                         or isinstance(obj, Perpendicular_line)
                         or isinstance(obj, Parallel_line)
                         or isinstance(obj, Angle_bisector)
+                        or isinstance(obj, Best_fit_line)
                     ):
                         if (
                             obj.point_1 is state.drag_target

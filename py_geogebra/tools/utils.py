@@ -184,7 +184,7 @@ def deselect_all():
             obj.deselect()
 
 
-def find_point_at_position(e, r=1):
+def find_point_at_position(e, r=2):
     items = g().canvas.find_overlapping(e.x - r, e.y - r, e.x + r, e.y + r)
     p = None
     for obj in g().objects._objects:
@@ -195,7 +195,7 @@ def find_point_at_position(e, r=1):
     return p
 
 
-def find_line_at_position(e, r=1):
+def find_line_at_position(e, r=2):
     items = g().canvas.find_overlapping(e.x - r, e.y - r, e.x + r, e.y + r)
     line = None
     for obj in g().objects._objects:
@@ -214,7 +214,7 @@ def find_line_at_position(e, r=1):
     return line
 
 
-def find_polyline_at_position(e, r=1):
+def find_polyline_at_position(e, r=2):
     items = g().canvas.find_overlapping(e.x - r, e.y - r, e.x + r, e.y + r)
     line = None
     for obj in g().objects._objects:
@@ -465,4 +465,30 @@ def handle_auth() -> dict | None:
         if not user_info:
             return None
     return user_info
+
+def calculate_points_for_best_fit_line(points):
+    # na toto som urcote dosiel sam
+    xs = [p.pos_x for p in points]
+    ys = [p.pos_y for p in points]
+    n = len(points)
+
+    mean_x = sum(xs) / n
+    mean_y = sum(ys) / n
+
+
+    numerator = sum((xs[i] - mean_x) * (ys[i] - mean_y) for i in range(n))
+    denominator = sum((xs[i] - mean_x) ** 2 for i in range(n))
+    if denominator == 0:
+        raise ValueError("Cannot compute line — all x values are identical")
+
+    m = numerator / denominator
+    b = mean_y - m * mean_x
+
+    x1 = min(xs)
+    x2 = max(xs)
+    y1 = m * x1 + b
+    y2 = m * x2 + b
+
+    return x1, x2, y1, y2
+    
 
