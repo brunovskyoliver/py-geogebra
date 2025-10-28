@@ -170,10 +170,26 @@ def toolbar(root):
         bar,
         def_icon="polygon",
         buttons=[
-            {"name": _("Mnoho uholník"), "icon": "polygon"},
+            {"name": _("Mnohouholník"), "icon": "polygon"},
             {"name": _("Pravidelný mnohouholník"), "icon": "regular_polygon"},
             {"name": _("Pevný mnohouholník"), "icon": "rigid_polygon"},
             {"name": _("Vektorový mnohouholník"), "icon": "vector_polygon"},
+        ],
+    )
+    tool_menu_init(
+        root,
+        bar,
+        def_icon="circle_center_point",
+        buttons=[
+            {"name": _("Kružnica daná stredom a bodom"), "icon": "circle_center_point"},
+            {"name": _("Kružnica daná stredom a polomerom"), "icon": "circle_center_radius"},
+            {"name": _("Kružnica daná polomerom a stredom"), "icon": "compass"},
+            {"name": _("Kružnica daná 3 bodmi"), "icon": "circle_3_points"},
+            {"name": _("Polkružnica s krajnými bodmi"), "icon": "semi_circle"},
+            {"name": _("Kružnicový oblúk daný stredom a krajnými bodmi"), "icon": "circular_arc"},
+            {"name": _("Kružnicový oblúk daný 3 bodmi"), "icon": "circumcircular_arc"},
+            {"name": _("Kruhový výsek daný stredom a krajnými bodmi"), "icon": "circular_sector"},
+            {"name": _("Kruhový výsek určený 3 bodmi"), "icon": "circumcircular_sector"},
         ],
     )
     state.selected_tool = "arrow"

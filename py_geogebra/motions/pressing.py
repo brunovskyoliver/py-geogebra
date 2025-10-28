@@ -1,3 +1,4 @@
+from py_geogebra.tools import objects
 from .. import state
 from ..ui.point import Point
 from ..ui.blank_point import Blank_point
@@ -18,6 +19,7 @@ from ..ui.perpendicular_bisector import Perpendicular_bisector
 from ..ui.angle_bisector import Angle_bisector
 from ..ui.best_fit_line import Best_fit_line
 from ..ui.polygon import Polygon
+from ..ui.circle_center_point import Circle_center_point
 from ..tools.utils import (
     delete_object,
     get_lower_label,
@@ -229,16 +231,16 @@ def pressing(root):
                 )
                 globals.objects.register(p)
             if len(state.points_for_obj) < 2:
-                line = Line(
+                c = Line(
                     root,
                     unit_size=globals.axes.unit_size,
                     point_1=p,
                 )
                 lower_label = get_lower_label(state)
-                line.lower_label = lower_label
-                globals.objects.register(line)
+                c.lower_label = lower_label
+                globals.objects.register(c)
                 state.points_for_obj.append(p)
-                state.points_for_obj.append(line)
+                state.points_for_obj.append(c)
 
             else:
                 state.points_for_obj[1].point_2 = p
@@ -725,9 +727,40 @@ def pressing(root):
                 state.current_polygon.update(e)
 
 
+        elif state.selected_tool == "circle_center_point":
+            state.start_pos["x"] = e.x
+            state.start_pos["y"] = e.y
+            world_x, world_y = screen_to_world(e)
+            p = find_point_at_position(e)
+            if p == None:
+                label = get_label(state)
+                p = Point(
+                    root,
+                    e=None,
+                    label=label,
+                    unit_size=globals.axes.unit_size,
+                    pos_x=world_x,
+                    pos_y=world_y,
+                )
+                globals.objects.register(p)
+            if len(state.points_for_obj) < 2:
+                c = Circle_center_point(
+                    root,
+                    unit_size=globals.axes.unit_size,
+                    point_1=p,
+                )
+                lower_label = get_lower_label(state)
+                c.lower_label = lower_label
+                globals.objects.register(c)
+                state.points_for_obj.append(p)
+                state.points_for_obj.append(c)
 
-
-
+            else:
+                state.points_for_obj[1].point_2 = p
+                state.points_for_obj[1].update()
+                globals.sidebar.items.append(state.points_for_obj[1])
+                globals.sidebar.update()
+                state.points_for_obj = []
 
 
 

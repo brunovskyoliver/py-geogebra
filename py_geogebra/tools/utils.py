@@ -1,6 +1,7 @@
 import tkinter as tk
 import math
-from tkinter import messagebox
+from tkinter import image_names, messagebox
+
 
 from .. import state
 
@@ -195,10 +196,11 @@ def deselect_all():
 
 
 def find_point_at_position(e, r=2):
+    from ..ui.point import Point
     items = g().canvas.find_overlapping(e.x - r, e.y - r, e.x + r, e.y + r)
     p = None
     for obj in g().objects._objects:
-        if hasattr(obj, "tag") and any(obj.tag in g().canvas.gettags(i) for i in items):
+        if hasattr(obj, "tag") and any(obj.tag in g().canvas.gettags(i) for i in items) and isinstance(obj, Point):
             if "point" in obj.tag or "intersect" in obj.tag:
                 p = obj
                 break
