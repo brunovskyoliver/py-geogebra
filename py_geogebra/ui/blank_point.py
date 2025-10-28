@@ -33,11 +33,11 @@ class Blank_point:
         self.cy = 0
         self.x = 0
         self.y = 0
-        
+
         self.pos_x = 0
         self.pos_y = 0
 
-        
+
         self.parent_line = None
 
 
@@ -89,4 +89,4 @@ class Blank_point:
         y = self.cy - self.pos_y * self.unit_size * self.scale
         self.x, self.y = x, y
 
-    
+

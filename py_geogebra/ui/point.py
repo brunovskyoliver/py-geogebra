@@ -36,8 +36,9 @@ class Point:
         self.scale = 1.0  # zoom factor
         self.unit_size = unit_size
 
-        self.cx = 0
-        self.cy = 0
+        cx, cy = state.center
+        self.cx = cx
+        self.cy = cy
         self.x = 0
         self.y = 0
 
@@ -46,7 +47,7 @@ class Point:
         self.is_drawable = True
         self.is_detachable = False
         self.is_atachable = True
-        
+
         self.parent_line = None
 
         self.tag = f"point_{id(self)}"

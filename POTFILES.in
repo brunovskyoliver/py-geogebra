@@ -8,6 +8,7 @@ py_geogebra/ui/segment_with_lenght.py
 py_geogebra/ui/lower_label.py
 py_geogebra/ui/midpoint_or_center.py
 py_geogebra/ui/line.py
+py_geogebra/ui/polygon.py
 py_geogebra/ui/__init__.py
 py_geogebra/ui/ray.py
 py_geogebra/ui/angle_bisector.py
