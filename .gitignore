@@ -7,3 +7,6 @@ __pycache__/
 .env
 *.env
 *.db
+*.db-shm
+*.db-info
+*.db-wal
