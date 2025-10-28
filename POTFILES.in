@@ -1,6 +1,7 @@
 py_geogebra/flask/app.py
 py_geogebra/ui/sidebar.py
 py_geogebra/ui/menu_bar.py
+py_geogebra/ui/best_fit_line.py
 py_geogebra/ui/vector.py
 py_geogebra/ui/parallel_line.py
 py_geogebra/ui/segment_with_lenght.py
@@ -9,6 +10,7 @@ py_geogebra/ui/midpoint_or_center.py
 py_geogebra/ui/line.py
 py_geogebra/ui/__init__.py
 py_geogebra/ui/ray.py
+py_geogebra/ui/angle_bisector.py
 py_geogebra/ui/point.py
 py_geogebra/ui/intersect.py
 py_geogebra/ui/free_hand.py
