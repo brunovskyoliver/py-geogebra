@@ -139,6 +139,8 @@ class Objects:
         state.shift_pressed = False
         state.center = center()
         globals.sidebar.load_from_dict(data.get("sidebar", {}))
+        state.current_polygon = None
+        state.drag_target = None
         # naskor musime loadnut POINTS, lebo inak sa nam neincializuju ostatne objecty ktore na POINTS zalezia...
         for od in data.get("objects", []):
             if od["type"] == "Point":
