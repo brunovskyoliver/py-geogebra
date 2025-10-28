@@ -707,21 +707,21 @@ def pressing(root):
 
                 state.current_polygon.line_points.append(p)
                 globals.objects.register(p)
+                state.current_polygon.handle_segments()
             elif (
                 len(state.current_polygon.line_points) > 2
                 and state.current_polygon.line_points[0] == p
             ):
                 state.current_polygon.last_not_set = False
                 state.current_polygon.lower_label = get_lower_label(state)
+                state.current_polygon.handle_segments()
                 state.current_polygon.update(e)
                 globals.sidebar.items.append(state.current_polygon)
                 globals.sidebar.update()
                 state.current_polygon = None
             else:
-                if p in state.current_polygon.line_points:
-                    state.current_polygon.line_points.remove(p)
-                else:
-                    state.current_polygon.line_points.append(p)
+                state.current_polygon.line_points.append(p)
+                state.current_polygon.handle_segments()
                 state.current_polygon.update(e)
 
 

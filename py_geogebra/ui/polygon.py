@@ -34,6 +34,7 @@ class Polygon:
 
         self.line_points = []
         self.points = []
+        self.segments = []
         self.last_not_set = True
         self.lower_label = ""
         self.lower_label_obj = Lower_label(self.root, obj=self)
@@ -94,6 +95,51 @@ class Polygon:
     def _on_canvas_configure(self, e=None):
         if e and e.width > 0 and e.height > 0:
             self.update()
+
+    def handle_segments(self):
+        from .segment import Segment
+
+        if len(self.line_points) < 2:
+            self.segments.clear()
+            return
+
+        pairs = []
+        for i in range(len(self.line_points) - 1):
+            pairs.append((self.line_points[i], self.line_points[i + 1]))
+
+        if not self.last_not_set and len(self.line_points) > 2:
+            pairs.append((self.line_points[-1], self.line_points[0]))
+
+        def segment_points(segment):
+            return segment.point_1, segment.point_2
+
+        segments = []
+        for segment in self.segments:
+            if not segment or not segment.point_1 or not segment.point_2:
+                continue
+            p1, p2 = segment_points(segment)
+            if (p1, p2) in pairs or (p2, p1) in pairs:
+                segments.append(segment)
+        self.segments = segments
+
+        for p1, p2 in pairs:
+            exists = any(
+                (segment.point_1 == p1 and segment.point_2 == p2)
+                or (segment.point_1 == p2 and segment.point_2 == p1)
+                for segment in self.segments
+            )
+            if not exists:
+                segment = Segment(self.root, point_1=p1)
+                segment.point_2 = p2
+                segment.parent = self
+                segment.color = "#FF0000"
+                segment.update()
+                self.objects.register(segment)
+                self.segments.append(segment)
+
+        for segment in self.segments:
+            segment.update()
+
 
     def update(self, e=None):
         length = 0.0
@@ -158,12 +204,12 @@ class Polygon:
         if items:
             self.canvas.tag_lower(polygon_fill, items[0])
 
-        self.canvas.create_line(
-            *coords,
-            fill="#FF0000",
-            width=5 * visual_scale,
-            tags=(self.tag, "polygon_alpha"),
-        )
+        # self.canvas.create_line(
+        #     *coords,
+        #     fill="#FF0000",
+        #     width=5 * visual_scale,
+        #     tags=(self.tag, "polygon_alpha"),
+        # )
 
         for p in self.line_points:
             self.canvas.tag_raise(p.tag)
@@ -189,6 +235,5 @@ class Polygon:
         for p in self.points:
             self.canvas.tag_raise(p.tag)
 
-        self.canvas.tag_lower("polygon_alpha")
 
         self.prev_x, self.prev_y = self.pos_x, self.pos_y
