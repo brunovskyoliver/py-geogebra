@@ -162,6 +162,17 @@ def toolbar(root):
             {"name": _("Množina bodov"), "icon": "locus"},
         ],
     )
+    tool_menu_init(
+        root,
+        bar,
+        def_icon="polygon",
+        buttons=[
+            {"name": _("Mnoho uholník"), "icon": "polygon"},
+            {"name": _("Pravidelný mnohouholník"), "icon": "regular_polygon"},
+            {"name": _("Pevný mnohouholník"), "icon": "rigid_polygon"},
+            {"name": _("Vektorový mnohouholník"), "icon": "vector_polygon"},
+        ],
+    )
     state.selected_tool = "arrow"
 
     return bar
