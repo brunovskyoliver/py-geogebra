@@ -133,7 +133,8 @@ class Polygon:
 
         if len(coords) < 4:
             return
-
+        if not self.last_not_set:
+            coords.extend([self.line_points[0].x,self.line_points[0].y])
         if self.selected:
             self.canvas.create_line(
                 *coords,
