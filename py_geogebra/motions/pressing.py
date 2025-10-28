@@ -17,6 +17,7 @@ from ..ui.polyline import Polyline
 from ..ui.perpendicular_bisector import Perpendicular_bisector
 from ..ui.angle_bisector import Angle_bisector
 from ..ui.best_fit_line import Best_fit_line
+from ..ui.polygon import Polygon
 from ..tools.utils import (
     delete_object,
     get_lower_label,
@@ -637,7 +638,7 @@ def pressing(root):
                 globals.sidebar.items.append(state.points_for_obj[1])
                 globals.sidebar.update()
                 state.points_for_obj = []
-                
+
         elif state.selected_tool == "angle_bisector":
             state.start_pos["x"] = e.x
             state.start_pos["y"] = e.y
@@ -647,7 +648,7 @@ def pressing(root):
                 return
             p.select()
             state.selected_angle_bisector_points.append(p)
-            
+
             if len(state.selected_angle_bisector_points) == 3:
                 ag = Angle_bisector(
                     root
@@ -658,7 +659,7 @@ def pressing(root):
                 globals.objects.register(ag)
                 for p in state.selected_angle_bisector_points:
                     p.deselect()
-                    
+
                 state.selected_angle_bisector_points.clear()
 
         elif state.selected_tool == "best_fit_line":
@@ -683,9 +684,49 @@ def pressing(root):
                 globals.objects.register(state.best_fit_line)
             if state.best_fit_line:
                 state.best_fit_line.fit_points = state.points_for_obj[:]
-                
-            
-            
+
+        elif state.selected_tool == "polygon":
+            state.start_pos["x"] = e.x
+            state.start_pos["y"] = e.y
+            world_x, world_y = screen_to_world(e)
+            if state.current_polygon is None:
+                polygon = Polygon(root, globals.axes.unit_size)
+                state.current_polygon = polygon
+                globals.objects.register(polygon)
+            p = find_point_at_position(e)
+            if p == None:
+                label = get_label(state)
+                p = Point(
+                    root,
+                    e,
+                    label=label,
+                    unit_size=globals.axes.unit_size,
+                    pos_x=world_x,
+                    pos_y=world_y,
+                )
+
+                state.current_polygon.line_points.append(p)
+                globals.objects.register(p)
+            elif (
+                len(state.current_polygon.line_points) > 2
+                and state.current_polygon.line_points[0] == p
+            ):
+                state.current_polygon.last_not_set = False
+                state.current_polygon.lower_label = get_lower_label(state)
+                state.current_polygon.update(e)
+                globals.sidebar.items.append(state.current_polygon)
+                globals.sidebar.update()
+                state.current_polygon = None
+            else:
+                if p in state.current_polygon.line_points:
+                    state.current_polygon.line_points.remove(p)
+                else:
+                    state.current_polygon.line_points.append(p)
+                state.current_polygon.update(e)
+
+
+
+
 
 
 

@@ -27,6 +27,7 @@ scale = 1.0
 selected_point = None
 current_pen = None
 current_polyline = None
+current_polygon = None
 label_counter = 0
 lower_label_counter = 0
 label_unused = []
