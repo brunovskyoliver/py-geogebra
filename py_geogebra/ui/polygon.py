@@ -3,6 +3,7 @@ from ..tools.utils import distance, snap_to_polyline
 from .. import state
 from .. import globals
 from .lower_label import Lower_label
+from PIL import Image, ImageTk, ImageDraw
 
 
 class Polygon:
@@ -149,7 +150,15 @@ class Polygon:
             width=2 * visual_scale,
             tags=(self.tag, "polygon_alpha"),
         )
-        self.canvas.create_polygon(*coords,fill="orange",tags=self.tag)
+        self.img = Image.new("RGBA", (self.canvas.winfo_width(), self.canvas.winfo_height()), (0, 0, 0, 0))
+        self.draw = ImageDraw.Draw(self.img)
+        self.draw.polygon(coords,fill=(255, 165, 0, 128)) # orange @ 50% opacity
+
+        self.overlay_img = ImageTk.PhotoImage(self.img)
+        self.overlay = self.canvas.create_image(0, 0, anchor="nw", image=self.overlay_img)
+        self.canvas.tag_raise(self.overlay)
+        
+        # self.canvas.create_polygon(*coords,fill="orange",stipple="gray25",tags=self.tag)
         if not self.last_not_set and self.line_points:
             for i in range(0, len(self.line_points), 2):
                 if i + 2 <= len(self.line_points):
@@ -168,6 +177,7 @@ class Polygon:
             self.canvas.tag_raise(p.tag)
         for p in self.points:
             self.canvas.tag_raise(p.tag)
+        self.canvas.tag_raise(self.overlay)
 
         self.canvas.tag_lower("polygon_alpha")
 
