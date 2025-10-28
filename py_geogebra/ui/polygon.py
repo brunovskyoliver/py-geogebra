@@ -2,8 +2,15 @@ import tkinter as tk
 from ..tools.utils import distance, snap_to_polyline
 from .. import state
 from .. import globals
+from io import BytesIO
+import cairosvg
+from PIL import Image, ImageTk
 from .lower_label import Lower_label
 
+def svg_to_photoimage(svg_string):
+    png_data = cairosvg.svg2png(bytestring=svg_string.encode("utf-8"))
+    image = Image.open(BytesIO(png_data))
+    return ImageTk.PhotoImage(image)
 
 class Polygon:
     def __init__(
@@ -39,6 +46,7 @@ class Polygon:
         self.lower_label = ""
         self.lower_label_obj = Lower_label(self.root, obj=self)
         self.objects.register(self.lower_label_obj)
+        self.svg_img = None
         self.canvas.bind("<Configure>", lambda e: self.update())
 
     def to_dict(self) -> dict:
@@ -149,7 +157,22 @@ class Polygon:
             width=2 * visual_scale,
             tags=(self.tag, "polygon_alpha"),
         )
-        self.canvas.create_polygon(*coords,fill="orange",tags=self.tag)
+        # self.canvas.create_polygon(*coords,fill="orange",tags=self.tag)
+        points = " ".join(f"{x},{y}" for x, y in zip(coords[::2], coords[1::2]))
+        svg = f"""
+        <svg xmlns='http://www.w3.org/2000/svg'
+             width='{self.canvas.winfo_width()}'
+             height='{self.canvas.winfo_height()}'>
+          <polygon points='{points}'
+                   fill='orange'
+                   fill-opacity='0.5'
+                   stroke='black'
+                   stroke-width='{2 * visual_scale}' />
+        </svg>
+        """
+        self.svg_img = svg_to_photoimage(svg)
+        self.canvas.create_image(0, 0, anchor="nw", image=self.svg_img, tags=self.tag)
+
         if not self.last_not_set and self.line_points:
             for i in range(0, len(self.line_points), 2):
                 if i + 2 <= len(self.line_points):
