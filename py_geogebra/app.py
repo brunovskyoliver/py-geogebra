@@ -1,5 +1,6 @@
 import tkinter as tk
 from tkinter import Canvas, ttk
+from PIL import Image, ImageTk, ImageDraw
 
 from .tools.language import set_language
 from .tools.language import change_lang
@@ -60,5 +61,8 @@ def run_app():
     menu_bar = menu(root, widgets)
     root.config(menu=menu_bar)
     state.shift_pressed = False
+    
+
+    
 
     root.mainloop()
