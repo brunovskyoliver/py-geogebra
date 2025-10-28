@@ -4,6 +4,7 @@ from ..ui.point import Point
 from ..ui.line import Line
 from ..ui.segment import Segment
 from ..ui.polyline import Polyline
+from ..ui.polygon import Polygon
 from ..ui.ray import Ray
 from ..ui.perpendicular_bisector import Perpendicular_bisector
 
@@ -128,6 +129,21 @@ class Sidebar:
                     font=self.font,
                 )
                 text.pack(padx=10, pady=10, anchor="nw")
+            elif isinstance(item, Polygon):
+                text = tk.Label(
+                    self.frame,
+                    text=(
+                        f"{item.lower_label} = Polygon({', '.join(p.label for p in item.line_points)})\n"
+                        f"{' ' * (len(item.lower_label)-1)}= {round(item.length, 2)}"
+                    ),
+                    fg="black",
+                    bg="#dddddd",
+                    justify="left",
+                    anchor="nw",
+                    font=self.font,
+                )
+                text.pack(padx=10, pady=10, anchor="nw")
+
 
             elif isinstance(item, Perpendicular_bisector):
                 a, b, c = item.prescription

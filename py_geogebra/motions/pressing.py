@@ -713,6 +713,7 @@ def pressing(root):
             ):
                 state.current_polygon.last_not_set = False
                 state.current_polygon.lower_label = get_lower_label(state)
+                state.current_polygon.line_points.append(p)
                 state.current_polygon.update(e)
                 globals.sidebar.items.append(state.current_polygon)
                 globals.sidebar.update()

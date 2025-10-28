@@ -19,6 +19,7 @@ from ..ui.polyline import Polyline
 from ..ui.lower_label import Lower_label
 from ..ui.angle_bisector import Angle_bisector
 from ..ui.best_fit_line import Best_fit_line
+from ..ui.polygon import Polygon
 from .. import globals
 import requests
 import subprocess
@@ -162,6 +163,9 @@ class Objects:
             elif od["type"] == "Polyline":
                 polyline = Polyline.from_dict(root, od)
                 self.register(polyline)
+            elif od["type"] == "Polygon":
+                polygon = Polygon.from_dict(root, od)
+                self.register(polygon)
             elif od["type"] == "Vector":
                 vector = Vector.from_dict(root, od)
                 self.register(vector)

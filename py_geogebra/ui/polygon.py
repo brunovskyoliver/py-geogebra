@@ -119,6 +119,7 @@ class Polygon:
         for p in self.line_points:
             coords.extend([p.x, p.y])
 
+
         if self.last_not_set and e is not None:
             coords.extend([e.x, e.y])
 
@@ -145,9 +146,9 @@ class Polygon:
             *coords,
             fill="black",
             width=2 * visual_scale,
-            tags=self.tag,
+            tags=(self.tag, "polygon_alpha"),
         )
-
+        self.canvas.create_polygon(*coords,fill="orange",tags=self.tag)
         if not self.last_not_set and self.line_points:
             for i in range(0, len(self.line_points), 2):
                 if i + 2 <= len(self.line_points):
@@ -166,5 +167,7 @@ class Polygon:
             self.canvas.tag_raise(p.tag)
         for p in self.points:
             self.canvas.tag_raise(p.tag)
+
+        self.canvas.tag_lower("polygon_alpha")
 
         self.prev_x, self.prev_y = self.pos_x, self.pos_y

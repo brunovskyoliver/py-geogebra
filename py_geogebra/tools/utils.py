@@ -104,6 +104,7 @@ def delete_object(object_to_delete, state):
     from ..ui.segment import Segment
     from ..ui.segment_with_lenght import Segment_with_length
     from ..ui.polyline import Polyline
+    from ..ui.polygon import Polygon
     from ..ui.perpendicular_bisector import Perpendicular_bisector
     from ..tools.utils import reconfigure_label_order
 
@@ -138,6 +139,7 @@ def delete_object(object_to_delete, state):
                 or isinstance(obj, Ray)
                 or isinstance(obj, Segment)
                 or isinstance(obj, Polyline)
+                or isinstance(obj, Polygon)
             ):
                 reconfigure_lower_label_order(obj.lower_label, state)
                 g().sidebar.items.remove(obj)
@@ -149,10 +151,18 @@ def delete_object(object_to_delete, state):
             if isinstance(obj, Polyline) and object_to_delete in obj.points:
                 g().objects.unregister(obj)
                 g().canvas.delete(obj.tag)
+            if isinstance(obj, Polygon) and object_to_delete in obj.points:
+                g().objects.unregister(obj)
+                g().canvas.delete(obj.tag)
 
         state.selected_point = None
         reconfigure_label_order(object_to_delete.label, state)
     if isinstance(object_to_delete, Polyline):
+        for obj in object_to_delete.points:
+            g().objects.unregister(obj)
+            g().canvas.delete(obj.tag)
+            reconfigure_label_order(obj.label, state)
+    if isinstance(object_to_delete, Polygon):
         for obj in object_to_delete.points:
             g().objects.unregister(obj)
             g().canvas.delete(obj.tag)
@@ -219,7 +229,7 @@ def find_polyline_at_position(e, r=2):
     line = None
     for obj in g().objects._objects:
         if hasattr(obj, "tag") and any(obj.tag in g().canvas.gettags(i) for i in items):
-            if "polyline" in obj.tag:
+            if "polyline" in obj.tag or "polygon" in obj.tag:
                 line = obj
                 break
     return line
@@ -490,5 +500,5 @@ def calculate_points_for_best_fit_line(points):
     y2 = m * x2 + b
 
     return x1, x2, y1, y2
-    
+
 
