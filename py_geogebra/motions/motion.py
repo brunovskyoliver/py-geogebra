@@ -21,6 +21,14 @@ def motion(root):
         ):
             state.current_polyline.update(e)
 
+        if (
+            state.selected_tool == "polygon"
+            and state.current_polygon is not None
+            and state.current_polygon.last_not_set
+        ):
+            state.current_polygon.update(e)
+
+
         if state.selected_tool == "vector" and 0 < len(state.points_for_obj) < 3:
             state.points_for_obj[1].update(e)
 

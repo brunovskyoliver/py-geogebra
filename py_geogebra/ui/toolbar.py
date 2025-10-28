@@ -42,6 +42,9 @@ def change_icon(img, btn, tool_name):
     if state.selected_tool == "polyline" and state.current_polyline:
         delete_object(state.current_polyline, state)
         state.current_polyline = None
+    if state.selected_tool == "polygon" and state.current_polygon:
+        delete_object(state.current_polygon, state)
+        state.current_polygon = None
 
     deselect_all()
     state.selected_tool = tool_name

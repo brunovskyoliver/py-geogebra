@@ -11,6 +11,7 @@ from ..ui.midpoint_or_center import Midpoint_or_center
 from ..ui.segment import Segment
 from ..ui.vector import Vector
 from ..ui.polyline import Polyline
+from ..ui.polygon import Polygon
 from ..ui.intersect import Intersect
 from ..ui.angle_bisector import Angle_bisector
 from ..ui.perpendicular_bisector import Perpendicular_bisector
@@ -97,6 +98,18 @@ def dragging(root):
                             obj.update()
                         else:
                             globals.objects.refresh()
+                    elif isinstance(obj, Polygon):
+                        if state.drag_target in obj.line_points:
+                            obj.update()
+                        elif state.drag_target in obj.points:
+                            state.drag_target.pos_x = world_x
+                            state.drag_target.pos_y = world_y
+                            state.drag_target.update()
+                            find_translation_polyline(state.drag_target, obj)
+                            obj.update()
+                        else:
+                            globals.objects.refresh()
+
                 globals.sidebar.update()
                 globals.objects.refresh()
 
