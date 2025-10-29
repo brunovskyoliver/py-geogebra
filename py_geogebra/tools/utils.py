@@ -1,7 +1,7 @@
+from os.path import isjunction
 import tkinter as tk
 import math
 from tkinter import image_names, messagebox
-
 
 from .. import state
 
@@ -227,11 +227,24 @@ def find_line_at_position(e, r=2):
 
 
 def find_polyline_at_position(e, r=2):
+    from ..ui.polyline import Polyline
+    from ..ui.polygon import Polygon
     items = g().canvas.find_overlapping(e.x - r, e.y - r, e.x + r, e.y + r)
     line = None
     for obj in g().objects._objects:
-        if hasattr(obj, "tag") and any(obj.tag in g().canvas.gettags(i) for i in items):
+        if hasattr(obj, "tag") and any(obj.tag in g().canvas.gettags(i) for i in items) and (isinstance(obj, Polyline) or isinstance(obj, Polygon)):
             if "polyline" in obj.tag or "polygon" in obj.tag:
+                line = obj
+                break
+    return line
+
+def find_circle_at_position(e, r=2):
+    from ..ui.circle_center_point import Circle_center_point
+    items = g().canvas.find_overlapping(e.x - r, e.y - r, e.x + r, e.y + r)
+    line = None
+    for obj in g().objects._objects:
+        if hasattr(obj, "tag") and any(obj.tag in g().canvas.gettags(i) for i in items) and isinstance(obj, Circle_center_point):
+            if "circle" in obj.tag:
                 line = obj
                 break
     return line
@@ -250,6 +263,20 @@ def snap_to_line(point, line):
 
     point.pos_x = proj_x
     point.pos_y = proj_y
+
+
+
+def snap_to_circle(point, circle):
+    x1, y1 = circle.point_1.pos_x, circle.point_1.pos_y
+    radius = circle.radius
+
+    angle = point.translation
+
+    px = x1 + radius * math.cos(angle)
+    py = y1 + radius * math.sin(angle)
+
+    point.pos_x = px
+    point.pos_y = py
 
 
 def snap_to_polyline(point, polyline):
@@ -307,6 +334,12 @@ def find_translation(point, line):
     p_dist = distance(x1, y1, px, py)
 
     point.translation = (p_dist * math.cos(beta)) / dist
+
+def find_translation_circle(point, circle):
+    x1, y1 = circle.point_1.pos_x, circle.point_1.pos_y
+    px, py = point.pos_x, point.pos_y
+    angle = math.atan2(py-y1, px-x1)
+    point.translation = angle
 
 def find_translation_between_points(point, point_1, point_2):
     x1, y1 = point_1.pos_x, point_1.pos_y
@@ -399,11 +432,12 @@ def get_linear_fuction_prescription(x1, y1, x2, y2):
 
 def detach_point(point, line):
     from ..ui.polyline import Polyline
-    if not isinstance(line, Polyline):
+    from ..ui.circle_center_point import Circle_center_point
+    if not isinstance(line, Polyline) and not isinstance(line, Circle_center_point):
         dx = line.point_2.pos_x - line.point_1.pos_x
         dy = line.point_2.pos_y - line.point_1.pos_y
 
-    else:
+    elif isinstance(line, Polyline):
         smallest_dist = float("inf")
         for i in range(len(line.line_points) - 1):
             dist = (
@@ -436,8 +470,14 @@ def detach_point(point, line):
 
         dx = x2 - x1
         dy = y2 - y1
+    elif isinstance(line, Circle_center_point):
+        x1, y1 = line.point_1.pos_x, line.point_1.pos_y
+        dx = point.pos_x - x1
+        dy = point.pos_y - y1
 
     length = math.hypot(dx, dy)
+    if length == 0:
+        return
     perp_x = -dy / length
     perp_y = dx / length
 
@@ -447,12 +487,16 @@ def detach_point(point, line):
 
 def attach_point(point, line):
     from ..ui.polyline import Polyline
-    if not isinstance(line, Polyline):
+    from ..ui.circle_center_point import Circle_center_point
+    if not isinstance(line, Polyline) and not isinstance(line, Circle_center_point):
         find_translation(point, line)
         snap_to_line(point, line)
-    else:
+    elif isinstance(line, Polyline):
         find_translation_polyline(point, line)
         snap_to_polyline(point, line)
+    else:
+        find_translation_circle(point, line)
+        snap_to_circle(point, line)
 
 def calculate_vector(point_1, point_2):
     return (point_1.pos_x - point_2.pos_x, point_1.pos_y - point_2.pos_y)
