@@ -1,8 +1,8 @@
 import tkinter as tk
 from ..tools.utils import (
-    world_to_screen, 
-    distance, 
-    snap_to_line, 
+    world_to_screen,
+    distance,
+    snap_to_line,
     calculate_vector,
     load_lines_from_labels,
 )
@@ -38,6 +38,7 @@ class Segment:
         self.cy = 0
 
         self.selected = False
+        self.color = "black"
 
         self.is_drawable = True
 
@@ -149,10 +150,10 @@ class Segment:
                 obj.translation = 0
             snap_to_line(obj, self)
             obj.update()
-            
+
         if self.point_2 is not None:
             self.lower_label_obj.update()
-            
+
             self.vector = calculate_vector(self.point_1, self.point_2)
 
         if not self.point_2:
@@ -170,11 +171,11 @@ class Segment:
             else:
                 x2, y2 = self.point_2.pos_x, self.point_2.pos_y
                 self.length = distance(x1, y1, x2, y2, 2)
-                
+
 
             x1, y1 = world_to_screen(x1, y1)
             x2, y2 = world_to_screen(x2, y2)
-            
+
 
             if self.selected:
                 self.canvas.create_line(
@@ -192,7 +193,7 @@ class Segment:
                 y1,
                 x2,
                 y2,
-                fill="black",
+                fill=self.color,
                 width=2 * visual_scale,
                 tags=self.tag,
             )
@@ -201,16 +202,18 @@ class Segment:
             self.canvas.tag_raise(self.point_2.tag)
             if self.point_2 not in self.points:
                 self.points.append(self.point_2)
-                
+
         if len(self.child_lines) == 0:
             self.child_lines = load_lines_from_labels(self.child_lines_labels)
 
         for p in self.points:
             self.canvas.tag_raise(p.tag)
-            
+
         for l in self.child_lines:
-            if l:
+            if l and hasattr(l, "parent_vector"):
                 l.parent_vector = self.vector
+                l.update()
+            else:
                 l.update()
 
         self.prev_x, self.prev_y = self.pos_x, self.pos_y

@@ -3,8 +3,6 @@ from ..tools.utils import distance, snap_to_polyline
 from .. import state
 from .. import globals
 from .lower_label import Lower_label
-from PIL import Image, ImageTk, ImageDraw
-
 
 class Polygon:
     def __init__(
@@ -36,11 +34,12 @@ class Polygon:
 
         self.line_points = []
         self.points = []
+        self.segments = []
         self.last_not_set = True
         self.lower_label = ""
         self.lower_label_obj = Lower_label(self.root, obj=self)
         self.objects.register(self.lower_label_obj)
-        self.canvas.bind("<Configure>", lambda e: self.update())
+        self.canvas.bind("<Configure>", self._on_canvas_configure)
 
     def to_dict(self) -> dict:
         return {
@@ -93,6 +92,55 @@ class Polygon:
         self.selected = False
         self.update()
 
+    def _on_canvas_configure(self, e=None):
+        if e and e.width > 0 and e.height > 0:
+            self.update()
+
+    def handle_segments(self):
+        from .segment import Segment
+
+        if len(self.line_points) < 2:
+            self.segments.clear()
+            return
+
+        pairs = []
+        for i in range(len(self.line_points) - 1):
+            pairs.append((self.line_points[i], self.line_points[i + 1]))
+
+        if not self.last_not_set and len(self.line_points) > 2:
+            pairs.append((self.line_points[-1], self.line_points[0]))
+
+        def segment_points(segment):
+            return segment.point_1, segment.point_2
+
+        segments = []
+        for segment in self.segments:
+            if not segment or not segment.point_1 or not segment.point_2:
+                continue
+            p1, p2 = segment_points(segment)
+            if (p1, p2) in pairs or (p2, p1) in pairs:
+                segments.append(segment)
+        self.segments = segments
+
+        for p1, p2 in pairs:
+            exists = any(
+                (segment.point_1 == p1 and segment.point_2 == p2)
+                or (segment.point_1 == p2 and segment.point_2 == p1)
+                for segment in self.segments
+            )
+            if not exists:
+                segment = Segment(self.root, point_1=p1)
+                segment.point_2 = p2
+                segment.parent = self
+                segment.color = "#FF0000"
+                segment.update()
+                self.objects.register(segment)
+                self.segments.append(segment)
+
+        for segment in self.segments:
+            segment.update()
+
+
     def update(self, e=None):
         length = 0.0
         for p in self.line_points:
@@ -144,21 +192,30 @@ class Polygon:
                 tags=self.tag,
             )
 
-        self.canvas.create_line(
-            *coords,
-            fill="black",
-            width=2 * visual_scale,
-            tags=(self.tag, "polygon_alpha"),
-        )
-        self.img = Image.new("RGBA", (self.canvas.winfo_width(), self.canvas.winfo_height()), (0, 0, 0, 0))
-        self.draw = ImageDraw.Draw(self.img)
-        self.draw.polygon(coords,fill=(255, 165, 0, 128)) # orange @ 50% opacity
+        items = self.canvas.find_all()
 
-        self.overlay_img = ImageTk.PhotoImage(self.img)
-        self.overlay = self.canvas.create_image(0, 0, anchor="nw", image=self.overlay_img)
-        self.canvas.tag_raise(self.overlay)
-        
-        # self.canvas.create_polygon(*coords,fill="orange",stipple="gray25",tags=self.tag)
+        polygon_fill = self.canvas.create_polygon(
+            *coords,
+            fill="#D9AEA0",
+            outline="",
+            tags=(self.tag, "polygon_fill"),
+        )
+
+        if items:
+            self.canvas.tag_lower(polygon_fill, items[0])
+
+        # self.canvas.create_line(
+        #     *coords,
+        #     fill="#FF0000",
+        #     width=5 * visual_scale,
+        #     tags=(self.tag, "polygon_alpha"),
+        # )
+
+        for p in self.line_points:
+            self.canvas.tag_raise(p.tag)
+        for p in self.points:
+            self.canvas.tag_raise(p.tag)
+
         if not self.last_not_set and self.line_points:
             for i in range(0, len(self.line_points), 2):
                 if i + 2 <= len(self.line_points):
@@ -179,6 +236,5 @@ class Polygon:
             self.canvas.tag_raise(p.tag)
         self.canvas.tag_raise(self.overlay)
 
-        self.canvas.tag_lower("polygon_alpha")
 
         self.prev_x, self.prev_y = self.pos_x, self.pos_y

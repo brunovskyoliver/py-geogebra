@@ -20,6 +20,7 @@ from ..ui.lower_label import Lower_label
 from ..ui.angle_bisector import Angle_bisector
 from ..ui.best_fit_line import Best_fit_line
 from ..ui.polygon import Polygon
+from ..ui.circle_center_point import Circle_center_point
 from .. import globals
 import requests
 import subprocess
@@ -139,6 +140,8 @@ class Objects:
         state.shift_pressed = False
         state.center = center()
         globals.sidebar.load_from_dict(data.get("sidebar", {}))
+        state.current_polygon = None
+        state.drag_target = None
         # naskor musime loadnut POINTS, lebo inak sa nam neincializuju ostatne objecty ktore na POINTS zalezia...
         for od in data.get("objects", []):
             if od["type"] == "Point":
@@ -187,6 +190,9 @@ class Objects:
             elif od["type"] == "Best_fit_line":
                 vector = Best_fit_line.from_dict(root, od)
                 self.register(vector)
+            elif od["type"] == "Circle_center_point":
+                c = Circle_center_point.from_dict(root, od)
+                self.register(c)
 
         for od in data.get("objects", []):
             if od["type"] == "Lower_label":
