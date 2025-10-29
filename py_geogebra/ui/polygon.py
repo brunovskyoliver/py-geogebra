@@ -234,6 +234,7 @@ class Polygon:
             self.canvas.tag_raise(p.tag)
         for p in self.points:
             self.canvas.tag_raise(p.tag)
+        self.canvas.tag_raise(self.overlay)
 
 
         self.prev_x, self.prev_y = self.pos_x, self.pos_y

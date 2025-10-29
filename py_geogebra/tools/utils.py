@@ -239,6 +239,7 @@ def find_polyline_at_position(e, r=2):
     return line
 
 def find_circle_at_position(e, r=2):
+<<<<<<< HEAD
     from ..ui.circle_center_point import Circle_center_point
     items = g().canvas.find_overlapping(e.x - r, e.y - r, e.x + r, e.y + r)
     line = None
@@ -248,6 +249,17 @@ def find_circle_at_position(e, r=2):
                 line = obj
                 break
     return line
+=======
+    items = g().canvas.find_overlapping(e.x - r, e.y - r, e.x + r, e.y + r)
+    circle = None
+    for obj in g().objects._objects:
+        if hasattr(obj, "tag") and any(obj.tag in g().canvas.gettags(i) for i in items):
+            if "circle" in obj.tag:
+                circle = obj
+                break
+    return circle
+
+>>>>>>> origin/koci
 
 
 def snap_to_line(point, line):
@@ -323,6 +335,14 @@ def snap_to_polyline(point, polyline):
     point.pos_y = proj_y
 
 
+def snap_to_circle(point, circle):
+    dx = point.pos_x - circle.point_1.pos_x
+    dy = point.pos_y - circle.point_1.pos_y
+    dist = math.hypot(dx, dy)
+    k = point.translation / dist
+    point.pos_x = circle.point_1.pos_x + dx * k
+    point.pos_y = circle.point_1.pos_y + dy * k
+
 def find_translation(point, line):
     x1, y1 = line.point_1.pos_x, line.point_1.pos_y
     x2, y2 = line.point_2.pos_x, line.point_2.pos_y
@@ -396,6 +416,11 @@ def find_translation_polyline(point, polyline):
     point.translation = (p_dist * math.cos(beta)) / dist
 
 
+def find_translation_circle(point,circle):
+    dist = math.hypot(circle.point_1.pos_x - circle.point_2.pos_x, circle.point_1.pos_y - circle.point_2.pos_y)
+    point.translation = dist
+
+
 def find_2lines_intersection(points):
     x1, y1 = (
         points[0].pos_x,
@@ -437,7 +462,7 @@ def detach_point(point, line):
         dx = line.point_2.pos_x - line.point_1.pos_x
         dy = line.point_2.pos_y - line.point_1.pos_y
 
-    elif isinstance(line, Polyline):
+    if isinstance(line, Polyline):
         smallest_dist = float("inf")
         for i in range(len(line.line_points) - 1):
             dist = (
@@ -474,6 +499,9 @@ def detach_point(point, line):
         x1, y1 = line.point_1.pos_x, line.point_1.pos_y
         dx = point.pos_x - x1
         dy = point.pos_y - y1
+    else:
+        dx = line.point_2.pos_x - line.point_1.pos_x
+        dy = line.point_2.pos_y - line.point_1.pos_y
 
     length = math.hypot(dx, dy)
     if length == 0:
@@ -488,15 +516,15 @@ def detach_point(point, line):
 def attach_point(point, line):
     from ..ui.polyline import Polyline
     from ..ui.circle_center_point import Circle_center_point
-    if not isinstance(line, Polyline) and not isinstance(line, Circle_center_point):
-        find_translation(point, line)
-        snap_to_line(point, line)
-    elif isinstance(line, Polyline):
+    if isinstance(line, Polyline):
         find_translation_polyline(point, line)
         snap_to_polyline(point, line)
-    else:
+    elif isinstance(line, Circle_center_point):
         find_translation_circle(point, line)
         snap_to_circle(point, line)
+    else:
+        find_translation(point, line)
+        snap_to_line(point, line)
 
 def calculate_vector(point_1, point_2):
     return (point_1.pos_x - point_2.pos_x, point_1.pos_y - point_2.pos_y)

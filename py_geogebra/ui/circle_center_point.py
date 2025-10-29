@@ -2,8 +2,8 @@ import tkinter as tk
 from ..tools.utils import (
     snap_to_circle,
     world_to_screen,
-    snap_to_line,
-    get_linear_fuction_prescription,
+    snap_to_circle,
+    find_translation_circle,
     calculate_vector,
     load_lines_from_labels,
 )
@@ -166,6 +166,7 @@ class Circle_center_point:
 
         for obj in self.points:
             if (obj is not self.point_1) and (obj is not self.point_2):
+                find_translation_circle(obj, self)
                 snap_to_circle(obj, self)
                 obj.update()
 
