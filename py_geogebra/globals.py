@@ -1,6 +1,7 @@
 from typing import TYPE_CHECKING, Optional
 from tkinter import Canvas, Frame, Tk
 
+
 if TYPE_CHECKING:
     from .tools.objects import Objects
     from .ui.axes import Axes

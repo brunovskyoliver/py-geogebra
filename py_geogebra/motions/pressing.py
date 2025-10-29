@@ -36,8 +36,11 @@ from ..tools.utils import (
     snap_to_circle,
     snap_to_line,
     find_polyline_at_position,
+    find_circle_at_position,
     find_translation_polyline,
+    find_translation_circle,
     snap_to_polyline,
+    snap_to_circle,
     detach_point,
     attach_point,
 )
@@ -124,7 +127,7 @@ def pressing(root):
                 p.is_detachable = True
                 p.is_atachable = False
                 p.parent_line = circle
-                find_translation_circle(p, circle)
+                find_translation_circle(p,circle)
                 circle.points.append(p)
                 snap_to_circle(p, circle)
                 p.color = "#349AFF"
@@ -149,7 +152,9 @@ def pressing(root):
                 if pb is None:
                     pb = find_polyline_at_position(e, r=2)
                     if pb is None:
-                        return
+                        pb = find_circle_at_position(e, r=2)
+                        if pb is None:
+                            return
                 pb.select()
                 state.line_to_attach = pb
 
