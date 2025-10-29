@@ -22,6 +22,8 @@ from ..ui.polygon import Polygon
 from ..ui.circle_center_point import Circle_center_point
 from ..tools.utils import (
     delete_object,
+    find_circle_at_position,
+    find_translation_circle,
     get_lower_label,
     center,
     set_cursor,
@@ -31,6 +33,7 @@ from ..tools.utils import (
     find_point_at_position,
     find_line_at_position,
     find_translation,
+    snap_to_circle,
     snap_to_line,
     find_polyline_at_position,
     find_translation_polyline,
@@ -86,6 +89,7 @@ def pressing(root):
 
             pb = find_line_at_position(e, r=2)
             polyline = find_polyline_at_position(e, r=2)
+            circle = find_circle_at_position(e, r=2)
 
             label = get_label(state)
             p = Point(
@@ -116,6 +120,17 @@ def pressing(root):
                 snap_to_polyline(p, polyline)
                 p.color = "#349AFF"
                 polyline.update()
+            elif circle is not None:
+                p.is_detachable = True
+                p.is_atachable = False
+                p.parent_line = circle
+                find_translation_circle(p, circle)
+                circle.points.append(p)
+                snap_to_circle(p, circle)
+                p.color = "#349AFF"
+                circle.update()
+
+
 
 
             globals.objects.register(p)

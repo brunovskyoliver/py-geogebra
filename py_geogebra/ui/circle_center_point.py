@@ -1,5 +1,6 @@
 import tkinter as tk
 from ..tools.utils import (
+    snap_to_circle,
     world_to_screen,
     snap_to_line,
     get_linear_fuction_prescription,
@@ -46,6 +47,7 @@ class Circle_center_point:
         self.anchor_1 = Blank_point(self.root)
         self.anchor_2 = Blank_point(self.root)
         self.selected = False
+        self.translation = None
 
         self.points = [self.point_1]
         self.child_lines_labels = []
@@ -162,10 +164,10 @@ class Circle_center_point:
             self.anchor_1.pos_x, self.anchor_1.pos_y = self.point_1.pos_x - self.radius, self.point_1.pos_y - self.radius
             self.anchor_2.pos_x, self.anchor_2.pos_y = self.point_1.pos_x + self.radius, self.point_1.pos_y + self.radius
 
-        # for obj in self.points:
-        #     if (obj is not self.point_1) and (obj is not self.point_2):
-        #         snap_to_line(obj, self)
-        #         obj.update()
+        for obj in self.points:
+            if (obj is not self.point_1) and (obj is not self.point_2):
+                snap_to_circle(obj, self)
+                obj.update()
 
         # self.angle = math.atan2(y2 - y1, x2 - x1)
         # span = max(self.canvas.winfo_width(), self.canvas.winfo_height()) / (

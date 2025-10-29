@@ -3,6 +3,7 @@ from ..tools.utils import (
     set_cursor,
     find_translation,
     find_translation_polyline,
+    find_translation_circle
 )
 from ..ui.line import Line
 from ..ui.ray import Ray
@@ -18,6 +19,7 @@ from ..ui.perpendicular_bisector import Perpendicular_bisector
 from ..ui.perpendicular_line import Perpendicular_line
 from ..ui.parallel_line import Parallel_line
 from ..ui.best_fit_line import Best_fit_line
+from ..ui.circle_center_point import Circle_center_point
 from .. import globals
 
 
@@ -109,6 +111,16 @@ def dragging(root):
                             obj.update()
                         else:
                             globals.objects.refresh()
+                    elif isinstance(obj, Circle_center_point):
+                        if state.drag_target in obj.points:
+                            state.drag_target.pos_x = world_x
+                            state.drag_target.pos_y = world_y
+                            state.drag_target.update()
+                            find_translation_circle(state.drag_target, obj)
+                            obj.update()
+                        else:
+                            globals.objects.refresh()
+
 
                 globals.sidebar.update()
                 globals.objects.refresh()
