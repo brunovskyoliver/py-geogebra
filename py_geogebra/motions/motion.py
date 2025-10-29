@@ -32,7 +32,10 @@ def motion(root):
         if state.selected_tool == "vector" and 0 < len(state.points_for_obj) < 3:
             state.points_for_obj[1].update(e)
 
-        if state.selected_tool == "perpendicular_bisector" and 1 < len(state.points_for_obj) <3:
+        if state.selected_tool == "perpendicular_bisector" and 1 <= len(state.points_for_obj) <3:
+            state.points_for_obj[1].update(e)
+
+        if state.selected_tool == "circle_center_point" and 0 < len(state.points_for_obj) < 3:
             state.points_for_obj[1].update(e)
 
     globals.canvas.bind("<Motion>", handle_mouse)
