@@ -239,7 +239,6 @@ def find_polyline_at_position(e, r=2):
     return line
 
 def find_circle_at_position(e, r=2):
-<<<<<<< HEAD
     from ..ui.circle_center_point import Circle_center_point
     items = g().canvas.find_overlapping(e.x - r, e.y - r, e.x + r, e.y + r)
     line = None
@@ -249,17 +248,6 @@ def find_circle_at_position(e, r=2):
                 line = obj
                 break
     return line
-=======
-    items = g().canvas.find_overlapping(e.x - r, e.y - r, e.x + r, e.y + r)
-    circle = None
-    for obj in g().objects._objects:
-        if hasattr(obj, "tag") and any(obj.tag in g().canvas.gettags(i) for i in items):
-            if "circle" in obj.tag:
-                circle = obj
-                break
-    return circle
-
->>>>>>> origin/koci
 
 
 def snap_to_line(point, line):
