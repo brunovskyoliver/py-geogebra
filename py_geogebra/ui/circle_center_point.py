@@ -58,6 +58,7 @@ class Circle_center_point:
         self.prescription = ()
         self.angle = 0
         self.vector = (0, 0)
+        self.radius = 0
 
         self.canvas.bind("<Configure>", lambda e: self.update())
 
@@ -170,28 +171,6 @@ class Circle_center_point:
                 snap_to_circle(obj, self)
                 obj.update()
 
-        # self.angle = math.atan2(y2 - y1, x2 - x1)
-        # span = max(self.canvas.winfo_width(), self.canvas.winfo_height()) / (
-        #     self.unit_size * self.scale
-        # )
-        # cos_a = math.cos(self.angle)
-        # sin_a = math.sin(self.angle)
-
-        # if self.point_2 is not None:
-        #     self.lower_label_obj.update()
-        #
-        #     self.vector = calculate_vector(self.point_1, self.point_2)
-
-        # self.prescription = get_linear_fuction_prescription(x1, y1, x2, y2)
-
-        # span *= 10
-        # x1 -= span * cos_a
-        # y1 -= span * sin_a
-        # x2 += span * cos_a
-        # y2 += span * sin_a
-
-        # x1, y1 = world_to_screen(x1, y1)
-        # x2, y2 = world_to_screen(x2, y2)
 
         x1, y1 = world_to_screen(self.anchor_1.pos_x, self.anchor_1.pos_y)
         x2, y2 = world_to_screen(self.anchor_2.pos_x, self.anchor_2.pos_y)
@@ -242,3 +221,6 @@ class Circle_center_point:
                 l.update()
         self.prev_x, self.prev_y = self.pos_x, self.pos_y
         self.canvas.tag_raise(self.lower_label_obj.tag)
+        
+        if self.point_2:
+            self.radius = math.hypot(self.point_2.pos_x - self.point_1.pos_x, self.point_2.pos_y - self.point_1.pos_y)

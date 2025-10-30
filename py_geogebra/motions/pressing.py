@@ -192,6 +192,9 @@ def pressing(root):
             pb = find_line_at_position(e, r=2)
             if pb is None:
                 pb = find_polyline_at_position(e, r=2)
+                if pb is None:
+                    pb = find_circle_at_position(e, r=2)
+                
             if pb is None and state.selected_intersect_line_1:
                 state.selected_intersect_line_1.deselect()
                 state.selected_intersect_line_1 = None

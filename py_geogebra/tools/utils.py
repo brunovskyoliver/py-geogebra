@@ -200,7 +200,7 @@ def find_point_at_position(e, r=2):
     items = g().canvas.find_overlapping(e.x - r, e.y - r, e.x + r, e.y + r)
     p = None
     for obj in g().objects._objects:
-        if hasattr(obj, "tag") and any(obj.tag in g().canvas.gettags(i) for i in items) and isinstance(obj, Point):
+        if hasattr(obj, "tag") and any(obj.tag in g().canvas.gettags(i) for i in items):
             if "point" in obj.tag or "intersect" in obj.tag:
                 p = obj
                 break
@@ -434,7 +434,51 @@ def find_2lines_intersection(points):
         (x1 - x2) * (y3 - y4) - (y1 - y2) * (x3 - x4)
     )
 
-    return px, py
+    return (px, py)
+
+def find_circle_line_intersection(circle, p1, p2):
+    x1,y1 = p1.pos_x, p1.pos_y
+    x2,y2 = p2.pos_x, p2.pos_y
+    c_pt = circle.point_1
+    vector = (x2-x1, y2 - y1)
+    a = vector[0]**2 + vector[1]**2
+    b = 2*x1*vector[0] - 2*c_pt.pos_x*vector[0] + 2*y1*vector[1] - 2*c_pt.pos_y*vector[1]
+    c = x1**2 - 2*c_pt.pos_x*x1 + c_pt.pos_x**2 + y1**2 - 2*c_pt.pos_y*y1 + c_pt.pos_y**2 - circle.radius**2 
+    k = []
+    k.extend(solve_quadratic(a,b,c))
+    intersections = []
+    
+    for i in range(len(k)):
+        intersections.append((x1 + k[i]*vector[0], y1 + k[i]*vector[1]))
+
+        
+    return intersections
+
+def find_circle_circle_intersection(circle1, circle2):
+        x1, y1 = circle1.point_1.pos_x, circle1.point_1.pos_y
+        r1 = circle1.radius
+        x2, y2 = circle2.point_1.pos_x, circle2.point_1.pos_y
+        r2 = circle2.radius
+
+        dx, dy = x2 - x1, y2 - y1
+        d = (dx**2 + dy**2) ** 0.5
+
+        if d > r1 + r2 or d < abs(r1 - r2) or d == 0:
+            return None  # no intersection or infinite
+
+        a = (r1**2 - r2**2 + d**2) / (2 * d)
+        h = (r1**2 - a**2) ** 0.5
+        xm = x1 + a * dx / d
+        ym = y1 + a * dy / d
+        xs1 = xm + h * dy / d
+        ys1 = ym - h * dx / d
+        xs2 = xm - h * dy / d
+        ys2 = ym + h * dx / d
+        return [(xs1, ys1), (xs2, ys2)]
+        
+    
+    
+    
 
 
 def get_linear_fuction_prescription(x1, y1, x2, y2):
@@ -562,5 +606,23 @@ def calculate_points_for_best_fit_line(points):
     y2 = m * x2 + b
 
     return x1, x2, y1, y2
+
+def solve_quadratic(a, b, c):
+    if a == 0:
+        if b == 0:
+            return [] 
+        return [-c / b]
+
+    discriminant = b**2 - 4*a*c
+    if discriminant < 0:
+        return []  
+    elif discriminant == 0:
+        x = -b / (2*a)
+        return [x]
+    else:
+        sqrt_disc = math.sqrt(discriminant)
+        x1 = (-b + sqrt_disc) / (2*a)
+        x2 = (-b - sqrt_disc) / (2*a)
+        return [x1, x2]
 
 
