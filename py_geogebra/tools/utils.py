@@ -230,10 +230,11 @@ def find_line_at_position(e, r=2):
 def find_polyline_at_position(e, r=2):
     from ..ui.polyline import Polyline
     from ..ui.polygon import Polygon
+    from ..ui.regular_polygon import Regular_polygon
     items = g().canvas.find_overlapping(e.x - r, e.y - r, e.x + r, e.y + r)
     line = None
     for obj in g().objects._objects:
-        if hasattr(obj, "tag") and any(obj.tag in g().canvas.gettags(i) for i in items) and (isinstance(obj, Polyline) or isinstance(obj, Polygon)):
+        if hasattr(obj, "tag") and any(obj.tag in g().canvas.gettags(i) for i in items) and (isinstance(obj, Polyline) or isinstance(obj, Polygon) or isinstance(obj, Regular_polygon)):
             if "polyline" in obj.tag or "polygon" in obj.tag:
                 line = obj
                 break
