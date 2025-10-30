@@ -1,104 +1,95 @@
 import tkinter as tk
-from ..tools.utils import world_to_screen, find_2lines_intersection, find_translation, get_label, find_translation_between_points
+from ..tools.utils import (
+    world_to_screen,
+    find_2lines_intersection,
+    find_translation,
+    get_label,
+    find_translation_between_points,
+    find_circle_line_intersection,
+    find_circle_circle_intersection,
+)
 from .segment import Segment
 from .segment_with_lenght import Segment_with_length
 from .polyline import Polyline
 from .ray import Ray
+from .circle_center_point import Circle_center_point
 from .. import globals
 from .. import state
 
 class Create_Intersect:
     def __init__(
         self,
-        line_1,
-        line_2,
+        shape_1,
+        shape_2,
         root: tk.Tk,
         unit_size: int = 40,
         color="grey",
     ):
-
         self.root = root
         self.color = color
-
         self.unit_size = unit_size
 
-        line_1.deselect()
-        
+        shape_1.deselect()
+
         intersects = []
+        
 
-        if isinstance(line_1, Polyline) and isinstance(line_2, Polyline):
-            for i in range(len(line_1.line_points) - 1):
-                for i2 in range(len(line_2.line_points) - 1):
-                    intersect = Intersect(
-                        root,
-                        label=get_label(state),
-                        unit_size=unit_size,
-                    )
-                    intersect.point_1 = line_1.line_points[i]
-                    intersect.point_2 = line_1.line_points[i + 1]
-                    intersect.point_3 = line_2.line_points[i2]
-                    intersect.point_4 = line_2.line_points[i2 + 1]
-                    intersect.line_1 = line_1
-                    intersect.line_2 = line_2
+        segs_1 = self.expand_segments(shape_1)
+        segs_2 = self.expand_segments(shape_2)
 
+        if not isinstance(shape_1, Circle_center_point) and not isinstance(shape_2, Circle_center_point):
+            for p1, p2 in segs_1:
+                for p3, p4 in segs_2: 
+                    intersect_point = find_2lines_intersection([p1, p2, p3, p4])
+                    if intersect_point:
+                        label = get_label(state)
+                        intersect = Intersect(root, label=label, unit_size=unit_size)
+                        intersect.point_1, intersect.point_2 = p1, p2
+                        intersect.point_3, intersect.point_4 = p3, p4
+                        intersect.line_1, intersect.line_2 = shape_1, shape_2
+                        intersects.append(intersect)
+                        globals.objects.register(intersect)
+
+
+        if isinstance(shape_1, Circle_center_point) or isinstance(shape_2, Circle_center_point):
+            circle = shape_1 if isinstance(shape_1, Circle_center_point) else shape_2
+            other = shape_2 if circle is shape_1 else shape_1
+
+            if not isinstance(other, Circle_center_point):
+                for p1, p2 in self.expand_segments(other):
+                    circle_points = find_circle_line_intersection(circle, p1, p2)
+                    for i in range(len(circle_points)):
+                        c_pt = circle_points[i]
+                        label = get_label(state)
+                        intersect = Intersect(root, label=label, unit_size=unit_size)
+                        intersect.Index = i
+                        intersect.line_1 = circle
+                        intersect.line_2 = other
+                        intersect.pos_x, intersect.pos_y = c_pt
+                        intersects.append(intersect)
+                        globals.objects.register(intersect)
+
+            elif isinstance(other, Circle_center_point):
+                circle_points = find_circle_circle_intersection(circle, other)
+                for i in range(len(circle_points)):
+                    c_pt = circle_points[i]
+                    label = get_label(state)
+                    intersect = Intersect(root, label=label, unit_size=unit_size)
+                    intersect.Index = i
+                    intersect.line_1 = circle
+                    intersect.line_2 = other
+                    intersect.pos_x, intersect.pos_y = c_pt
                     intersects.append(intersect)
                     globals.objects.register(intersect)
-        if isinstance(line_1, Polyline) and not isinstance(line_2, Polyline):
-            for i in range(len(line_1.line_points) - 1):
-                intersect = Intersect(
-                    root,
-                    label=get_label(state),
-                    unit_size=unit_size,
-                )
-                intersect.point_1 = line_1.line_points[i]
-                intersect.point_2 = line_1.line_points[i + 1]
-                intersect.point_3 = line_2.point_1
-                intersect.point_4 = line_2.point_2
-                intersect.line_1 = line_1
-                intersect.line_2 = line_2
 
-                intersects.append(intersect)
-                globals.objects.register(intersect)
-        if not isinstance(line_1, Polyline) and isinstance(line_2, Polyline):
-            for i in range(len(line_2.line_points) - 1):
-                intersect = Intersect(
-                    root,
-                    label=get_label(state),
-                    unit_size=unit_size,
-                )
-                intersect.point_1 = line_1.point_1
-                intersect.point_2 = line_1.point_2
-                intersect.point_3 = line_2.line_points[i]
-                intersect.point_4 = line_2.line_points[i + 1]
-                intersect.line_1 = line_1
-                intersect.line_2 = line_2
-
-                intersects.append(intersect)
-                globals.objects.register(intersect)
-        if not isinstance(line_1, Polyline) and not isinstance(line_2, Polyline):
-            
-            intersect = Intersect(
-                root,
-                label=get_label(state),
-                unit_size=unit_size,
-            )
-            intersect.point_1 = line_1.point_1
-            intersect.point_2 = line_1.point_2
-            intersect.point_3 = line_2.point_1
-            intersect.point_4 = line_2.point_2
-            intersect.line_1 = line_1
-            intersect.line_2 = line_2
-
-            intersects.append(intersect)
-            globals.objects.register(intersect)
-            
-        
-
-                
-            
-        
-        
-
+    def expand_segments(self, shape):
+        if isinstance(shape, Polyline):
+            return [(shape.line_points[i], shape.line_points[i + 1])
+                    for i in range(len(shape.line_points) - 1)]
+        elif hasattr(shape, "point_1") and hasattr(shape, "point_2"):
+            return [(shape.point_1, shape.point_2)]
+        else:
+            return [] 
 
 
 class Intersect:
@@ -109,7 +100,6 @@ class Intersect:
         unit_size: int = 40,
         color="grey",
     ):
-
         self.root = root
         self.canvas = globals.canvas
         self.color = color
@@ -117,34 +107,32 @@ class Intersect:
 
         self.pos_x = 0
         self.pos_y = 0
+        self.x = 0
+        self.y = 0
         self.label = label
 
         self.offset_x = 0.0
         self.offset_y = 0.0
-        self.scale = 1.0  # zoom factor
+        self.scale = 1.0
         self.unit_size = unit_size
-
-        self.x = 0
-        self.y = 0
 
         self.point_1 = None
         self.point_2 = None
         self.point_3 = None
         self.point_4 = None
-        
         self.line_1 = None
         self.line_2 = None
-        
-        self.points = []
-        
-        self.translation = 0
+
         self.is_drawable = True
         self.is_detatchable = False
+        self.translation = 0
 
         self.tag = f"intersect_{id(self)}"
         self.selected = False
-        self.highlight_tag = f"{self.tag}_highlight"
+        
+        self.Index = 0
 
+ 
     def select(self):
         self.selected = True
         self.update()
@@ -154,15 +142,34 @@ class Intersect:
         self.update()
 
     def update(self):
-        self.points = [self.point_1, self.point_2, self.point_3, self.point_4] #toto si nevsimajme ze sa assignuje kazdy update
         self.canvas.delete(self.tag)
-        self.canvas.delete(self.highlight_tag)
-
         self.is_drawable = True
-        
 
-        self.pos_x, self.pos_y = find_2lines_intersection(self.points)
-        
+        intersection_point = None
+
+        if not isinstance(self.line_1, Circle_center_point) and not isinstance(self.line_2, Circle_center_point):
+            intersection_point = find_2lines_intersection(
+                [self.point_1, self.point_2, self.point_3, self.point_4]
+            )
+
+        elif isinstance(self.line_1, Circle_center_point) or isinstance(self.line_2, Circle_center_point):
+            circle = self.line_1 if isinstance(self.line_1, Circle_center_point) else self.line_2
+            other = self.line_2 if circle is self.line_1 else self.line_1
+
+            if not isinstance(other, Circle_center_point):
+                for p1, p2 in self.get_segments(other):
+                    pts = find_circle_line_intersection(circle, p1, p2)
+                    if pts:
+                        intersection_point = pts[self.Index]  
+                        break
+            else:
+                pts = find_circle_circle_intersection(circle, other)
+                if pts:
+                    intersection_point = pts[self.Index]
+
+        if not intersection_point:
+            self.is_drawable = False
+            return
         
         if isinstance(self.line_1, Segment) or isinstance(
             self.line_1, Segment_with_length
@@ -179,7 +186,6 @@ class Intersect:
             if self.translation > 1 or self.translation < 0:
                 self.is_drawable = False
                 
-                
         if isinstance(self.line_2, Segment) or isinstance(
             self.line_2, Segment_with_length
         ):
@@ -194,46 +200,45 @@ class Intersect:
             find_translation_between_points(self, self.points[2], self.points[3])
             if self.translation > 1 or self.translation < 0:
                 self.is_drawable = False
-                
 
+        self.pos_x, self.pos_y = intersection_point
         if self.is_drawable:
+            self.draw_point()
 
-            visual_scale = min(max(1, self.scale**0.5), 1.9)
 
-            x, y = world_to_screen(self.pos_x, self.pos_y)
-            self.x, self.y = x, y
+    def get_segments(self, shape):
+        if isinstance(shape, Polyline):
+            return [(shape.line_points[i], shape.line_points[i + 1])
+                    for i in range(len(shape.line_points) - 1)]
+        elif hasattr(shape, "point_1") and hasattr(shape, "point_2"):
+            return [(shape.point_1, shape.point_2)]
+        return []
 
-            r = 6.0 * visual_scale
+    def draw_point(self):
+        visual_scale = min(max(1, self.scale**0.5), 1.9)
+        self.x, self.y = world_to_screen(self.pos_x, self.pos_y)
+        r = 6.0 * visual_scale
 
+        self.canvas.create_oval(
+            self.x - r, self.y - r, self.x + r, self.y + r,
+            fill=self.color,
+            outline="",
+            tags =self.tag,
+        )
+
+        if self.selected:
+            r_h = r * 1.4
             self.canvas.create_oval(
-                x - r,
-                y - r,
-                x + r,
-                y + r,
-                fill=self.color,
-                outline="",
-                tags=(self.tag,),
+                self.x - r_h, self.y - r_h, self.x + r_h, self.y + r_h,
+                outline=self.color, width=2, fill="",
+                tags=self.tag,
             )
-
-            if self.selected:
-                r_h = r * 1.4
-                self.canvas.create_oval(
-                    x - r_h,
-                    y - r_h,
-                    x + r_h,
-                    y + r_h,
-                    outline=self.color,
-                    width=2,
-                    fill="",  # no fill so it looks like a ring
-                    tags=(self.highlight_tag,),  # must be a tuple
-                )
-
-            if self.label:
-                self.canvas.create_text(
-                    x + 10 * visual_scale,
-                    y - 15 * visual_scale,
-                    text=self.label,
-                    font=("Arial", int(12 * visual_scale)),
-                    fill="blue",
-                    tags=self.tag,
-                )
+        if self.label:
+            self.canvas.create_text(
+                self.x + 10 * visual_scale,
+                self.y - 15 * visual_scale,
+                text=self.label,
+                font=("Arial", int(12 * visual_scale)),
+                fill="blue",
+                tags=self.tag,
+            )
