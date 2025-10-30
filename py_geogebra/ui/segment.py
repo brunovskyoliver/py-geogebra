@@ -162,6 +162,8 @@ class Segment:
             self.is_drawable = True
         else:
             self.is_drawable = False
+            
+        self.lower_label_obj.is_drawable = self.is_drawable 
 
         if self.is_drawable:
             if self.point_2 is None:

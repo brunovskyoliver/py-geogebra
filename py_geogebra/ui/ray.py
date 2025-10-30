@@ -187,7 +187,9 @@ class Ray:
         elif self.point_1.is_drawable and self.point_2.is_drawable:
             self.is_drawable = True
         else:
-            self.is_drawable = False
+            self.is_drawable = False\
+                
+        self.lower_label_obj.is_drawable = self.is_drawable 
 
         if self.is_drawable:
 

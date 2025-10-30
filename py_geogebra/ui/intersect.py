@@ -182,7 +182,7 @@ class Intersect:
             if self.translation < 0:
                 self.is_drawable = False
         elif isinstance(self.line_1, Polyline):
-            find_translation_between_points(self, self.points[0], self.points[1])
+            find_translation_between_points(self, self.point_1, self.point_2)
             if self.translation > 1 or self.translation < 0:
                 self.is_drawable = False
                 
@@ -197,7 +197,7 @@ class Intersect:
             if self.translation < 0:
                 self.is_drawable = False
         elif isinstance(self.line_2, Polyline):
-            find_translation_between_points(self, self.points[2], self.points[3])
+            find_translation_between_points(self, self.point_3, self.point_4)
             if self.translation > 1 or self.translation < 0:
                 self.is_drawable = False
 
