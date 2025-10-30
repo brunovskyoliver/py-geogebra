@@ -5,6 +5,7 @@ from .utils import center
 from .. import state
 import json
 from ..ui.point import Point
+from ..ui.intersect import Intersect
 from ..ui.axes import Axes
 from ..ui.line import Line
 from ..ui.perpendicular_line import Perpendicular_line
@@ -193,6 +194,9 @@ class Objects:
             elif od["type"] == "Circle_center_point":
                 c = Circle_center_point.from_dict(root, od)
                 self.register(c)
+            elif od["type"] == "Intersect":
+                i = Intersect.from_dict(root, od)
+                self.register(i)
 
         for od in data.get("objects", []):
             if od["type"] == "Lower_label":
