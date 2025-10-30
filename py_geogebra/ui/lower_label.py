@@ -21,6 +21,7 @@ class Lower_label:
         self.unit_size = unit_size
         self.tag = f"lower_label_{id(self)}"
         self.canvas.bind("<Configure>", lambda e: self.update())
+        self.is_drawable = True
 
     def to_dict(self) -> dict:
         return {
@@ -51,7 +52,7 @@ class Lower_label:
         return ll
 
     def update(self, e=None):
-        if self.obj is None:
+        if self.obj is None or not self.is_drawable:
             return
         self.canvas.delete(self.tag)
 
