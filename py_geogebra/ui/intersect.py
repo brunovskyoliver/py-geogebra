@@ -122,6 +122,12 @@ class Intersect:
         self.point_4 = None
         self.line_1 = None
         self.line_2 = None
+        self.point_1_label = ""
+        self.point_2_label = ""
+        self.point_3_label = ""
+        self.point_4_label = ""
+        self.line_1_label = ""
+        self.line_2_label = ""
 
         self.is_drawable = True
         self.is_detatchable = False
@@ -140,10 +146,80 @@ class Intersect:
     def deselect(self):
         self.selected = False
         self.update()
+        
+    def to_dict(self) -> dict:
+        return {
+            "type": "Intersect",
+            "label": self.label,
+            "pos_x": self.pos_x,
+            "pos_y": self.pos_y,
+            "color": self.color,
+            "unit_size": self.unit_size,
+            "scale": self.scale,
+            "is_drawable": self.is_drawable,
+            "translation": self.translation,
+            "offset_x": self.offset_x,
+            "offset_y": self.offset_y,
+            "point_1_label": self.point_1.label if self.point_1 else None,
+            "point_2_label": self.point_2.label if self.point_2 else None,
+            "point_3_label": self.point_3.label if self.point_3 else None,
+            "point_4_label": self.point_4.label if self.point_4 else None,
+            "line_1_label": self.line_1.lower_label if self.line_1 else None,
+            "line_2_label": self.line_2.lower_label if self.line_2 else None,
+            "tag": self.tag,
+            "index": self.Index,
+        }
+
+    @classmethod
+    def from_dict(cls, root, data: dict):
+        p = cls(
+            root=root,
+            label=data.get("label", ""),
+            unit_size=data.get("unit_size", 40),
+            color=data.get("color", "blue"),
+        )
+        p.scale = data.get("scale", 1.0)
+        p.is_drawable = data.get("is_drawable", True)
+        p.offset_x = data.get("offset_x", 0)
+        p.offset_y = data.get("offset_y", 0)
+        p.tag = data.get("tag", "")
+        p.translation = data.get("translation", 0)
+        p.point_1_label = data.get("point_1_label", "")
+        p.point_2_label = data.get("point_2_label", "")
+        p.point_3_label = data.get("point_3_label", "")
+        p.point_4_label = data.get("point_4_label", "")
+        p.line_1_label = data.get("line_1_label", "")
+        p.line_2_label = data.get("line_2_label", "")
+        p.Index = data.get("index", 0)
+        cx, cy = state.center
+        p.cx = cx
+        p.cy = cy
+        p.update()
+        return p
+    
+    def find_obj(self, label):
+            for obj in globals.objects._objects:
+                if getattr(obj, "label", None) == label:
+                    return obj
+                elif getattr(obj, "lower_label", None) == label:
+                    return obj
+            return None
 
     def update(self):
         self.canvas.delete(self.tag)
         self.is_drawable = True
+        if not self.point_1:
+            self.point_1 = self.find_obj(self.point_1_label)
+        if not self.point_2:
+            self.point_2 = self.find_obj(self.point_2_label)
+        if not self.point_3:
+            self.point_3 = self.find_obj(self.point_3_label)
+        if not self.point_4:
+            self.point_4 = self.find_obj(self.point_4_label)
+        if not self.line_1:
+            self.line_1 = self.find_obj(self.line_1_label)
+        if not self.line_2:
+            self.line_2 = self.find_obj(self.line_2_label)
 
         intersection_point = None
 
