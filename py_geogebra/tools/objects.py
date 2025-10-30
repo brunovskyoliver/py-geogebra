@@ -21,6 +21,7 @@ from ..ui.lower_label import Lower_label
 from ..ui.angle_bisector import Angle_bisector
 from ..ui.best_fit_line import Best_fit_line
 from ..ui.polygon import Polygon
+from ..ui.regular_polygon import Regular_polygon
 from ..ui.circle_center_point import Circle_center_point
 from .. import globals
 import requests
@@ -169,6 +170,9 @@ class Objects:
                 self.register(polyline)
             elif od["type"] == "Polygon":
                 polygon = Polygon.from_dict(root, od)
+                self.register(polygon)
+            elif od["type"] == "Regular_polygon":
+                polygon = Regular_polygon.from_dict(root, od)
                 self.register(polygon)
             elif od["type"] == "Vector":
                 vector = Vector.from_dict(root, od)

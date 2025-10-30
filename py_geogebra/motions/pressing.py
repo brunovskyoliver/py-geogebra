@@ -19,6 +19,7 @@ from ..ui.perpendicular_bisector import Perpendicular_bisector
 from ..ui.angle_bisector import Angle_bisector
 from ..ui.best_fit_line import Best_fit_line
 from ..ui.polygon import Polygon
+from ..ui.regular_polygon import Regular_polygon
 from ..ui.circle_center_point import Circle_center_point
 from ..tools.utils import (
     delete_object,
@@ -45,6 +46,7 @@ from ..tools.utils import (
     attach_point,
 )
 from tkinter import simpledialog
+import math
 from .. import globals
 
 
@@ -748,6 +750,75 @@ def pressing(root):
                 state.current_polygon.line_points.append(p)
                 state.current_polygon.handle_segments()
                 state.current_polygon.update(e)
+                
+        elif state.selected_tool == "regular_polygon":
+            state.start_pos["x"] = e.x
+            state.start_pos["y"] = e.y
+            world_x, world_y = screen_to_world(e)
+            
+            if not state.current_polygon:
+                polygon = Regular_polygon(root, globals.axes.unit_size)
+                state.current_polygon = polygon
+                globals.objects.register(polygon)
+                
+                
+            p = find_point_at_position(e)
+            if not p:
+                label = get_label(state)
+                p = Point(
+                    root,
+                    e,
+                    label=label,
+                    unit_size=globals.axes.unit_size,
+                    pos_x=world_x,
+                    pos_y=world_y,
+                )
+            p.select()
+            globals.objects.register(p)
+            state.points_for_obj.append(p)
+            state.current_polygon.line_points.append(p)
+                
+            if state.current_polygon and len(state.current_polygon.line_points) == 2:
+                num_points = simpledialog.askinteger(
+                "pocet stran",
+                "pocet stran",
+                minvalue=0,
+                )
+                angle = (num_points*180 - 360) / num_points
+                rad_angle = math.radians(angle)
+                angle_matrix = [[math.cos(rad_angle), -math.sin(rad_angle)],
+                                [math.sin(rad_angle), math.cos(rad_angle)]]
+                state.current_polygon.matrix = angle_matrix
+                for i in range(1, num_points-1):
+                    dist_x = (state.current_polygon.line_points[i-1].pos_x - state.current_polygon.line_points[i].pos_x)
+                    dist_y = (state.current_polygon.line_points[i-1].pos_y - state.current_polygon.line_points[i].pos_y)
+                    pos_x = state.current_polygon.line_points[i].pos_x + (dist_x * angle_matrix[0][0] + dist_y * angle_matrix[1][0])
+                    pos_y = state.current_polygon.line_points[i].pos_y + (dist_x * angle_matrix[0][1] + dist_y * angle_matrix[1][1])
+                    label = get_label(state)
+                    p = Point(
+                        root,
+                        e,
+                        label=label,
+                        unit_size=globals.axes.unit_size,
+                        pos_x=pos_x,
+                        pos_y=pos_y,
+                        color="Gray"
+                    )
+                    globals.objects.register(p)
+                    state.current_polygon.line_points.append(p)
+                    
+                for p in state.current_polygon.line_points:
+                    p.deselect()
+                state.current_polygon.last_not_set = False
+                state.current_polygon.lower_label = get_lower_label(state)
+                state.current_polygon.handle_segments()
+                state.current_polygon.update()
+                state.current_polygon = None
+                state.points_for_obj = []
+                
+                
+                
+            
 
 
         elif state.selected_tool == "circle_center_point":
