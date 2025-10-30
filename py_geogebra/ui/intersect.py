@@ -11,6 +11,7 @@ from ..tools.utils import (
 from .segment import Segment
 from .segment_with_lenght import Segment_with_length
 from .polyline import Polyline
+from .polygon import Polygon
 from .ray import Ray
 from .circle_center_point import Circle_center_point
 from .. import globals
@@ -83,7 +84,7 @@ class Create_Intersect:
                     globals.objects.register(intersect)
 
     def expand_segments(self, shape):
-        if isinstance(shape, Polyline):
+        if isinstance(shape, Polyline) or isinstance(shape, Polygon):
             return [(shape.line_points[i], shape.line_points[i + 1])
                     for i in range(len(shape.line_points) - 1)]
         elif hasattr(shape, "point_1") and hasattr(shape, "point_2"):
@@ -257,7 +258,9 @@ class Intersect:
             find_translation(self, self.line_1)
             if self.translation < 0:
                 self.is_drawable = False
-        elif isinstance(self.line_1, Polyline):
+        elif (isinstance(self.line_1, Polyline)
+            or isinstance(self.line_1, Polygon)      
+        ):
             find_translation_between_points(self, self.point_1, self.point_2)
             if self.translation > 1 or self.translation < 0:
                 self.is_drawable = False
@@ -272,7 +275,9 @@ class Intersect:
             find_translation(self, self.line_2)
             if self.translation < 0:
                 self.is_drawable = False
-        elif isinstance(self.line_2, Polyline):
+        elif (isinstance(self.line_2, Polyline)
+            or isinstance(self.line_2, Polygon)      
+        ):
             find_translation_between_points(self, self.point_3, self.point_4)
             if self.translation > 1 or self.translation < 0:
                 self.is_drawable = False
@@ -283,7 +288,7 @@ class Intersect:
 
 
     def get_segments(self, shape):
-        if isinstance(shape, Polyline):
+        if isinstance(shape, Polyline) or isinstance(shape, Polygon):
             return [(shape.line_points[i], shape.line_points[i + 1])
                     for i in range(len(shape.line_points) - 1)]
         elif hasattr(shape, "point_1") and hasattr(shape, "point_2"):

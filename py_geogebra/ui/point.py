@@ -154,3 +154,4 @@ class Point:
                     fill="blue",
                     tags=(self.tag, "point_label"),
                 )
+
