@@ -211,10 +211,6 @@ class Polygon:
         #     tags=(self.tag, "polygon_alpha"),
         # )
 
-        for p in self.line_points:
-            self.canvas.tag_raise(p.tag)
-        for p in self.points:
-            self.canvas.tag_raise(p.tag)
 
         if not self.last_not_set and self.line_points:
             for i in range(0, len(self.line_points), 2):
