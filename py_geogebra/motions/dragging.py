@@ -12,6 +12,7 @@ from ..ui.midpoint_or_center import Midpoint_or_center
 from ..ui.segment import Segment
 from ..ui.vector import Vector
 from ..ui.polyline import Polyline
+from ..ui.regular_polygon import Regular_polygon
 from ..ui.polygon import Polygon
 from ..ui.intersect import Intersect
 from ..ui.angle_bisector import Angle_bisector
@@ -84,11 +85,6 @@ def dragging(root):
                             state.drag_target.update()
                             find_translation(state.drag_target, obj)
                             obj.update()
-                        elif (
-                            state.drag_target is not obj.point_1
-                            and state.drag_target is not obj.point_2
-                        ):
-                            globals.objects.refresh()
                     elif isinstance(obj, Polyline):
                         if state.drag_target in obj.line_points:
                             obj.update()
@@ -98,9 +94,7 @@ def dragging(root):
                             state.drag_target.update()
                             find_translation_polyline(state.drag_target, obj)
                             obj.update()
-                        else:
-                            globals.objects.refresh()
-                    elif isinstance(obj, Polygon):
+                    elif isinstance(obj, Polygon) or isinstance(obj, Regular_polygon):
                         if state.drag_target in obj.line_points:
                             obj.update()
                         elif state.drag_target in obj.points:
@@ -109,8 +103,6 @@ def dragging(root):
                             state.drag_target.update()
                             find_translation_polyline(state.drag_target, obj)
                             obj.update()
-                        else:
-                            globals.objects.refresh()
                     elif isinstance(obj, Circle_center_point):
                         if state.drag_target in obj.points:
                             state.drag_target.pos_x = world_x
@@ -118,11 +110,10 @@ def dragging(root):
                             state.drag_target.update()
                             find_translation_circle(state.drag_target, obj)
                             obj.update()
-                        else:
-                            globals.objects.refresh()
 
 
                 globals.sidebar.update()
+                globals.objects.refresh()
                 globals.objects.refresh()
 
         elif state.selected_tool == "pen" and state.current_pen is not None:
