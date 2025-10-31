@@ -146,13 +146,6 @@ class Regular_polygon:
 
     def update(self, e=None):
         length = 0.0
-        for p in self.line_points:
-            p.offset_x = self.offset_x
-            p.offset_y = self.offset_y
-            p.scale = self.scale
-            p.cx = self.cx
-            p.cy = self.cy
-            p.update()
 
         self.canvas.delete(self.tag)
 
@@ -162,9 +155,11 @@ class Regular_polygon:
 
         if state.drag_target is self:
             x_dif, y_dif = self.prev_x - self.pos_x, self.prev_y - self.pos_y
-            for obj in self.line_points:
-                obj.pos_x -= x_dif
-                obj.pos_y -= y_dif
+            
+            self.line_points[0].pos_x -= x_dif            
+            self.line_points[0].pos_y -= y_dif
+            self.line_points[1].pos_x -= x_dif            
+            self.line_points[1].pos_y -= y_dif
                 
         for i in range(1, len(self.line_points)-1):
             dist_x = (self.line_points[i-1].pos_x - self.line_points[i].pos_x)
@@ -237,10 +232,6 @@ class Regular_polygon:
             self.lower_label_obj.update()
         self.length = length
 
-        for p in self.line_points:
-            self.canvas.tag_raise(p.tag)
-        for p in self.points:
-            self.canvas.tag_raise(p.tag)
 
 
         self.prev_x, self.prev_y = self.pos_x, self.pos_y
