@@ -1,53 +1,52 @@
+import math
+from tkinter import simpledialog
+
 from py_geogebra.tools import objects
-from .. import state
-from ..ui.point import Point
-from ..ui.blank_point import Blank_point
-from ..ui.intersect import Create_Intersect
-from ..ui.midpoint_or_center import Midpoint_or_center
-from ..ui.pen import Pen
-from ..ui.line import Line
-from ..ui.perpendicular_line import Perpendicular_line
-from ..ui.parallel_line import Parallel_line
-from ..ui.ray import Ray
-from ..ui.segment import Segment
-from ..ui.vector import Vector
-from ..ui.vector_from_point import Vector_from_point
-from ..ui.free_hand import FreeHand
-from ..ui.segment_with_lenght import Segment_with_length
-from ..ui.polyline import Polyline
-from ..ui.perpendicular_bisector import Perpendicular_bisector
-from ..ui.angle_bisector import Angle_bisector
-from ..ui.best_fit_line import Best_fit_line
-from ..ui.polygon import Polygon
-from ..ui.regular_polygon import Regular_polygon
-from ..ui.circle_center_point import Circle_center_point
+
+from .. import globals, state
 from ..tools.utils import (
-    delete_object,
-    find_circle_at_position,
-    find_translation_circle,
-    get_lower_label,
+    attach_point,
     center,
-    set_cursor,
-    get_label,
-    screen_to_world,
+    delete_object,
     deselect_all,
-    find_point_at_position,
+    detach_point,
+    find_circle_at_position,
     find_line_at_position,
+    find_point_at_position,
+    find_polyline_at_position,
     find_translation,
+    find_translation_circle,
+    find_translation_polyline,
+    get_label,
+    get_lower_label,
+    screen_to_world,
+    set_cursor,
     snap_to_circle,
     snap_to_line,
-    find_polyline_at_position,
-    find_circle_at_position,
-    find_translation_polyline,
-    find_translation_circle,
     snap_to_polyline,
-    snap_to_circle,
-    detach_point,
-    attach_point,
 )
-from tkinter import simpledialog
-import math
-from .. import globals
+from ..ui.angle_bisector import Angle_bisector
+from ..ui.best_fit_line import Best_fit_line
+from ..ui.blank_point import Blank_point
+from ..ui.circle_center_point import Circle_center_point
+from ..ui.circle_center_radius import Circle_center_radius
+from ..ui.free_hand import FreeHand
+from ..ui.intersect import Create_Intersect
+from ..ui.line import Line
+from ..ui.midpoint_or_center import Midpoint_or_center
+from ..ui.parallel_line import Parallel_line
+from ..ui.pen import Pen
+from ..ui.perpendicular_bisector import Perpendicular_bisector
+from ..ui.perpendicular_line import Perpendicular_line
+from ..ui.point import Point
+from ..ui.polygon import Polygon
+from ..ui.polyline import Polyline
+from ..ui.ray import Ray
+from ..ui.regular_polygon import Regular_polygon
+from ..ui.segment import Segment
+from ..ui.segment_with_lenght import Segment_with_length
+from ..ui.vector import Vector
+from ..ui.vector_from_point import Vector_from_point
 
 
 def pressing(root):
@@ -196,7 +195,7 @@ def pressing(root):
                 pb = find_polyline_at_position(e, r=2)
                 if pb is None:
                     pb = find_circle_at_position(e, r=2)
-                
+
             if pb is None and state.selected_intersect_line_1:
                 state.selected_intersect_line_1.deselect()
                 state.selected_intersect_line_1 = None
@@ -750,18 +749,18 @@ def pressing(root):
                 state.current_polygon.line_points.append(p)
                 state.current_polygon.handle_segments()
                 state.current_polygon.update(e)
-                
+
         elif state.selected_tool == "regular_polygon":
             state.start_pos["x"] = e.x
             state.start_pos["y"] = e.y
             world_x, world_y = screen_to_world(e)
-            
+
             if not state.current_polygon:
                 polygon = Regular_polygon(root, globals.axes.unit_size)
                 state.current_polygon = polygon
                 globals.objects.register(polygon)
-                
-                
+
+
             p = find_point_at_position(e)
             if not p:
                 label = get_label(state)
@@ -773,11 +772,11 @@ def pressing(root):
                     pos_x=world_x,
                     pos_y=world_y,
                 )
+                globals.objects.register(p)
             p.select()
-            globals.objects.register(p)
             state.points_for_obj.append(p)
             state.current_polygon.line_points.append(p)
-                
+
             if state.current_polygon and len(state.current_polygon.line_points) == 2:
                 num_points = simpledialog.askinteger(
                 "pocet stran",
@@ -806,7 +805,7 @@ def pressing(root):
                     )
                     globals.objects.register(p)
                     state.current_polygon.line_points.append(p)
-                    
+
                 for p in state.current_polygon.line_points:
                     p.deselect()
                 state.current_polygon.last_not_set = False
@@ -815,10 +814,10 @@ def pressing(root):
                 state.current_polygon.update()
                 state.current_polygon = None
                 state.points_for_obj = []
-                
-                
-                
-            
+
+
+
+
 
 
         elif state.selected_tool == "circle_center_point":
@@ -855,6 +854,37 @@ def pressing(root):
                 globals.sidebar.items.append(state.points_for_obj[1])
                 globals.sidebar.update()
                 state.points_for_obj = []
+
+        elif state.selected_tool == "circle_center_radius":
+            state.start_pos["x"] = e.x
+            state.start_pos["y"] = e.y
+            world_x, world_y = screen_to_world(e)
+            p = find_point_at_position(e)
+            if p is None:
+                label = get_label(state)
+                p = Point(
+                    root,
+                    e=None,
+                    label=label,
+                    unit_size=globals.axes.unit_size,
+                    pos_x=world_x,
+                    pos_y=world_y,
+                )
+                globals.objects.register(p)
+            radius = simpledialog.askfloat(
+            "radius",
+            "radius",
+            minvalue=0,
+            )
+            c = Circle_center_radius(
+                root,
+                unit_size=globals.axes.unit_size,
+                point_1=p,
+            )
+            lower_label = get_lower_label(state)
+            c.lower_label = lower_label
+            c.radius = radius
+            globals.objects.register(c)
 
 
 

@@ -23,6 +23,7 @@ from ..ui.best_fit_line import Best_fit_line
 from ..ui.polygon import Polygon
 from ..ui.regular_polygon import Regular_polygon
 from ..ui.circle_center_point import Circle_center_point
+from ..ui.circle_center_radius import Circle_center_radius
 from .. import globals
 import requests
 import subprocess
@@ -197,6 +198,9 @@ class Objects:
                 self.register(vector)
             elif od["type"] == "Circle_center_point":
                 c = Circle_center_point.from_dict(root, od)
+                self.register(c)
+            elif od["type"] == "Circle_center_radius":
+                c = Circle_center_radius.from_dict(root, od)
                 self.register(c)
             elif od["type"] == "Intersect":
                 i = Intersect.from_dict(root, od)

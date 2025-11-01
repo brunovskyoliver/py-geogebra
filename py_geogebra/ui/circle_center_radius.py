@@ -14,7 +14,7 @@ import math
 from .. import globals
 
 
-class Circle_center_point:
+class Circle_center_radius:
     def __init__(
         self,
         root: tk.Tk,
@@ -41,9 +41,9 @@ class Circle_center_point:
 
         self.is_drawable = True
 
-        self.tag = f"circle_center_point_{id(self)}"
+        self.tag = f"circle_center_radius_{id(self)}"
         self.point_1 = point_1
-        self.point_2 = None
+        self.point_2 = Blank_point(self.root)
         self.anchor_1 = Blank_point(self.root)
         self.anchor_2 = Blank_point(self.root)
         self.selected = False
@@ -63,7 +63,7 @@ class Circle_center_point:
 
     def to_dict(self) -> dict:
         return {
-            "type": "Circle_center_point",
+            "type": "Circle_center_radius",
             "lower_label": self.lower_label,
             "pos_x": self.pos_x,
             "pos_y": self.pos_y,
@@ -75,10 +75,10 @@ class Circle_center_point:
             "tag": self.tag,
             "points": [p.label for p in self.points],
             "point_1": self.point_1.label if self.point_1 else None,
-            "point_2": self.point_2.label if self.point_2 else None,
             "prescription": [p for p in self.prescription],
             "vector": self.vector,
-            "child_lines_labels": [l.lower_label for l in self.child_lines]
+            "child_lines_labels": [l.lower_label for l in self.child_lines],
+            "radius": self.radius
         }
 
     @classmethod
@@ -96,9 +96,7 @@ class Circle_center_point:
             return None
 
         p1 = find_point(data.get("point_1"))
-        p2 = find_point(data.get("point_2"))
         c = cls(root=root, point_1=p1, unit_size=data.get("unit_size", 40))
-        c.point_2 = p2
         c.scale = data.get("scale", 1.0)
         c.is_drawable = data.get("is_drawable", True)
         c.offset_x = data.get("offset_x", 0)
@@ -114,6 +112,7 @@ class Circle_center_point:
         c.prescription = data.get("prescription", {})
         c.vector = data.get("vector")
         c.child_lines_labels = [lbl for lbl in data.get("child_lines_labels", [])]
+        c.radius = data.get("radius", 0)
         c.update()
         return c
 
@@ -134,38 +133,22 @@ class Circle_center_point:
 
             x_dif, y_dif = self.prev_x - self.pos_x, self.prev_y - self.pos_y
             x1, y1 = self.point_1.pos_x, self.point_1.pos_y
-            x2, y2 = self.point_2.pos_x, self.point_2.pos_y
 
             for obj in self.points:
-                if (obj is self.point_1) or (obj is self.point_2):
+                if (obj is self.point_1):
                     obj.pos_x -= x_dif
                     obj.pos_y -= y_dif
                     x1 -= x_dif
                     y1 -= y_dif
-                    x2 -= x_dif
-                    y2 -= y_dif
                     continue
 
         else:
             x1, y1 = self.point_1.pos_x, self.point_1.pos_y
-
-            if self.point_2 is None and e is None:
-                return
-
-            if self.point_2 is None:
-                cx, cy = state.center
-                x2 = (e.x - cx) / (self.unit_size * self.scale)
-                y2 = (cy - e.y) / (self.unit_size * self.scale)
-            else:
-                x2, y2 = self.point_2.pos_x, self.point_2.pos_y
-
-
-            self.radius = abs(math.hypot(x2-x1, y2-y1))
             self.anchor_1.pos_x, self.anchor_1.pos_y = self.point_1.pos_x - self.radius, self.point_1.pos_y - self.radius
             self.anchor_2.pos_x, self.anchor_2.pos_y = self.point_1.pos_x + self.radius, self.point_1.pos_y + self.radius
 
         for obj in self.points:
-            if (obj is not self.point_1) and (obj is not self.point_2):
+            if (obj is not self.point_1):
                 find_translation_circle(obj, self)
                 snap_to_circle(obj, self)
                 obj.update()
@@ -174,9 +157,8 @@ class Circle_center_point:
         x1, y1 = world_to_screen(self.anchor_1.pos_x, self.anchor_1.pos_y)
         x2, y2 = world_to_screen(self.anchor_2.pos_x, self.anchor_2.pos_y)
 
-        if not self.point_2:
-            self.is_drawable = True
-        elif self.point_1.is_drawable and self.point_2.is_drawable:
+
+        if self.point_1.is_drawable:
             self.is_drawable = True
         else:
             self.is_drawable = False
@@ -206,10 +188,6 @@ class Circle_center_point:
                 tags=self.tag,
             )
         self.canvas.tag_raise(self.point_1.tag)
-        if self.point_2 is not None:
-            self.canvas.tag_raise(self.point_2.tag)
-            if self.point_2 not in self.points:
-                self.points.append(self.point_2)
 
         if len(self.child_lines) == 0:
             self.child_lines = load_lines_from_labels(self.child_lines_labels)

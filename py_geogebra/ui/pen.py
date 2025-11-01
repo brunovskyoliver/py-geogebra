@@ -44,6 +44,10 @@ class Pen:
         if len(self.points) < 2:
             return
 
+
+
+
+
         visual_scale = min(max(1, self.scale**0.5), 1.9)
 
         segment = []
