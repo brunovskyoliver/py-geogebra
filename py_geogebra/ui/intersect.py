@@ -15,6 +15,7 @@ from .polygon import Polygon
 from .regular_polygon import Regular_polygon
 from .ray import Ray
 from .circle_center_point import Circle_center_point
+from .circle_center_radius import Circle_center_radius
 from .. import globals
 from .. import state
 
@@ -34,14 +35,14 @@ class Create_Intersect:
         shape_1.deselect()
 
         intersects = []
-        
+
 
         segs_1 = self.expand_segments(shape_1)
         segs_2 = self.expand_segments(shape_2)
 
-        if not isinstance(shape_1, Circle_center_point) and not isinstance(shape_2, Circle_center_point):
+        if "circle" not in shape_1.tag and "circle" not in shape_2.tag:
             for p1, p2 in segs_1:
-                for p3, p4 in segs_2: 
+                for p3, p4 in segs_2:
                     intersect_point = find_2lines_intersection([p1, p2, p3, p4])
                     if intersect_point:
                         label = get_label(state)
@@ -53,11 +54,11 @@ class Create_Intersect:
                         globals.objects.register(intersect)
 
 
-        if isinstance(shape_1, Circle_center_point) or isinstance(shape_2, Circle_center_point):
-            circle = shape_1 if isinstance(shape_1, Circle_center_point) else shape_2
+        if "circle" in shape_1.tag or "circle" in shape_2.tag:
+            circle = shape_1 if "circle" in shape_1.tag else shape_2
             other = shape_2 if circle is shape_1 else shape_1
 
-            if not isinstance(other, Circle_center_point):
+            if "circle" not in other.tag:
                 for p1, p2 in self.expand_segments(other):
                     circle_points = find_circle_line_intersection(circle, p1, p2)
                     for i in range(len(circle_points)):
@@ -71,7 +72,7 @@ class Create_Intersect:
                         intersects.append(intersect)
                         globals.objects.register(intersect)
 
-            elif isinstance(other, Circle_center_point):
+            elif "circle" in other.tag:
                 circle_points = find_circle_circle_intersection(circle, other)
                 for i in range(len(circle_points)):
                     c_pt = circle_points[i]
@@ -91,7 +92,7 @@ class Create_Intersect:
         elif hasattr(shape, "point_1") and hasattr(shape, "point_2"):
             return [(shape.point_1, shape.point_2)]
         else:
-            return [] 
+            return []
 
 
 class Intersect:
@@ -137,10 +138,10 @@ class Intersect:
 
         self.tag = f"intersect_{id(self)}"
         self.selected = False
-        
+
         self.Index = 0
 
- 
+
     def select(self):
         self.selected = True
         self.update()
@@ -148,7 +149,7 @@ class Intersect:
     def deselect(self):
         self.selected = False
         self.update()
-        
+
     def to_dict(self) -> dict:
         return {
             "type": "Intersect",
@@ -198,7 +199,7 @@ class Intersect:
         p.cy = cy
         p.update()
         return p
-    
+
     def find_obj(self, label):
             for obj in globals.objects._objects:
                 if getattr(obj, "label", None) == label:
@@ -225,20 +226,20 @@ class Intersect:
 
         intersection_point = None
 
-        if not isinstance(self.line_1, Circle_center_point) and not isinstance(self.line_2, Circle_center_point):
+        if "circle" not in self.line_1.tag and "circle" not in self.line_2.tag:
             intersection_point = find_2lines_intersection(
                 [self.point_1, self.point_2, self.point_3, self.point_4]
             )
 
-        elif isinstance(self.line_1, Circle_center_point) or isinstance(self.line_2, Circle_center_point):
-            circle = self.line_1 if isinstance(self.line_1, Circle_center_point) else self.line_2
+        elif "circle" in self.line_1.tag or "circle" in self.line_2.tag:
+            circle = self.line_1 if "circle" in self.line_1.tag else self.line_2
             other = self.line_2 if circle is self.line_1 else self.line_1
 
-            if not isinstance(other, Circle_center_point):
+            if "circle" not in other.tag:
                 for p1, p2 in self.get_segments(other):
                     pts = find_circle_line_intersection(circle, p1, p2)
                     if pts:
-                        intersection_point = pts[self.Index]  
+                        intersection_point = pts[self.Index]
                         break
             else:
                 pts = find_circle_circle_intersection(circle, other)
@@ -248,7 +249,7 @@ class Intersect:
         if not intersection_point:
             self.is_drawable = False
             return
-        
+
         if isinstance(self.line_1, Segment) or isinstance(
             self.line_1, Segment_with_length
         ):
@@ -260,13 +261,13 @@ class Intersect:
             if self.translation < 0:
                 self.is_drawable = False
         elif (isinstance(self.line_1, Polyline)
-            or isinstance(self.line_1, Polygon)      
-            or isinstance(self.line_1, Regular_polygon)      
+            or isinstance(self.line_1, Polygon)
+            or isinstance(self.line_1, Regular_polygon)
         ):
             find_translation_between_points(self, self.point_1, self.point_2)
             if self.translation > 1 or self.translation < 0:
                 self.is_drawable = False
-                
+
         if isinstance(self.line_2, Segment) or isinstance(
             self.line_2, Segment_with_length
         ):
@@ -278,8 +279,8 @@ class Intersect:
             if self.translation < 0:
                 self.is_drawable = False
         elif (isinstance(self.line_2, Polyline)
-            or isinstance(self.line_2, Polygon)      
-            or isinstance(self.line_2, Regular_polygon)      
+            or isinstance(self.line_2, Polygon)
+            or isinstance(self.line_2, Regular_polygon)
         ):
             find_translation_between_points(self, self.point_3, self.point_4)
             if self.translation > 1 or self.translation < 0:
