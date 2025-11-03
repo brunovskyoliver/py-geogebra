@@ -29,6 +29,7 @@ class Circle_center_radius:
         self.pos_y = 0.0
         self.prev_x = 0.0
         self.prev_y = 0.0
+        se
 
         self.offset_x = 0.0
         self.offset_y = 0.0
