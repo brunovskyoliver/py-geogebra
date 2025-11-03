@@ -245,11 +245,12 @@ def find_polyline_at_position(e, r=2):
 def find_circle_at_position(e, r=2):
     from ..ui.circle_center_point import Circle_center_point
     from ..ui.circle_center_radius import Circle_center_radius
+    from ..ui.compass import Compass
 
     items = g().canvas.find_overlapping(e.x - r, e.y - r, e.x + r, e.y + r)
     line = None
     for obj in g().objects._objects:
-        if hasattr(obj, "tag") and any(obj.tag in g().canvas.gettags(i) for i in items) and (isinstance(obj, Circle_center_radius) or isinstance(obj, Circle_center_point)):
+        if hasattr(obj, "tag") and any(obj.tag in g().canvas.gettags(i) for i in items) and (isinstance(obj, Circle_center_radius) or isinstance(obj, Circle_center_point) or isinstance(obj, Compass)):
             if "circle" in obj.tag:
                 line = obj
                 break

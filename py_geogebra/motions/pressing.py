@@ -1,7 +1,9 @@
+from inspect import stack
 import math
 from tkinter import simpledialog
 
 from py_geogebra.tools import objects
+from py_geogebra.ui.compass import Compass
 
 from .. import globals, state
 from ..tools.utils import (
@@ -885,6 +887,42 @@ def pressing(root):
             c.lower_label = lower_label
             c.radius = radius
             globals.objects.register(c)
+
+        elif state.selected_tool == "compass":
+            state.start_pos["x"] = e.x
+            state.start_pos["y"] = e.y
+            world_x, world_y = screen_to_world(e)
+            p = find_point_at_position(e)
+            if p is None:
+                label = get_label(state)
+                p = Point(
+                    root,
+                    e=None,
+                    label=label,
+                    unit_size=globals.axes.unit_size,
+                    pos_x=world_x,
+                    pos_y=world_y,
+                )
+                globals.objects.register(p)
+            state.points_for_obj.append(p)
+
+            if len(state.points_for_obj) == 2:
+                c = Compass(
+                    root
+                )
+                c.r_point_1 = state.points_for_obj[0]
+                c.r_point_2 = state.points_for_obj[1]
+                lower_label = get_lower_label(state)
+                c.lower_label = lower_label
+                globals.objects.register(c)
+                state.points_for_obj.append(c)
+            elif len(state.points_for_obj) == 4:
+                state.points_for_obj[2].point_1 = p
+                state.points_for_obj[2].update()
+                globals.sidebar.items.append(state.points_for_obj[2])
+                globals.sidebar.update()
+                state.points_for_obj = []
+
 
 
 
