@@ -38,4 +38,7 @@ def motion(root):
         if state.selected_tool == "circle_center_point" and 0 < len(state.points_for_obj) < 3:
             state.points_for_obj[1].update(e)
 
+        if state.selected_tool == "compass" and 2 < len(state.points_for_obj) < 4:
+                state.points_for_obj[2].update(e)
+
     globals.canvas.bind("<Motion>", handle_mouse)

@@ -1,5 +1,6 @@
 from typing import List, Protocol
 
+from py_geogebra.ui.compass import Compass
 from py_geogebra.ui.lower_label import Lower_label
 from .utils import center
 from .. import state
@@ -201,6 +202,9 @@ class Objects:
                 self.register(c)
             elif od["type"] == "Circle_center_radius":
                 c = Circle_center_radius.from_dict(root, od)
+                self.register(c)
+            elif od["type"] == "Compass":
+                c = Compass.from_dict(root, od)
                 self.register(c)
             elif od["type"] == "Intersect":
                 i = Intersect.from_dict(root, od)
