@@ -1,8 +1,8 @@
 import tkinter as tk
+from .. import globals, state
 from ..tools.utils import distance, snap_to_polyline
-from .. import state
-from .. import globals
 from .lower_label import Lower_label
+
 
 class Regular_polygon:
     def __init__(
@@ -32,11 +32,13 @@ class Regular_polygon:
 
         self.selected = False
 
+        self.is_drawable = True
+
         self.line_points = []
         self.points = []
         self.segments = []
         self.last_not_set = True
-        self.matrix = [[],[]]
+        self.matrix = [[], []]
         self.lower_label = ""
         self.lower_label_obj = Lower_label(self.root, obj=self)
         self.objects.register(self.lower_label_obj)
@@ -57,6 +59,7 @@ class Regular_polygon:
             "line_points": [p.label for p in self.line_points],
             "last_not_set": self.last_not_set,
             "matrix": self.matrix,
+            "is_drawable": self.is_drawable,
         }
 
     @classmethod
@@ -78,6 +81,7 @@ class Regular_polygon:
         polygon.last_not_set = data.get("last_not_set", False)
         polygon.points = [find_point(lbl) for lbl in data.get("points", []) if lbl]
         polygon.matrix = data.get("matrix", None)
+        polygon.is_drawable = data.get("is_drawable", True)
         polygon.line_points = [
             find_point(lbl) for lbl in data.get("line_points", []) if lbl
         ]
@@ -143,7 +147,6 @@ class Regular_polygon:
         for segment in self.segments:
             segment.update()
 
-
     def update(self, e=None):
         length = 0.0
 
@@ -155,20 +158,31 @@ class Regular_polygon:
 
         if state.drag_target is self:
             x_dif, y_dif = self.prev_x - self.pos_x, self.prev_y - self.pos_y
-            
-            self.line_points[0].pos_x -= x_dif            
+
+            self.line_points[0].pos_x -= x_dif
             self.line_points[0].pos_y -= y_dif
-            self.line_points[1].pos_x -= x_dif            
+            self.line_points[1].pos_x -= x_dif
             self.line_points[1].pos_y -= y_dif
-                
-        for i in range(1, len(self.line_points)-1):
-            dist_x = (self.line_points[i-1].pos_x - self.line_points[i].pos_x)
-            dist_y = (self.line_points[i-1].pos_y - self.line_points[i].pos_y)
-            self.line_points[i+1].pos_x = self.line_points[i].pos_x + (dist_x * self.matrix[0][0] + dist_y * self.matrix[1][0])
-            self.line_points[i+1].pos_y = self.line_points[i].pos_y + (dist_x * self.matrix[0][1] + dist_y * self.matrix[1][1])
+
+        for i in range(1, len(self.line_points) - 1):
+            dist_x = self.line_points[i - 1].pos_x - self.line_points[i].pos_x
+            dist_y = self.line_points[i - 1].pos_y - self.line_points[i].pos_y
+            self.line_points[i + 1].pos_x = self.line_points[i].pos_x + (
+                dist_x * self.matrix[0][0] + dist_y * self.matrix[1][0]
+            )
+            self.line_points[i + 1].pos_y = self.line_points[i].pos_y + (
+                dist_x * self.matrix[0][1] + dist_y * self.matrix[1][1]
+            )
+
+        if len(self.line_points)>=2:
+            if not self.line_points[0].is_drawable or not self.line_points[1].is_drawable:
+                self.is_drawable = False
+            else:
+                self.is_drawable = True
 
         for p in self.line_points:
             coords.extend([p.x, p.y])
+            p.is_drawable = self.is_drawable
 
 
         if self.last_not_set and e is not None:
@@ -182,29 +196,30 @@ class Regular_polygon:
             snap_to_polyline(obj, self)
             obj.update()
 
-        if len(coords) < 4:
-            return
-        if not self.last_not_set:
-            coords.extend([self.line_points[0].x,self.line_points[0].y])
-        if self.selected:
-            self.canvas.create_line(
+        if self.is_drawable:
+            if len(coords) < 4:
+                return
+            if not self.last_not_set:
+                coords.extend([self.line_points[0].x, self.line_points[0].y])
+            if self.selected:
+                self.canvas.create_line(
+                    *coords,
+                    fill="lightgrey",
+                    width=2 * 3 * visual_scale,
+                    tags=self.tag,
+                )
+
+            items = self.canvas.find_all()
+
+            polygon_fill = self.canvas.create_polygon(
                 *coords,
-                fill="lightgrey",
-                width=2 * 3 * visual_scale,
-                tags=self.tag,
+                fill="#D9AEA0",
+                outline="",
+                tags=(self.tag, "polygon_fill"),
             )
 
-        items = self.canvas.find_all()
-
-        polygon_fill = self.canvas.create_polygon(
-            *coords,
-            fill="#D9AEA0",
-            outline="",
-            tags=(self.tag, "polygon_fill"),
-        )
-
-        if items:
-            self.canvas.tag_lower(polygon_fill, items[0])
+            if items:
+                self.canvas.tag_lower(polygon_fill, items[0])
 
         # self.canvas.create_line(
         #     *coords,
@@ -231,7 +246,5 @@ class Regular_polygon:
                     )
             self.lower_label_obj.update()
         self.length = length
-
-
 
         self.prev_x, self.prev_y = self.pos_x, self.pos_y
