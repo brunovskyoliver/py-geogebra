@@ -169,6 +169,8 @@ class Compass:
                 self.is_drawable = True
             else:
                 self.is_drawable = False
+        if e:
+            self.is_drawable = True
 
         self.lower_label_obj.is_drawable = self.is_drawable
 

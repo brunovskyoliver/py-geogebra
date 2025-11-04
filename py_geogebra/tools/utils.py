@@ -2,6 +2,7 @@ from os.path import isjunction
 import tkinter as tk
 import math
 from tkinter import image_names, messagebox
+from typing import List
 
 
 from .. import state
@@ -210,9 +211,10 @@ def find_point_at_position(e, r=2):
     return p
 
 
-def find_line_at_position(e, r=2):
+def find_line_at_position(e, r=2, num_lines: int = 1):
     items = g().canvas.find_overlapping(e.x - r, e.y - r, e.x + r, e.y + r)
-    line = None
+    lines = []
+    line_count = 0
     for obj in g().objects._objects:
         if hasattr(obj, "tag") and any(obj.tag in g().canvas.gettags(i) for i in items):
             if (
@@ -224,9 +226,14 @@ def find_line_at_position(e, r=2):
                 or "angle_bisector" in obj.tag
                 or "perpendicular_bisector" in obj.tag
             ):
-                line = obj
-                break
-    return line
+                lines.append(obj)
+                line_count += 1
+                if line_count == num_lines:
+                    break
+    if num_lines == 1:
+        return lines[0]
+    else:
+        return lines
 
 
 def find_polyline_at_position(e, r=2):
