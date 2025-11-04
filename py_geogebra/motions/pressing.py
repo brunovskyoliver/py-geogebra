@@ -192,35 +192,61 @@ def pressing(root):
 
 
         elif state.selected_tool == "intersect":
-            pb = find_line_at_position(e, r=2)
-            if pb is None:
+            pbs = find_line_at_position(e, r=2, num_lines=2)
+            if not pbs:
                 pb = find_polyline_at_position(e, r=2)
                 if pb is None:
                     pb = find_circle_at_position(e, r=2)
 
-            if pb is None and state.selected_intersect_line_1:
-                state.selected_intersect_line_1.deselect()
-                state.selected_intersect_line_1 = None
-                return
-            elif pb is None:
-                return
-            else:
-                if state.selected_intersect_line_1:
-                    if state.selected_intersect_line_1 == pb:
+            if len(pbs) > 0:
+                for pb in pbs:
+                    if pb is None and state.selected_intersect_line_1:
+                        state.selected_intersect_line_1.deselect()
+                        state.selected_intersect_line_1 = None
+                        return
+                    elif pb is None:
                         return
                     else:
-                        i = Create_Intersect(
-                        state.selected_intersect_line_1,
-                        pb,
-                        root,
-                        unit_size=globals.axes.unit_size,
-                        )
-                        state.selected_intersect_line_1 = None
-                else:
-                    world_x, world_y = screen_to_world(e)
+                        if state.selected_intersect_line_1:
+                            if state.selected_intersect_line_1 == pb:
+                                return
+                            else:
+                                i = Create_Intersect(
+                                state.selected_intersect_line_1,
+                                pb,
+                                root,
+                                unit_size=globals.axes.unit_size,
+                                )
+                                state.selected_intersect_line_1 = None
+                        else:
+                            world_x, world_y = screen_to_world(e)
 
-                    state.selected_intersect_line_1 = pb
-                    pb.select()
+                            state.selected_intersect_line_1 = pb
+                            pb.select()
+            else:
+                if pb is None and state.selected_intersect_line_1:
+                    state.selected_intersect_line_1.deselect()
+                    state.selected_intersect_line_1 = None
+                    return
+                elif pb is None:
+                    return
+                else:
+                    if state.selected_intersect_line_1:
+                        if state.selected_intersect_line_1 == pb:
+                            return
+                        else:
+                            i = Create_Intersect(
+                            state.selected_intersect_line_1,
+                            pb,
+                            root,
+                            unit_size=globals.axes.unit_size,
+                            )
+                            state.selected_intersect_line_1 = None
+                    else:
+                        world_x, world_y = screen_to_world(e)
+
+                        state.selected_intersect_line_1 = pb
+                        pb.select()
 
         elif state.selected_tool == "pen":
             cx, cy = state.center
@@ -752,6 +778,8 @@ def pressing(root):
                 state.current_polygon.handle_segments()
                 state.current_polygon.update(e)
 
+            p.select()
+
         elif state.selected_tool == "regular_polygon":
             state.start_pos["x"] = e.x
             state.start_pos["y"] = e.y
@@ -783,7 +811,7 @@ def pressing(root):
                 num_points = simpledialog.askinteger(
                 "pocet stran",
                 "pocet stran",
-                minvalue=0,
+                minvalue=3,
                 )
                 angle = (num_points*180 - 360) / num_points
                 rad_angle = math.radians(angle)
@@ -915,14 +943,12 @@ def pressing(root):
                 lower_label = get_lower_label(state)
                 c.lower_label = lower_label
                 globals.objects.register(c)
+                c.update(e)
                 state.points_for_obj.append(c)
             elif len(state.points_for_obj) == 4:
                 state.points_for_obj[2].point_1 = p
-                state.points_for_obj[2].update()
-                globals.sidebar.items.append(state.points_for_obj[2])
-                globals.sidebar.update()
+                state.points_for_obj[2].update(e)
                 state.points_for_obj = []
-
 
 
 
