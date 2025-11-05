@@ -162,8 +162,8 @@ class Segment:
             self.is_drawable = True
         else:
             self.is_drawable = False
-            
-        self.lower_label_obj.is_drawable = self.is_drawable 
+
+        self.lower_label_obj.is_drawable = self.is_drawable
 
         if self.is_drawable:
             if self.point_2 is None:
@@ -199,8 +199,9 @@ class Segment:
                 width=2 * visual_scale,
                 tags=self.tag,
             )
-        self.canvas.tag_raise(self.point_1.tag)
-        if self.point_2 is not None:
+        if hasattr(self.point_1, self.tag):
+            self.canvas.tag_raise(self.point_1.tag)
+        if self.point_2 is not None and hasattr(self.point_2, self.tag):
             self.canvas.tag_raise(self.point_2.tag)
             if self.point_2 not in self.points:
                 self.points.append(self.point_2)
@@ -209,7 +210,8 @@ class Segment:
             self.child_lines = load_lines_from_labels(self.child_lines_labels)
 
         for p in self.points:
-            self.canvas.tag_raise(p.tag)
+            if hasattr(p, self.tag):
+                self.canvas.tag_raise(p.tag)
 
         for l in self.child_lines:
             if l and hasattr(l, "parent_vector"):

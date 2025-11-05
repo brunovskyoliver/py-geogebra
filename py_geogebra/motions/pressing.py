@@ -964,6 +964,7 @@ def pressing(root):
 
     def left_click_released(e):
         if state.selected_tool == "freehand":
+            state.current_pen.detect_line()
             globals.objects.unregister(state.current_pen)
             globals.canvas.delete(state.current_pen.tag)
         elif state.selected_tool == "arrow":

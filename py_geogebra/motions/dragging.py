@@ -122,7 +122,7 @@ def dragging(root):
             world_y = (cy - e.y) / (globals.objects.unit_size * globals.objects.scale)
             state.current_pen.add_point(world_x, world_y)
 
-        elif state.selected_tool == "freehand":
+        elif state.selected_tool == "freehand" and state.current_pen is not None:
             cx, cy = state.center
             world_x = (e.x - cx) / (globals.objects.unit_size * globals.objects.scale)
             world_y = (cy - e.y) / (globals.objects.unit_size * globals.objects.scale)

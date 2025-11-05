@@ -28,6 +28,7 @@ class Blank_point:
         self.scale = 1.0  # zoom factor
         self.unit_size = unit_size
         self.label = label
+        self.is_drawable = True
 
         self.cx = 0
         self.cy = 0
@@ -36,6 +37,7 @@ class Blank_point:
 
         self.pos_x = 0
         self.pos_y = 0
+
 
 
         self.parent_line = None
@@ -88,5 +90,3 @@ class Blank_point:
         x = self.cx + self.pos_x * self.unit_size * self.scale
         y = self.cy - self.pos_y * self.unit_size * self.scale
         self.x, self.y = x, y
-
-

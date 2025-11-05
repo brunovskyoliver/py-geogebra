@@ -231,7 +231,10 @@ def find_line_at_position(e, r=2, num_lines: int = 1):
                 if line_count == num_lines:
                     break
     if num_lines == 1:
-        return lines[0]
+        try:
+            return lines[0]
+        except IndexError:
+            return None
     else:
         return lines
 
