@@ -24,7 +24,7 @@ class FreeHand:
         self.points = []
 
         self.line_buffer = 0.95
-        self.circle_buffer =0.30
+        self.circle_buffer =0.33
 
         self.detected = False
 
@@ -93,8 +93,6 @@ class FreeHand:
 
 
         max_dev = max(abs(d - avg_r) for d in distances)
-
-        print(max_dev / avg_r)
 
         if (max_dev / avg_r) < self.circle_buffer:
             p = Blank_point(root=self.root)
