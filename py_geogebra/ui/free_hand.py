@@ -4,6 +4,7 @@ import tkinter as tk
 from py_geogebra import state
 from py_geogebra.tools.utils import get_lower_label
 from py_geogebra.ui.blank_point import Blank_point
+from py_geogebra.ui.circle_center_radius import Circle_center_radius
 from py_geogebra.ui.segment import Segment
 from .. import globals
 
@@ -23,6 +24,7 @@ class FreeHand:
         self.points = []
 
         self.line_buffer = 0.95
+        self.circle_buffer =0.30
 
         self.detected = False
 
@@ -49,7 +51,7 @@ class FreeHand:
         self.points = points
         self.update()
 
-    def detect_line(self) -> None:
+    def detect_line(self) -> bool:
         real_lenght = 0
         estimated_lenght = math.hypot(self.points[-1][0] - self.points[0][0], self.points[-1][1] - self.points[0][1])
 
@@ -74,7 +76,49 @@ class FreeHand:
             segment.point_2 = p2
             globals.objects.register(segment)
             segment.lower_label = lower_label
+            return True
 
+        return False
+
+    def detect_circle(self) -> bool:
+        if len(self.points) < 3:
+            return False
+
+        xs, ys = zip(*self.points)
+        cx = sum(xs) / len(xs)
+        cy = sum(ys) / len(ys)
+
+        distances = [math.hypot(x - cx, y - cy) for x, y in self.points]
+        avg_r = sum(distances) / len(distances)
+
+
+        max_dev = max(abs(d - avg_r) for d in distances)
+
+        print(max_dev / avg_r)
+
+        if (max_dev / avg_r) < self.circle_buffer:
+            p = Blank_point(root=self.root)
+            p.pos_x, p.pos_y = cx, cy
+            c = Circle_center_radius(
+                root=self.root,
+                point_1=p
+            )
+            c.radius = avg_r
+            lower_label = get_lower_label(state)
+            c.lower_label = lower_label
+            globals.objects.register(c)
+
+            return True
+
+        return False
+
+
+    def detect_shape(self) -> None:
+
+        if self.detect_line():
+            return
+        elif self.detect_circle():
+            return
 
 
 
