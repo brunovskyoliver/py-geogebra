@@ -1,3 +1,4 @@
+from py_geogebra.ui.circle_center_radius import Circle_center_radius
 from .. import state
 from ..tools.utils import (
     set_cursor,
@@ -103,7 +104,7 @@ def dragging(root):
                             state.drag_target.update()
                             find_translation_polyline(state.drag_target, obj)
                             obj.update()
-                    elif isinstance(obj, Circle_center_point):
+                    elif isinstance(obj, Circle_center_point) or isinstance(obj, Circle_center_radius):
                         if state.drag_target in obj.points:
                             state.drag_target.pos_x = world_x
                             state.drag_target.pos_y = world_y
@@ -114,7 +115,7 @@ def dragging(root):
 
                 globals.sidebar.update()
                 globals.objects.refresh()
-                globals.objects.refresh()
+                globals.objects.refresh() #jup tu to ma byt dvakrat
 
         elif state.selected_tool == "pen" and state.current_pen is not None:
             cx, cy = state.center

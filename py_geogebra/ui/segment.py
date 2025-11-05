@@ -203,8 +203,8 @@ class Segment:
             self.canvas.tag_raise(self.point_1.tag)
         if self.point_2 is not None and hasattr(self.point_2, self.tag):
             self.canvas.tag_raise(self.point_2.tag)
-            if self.point_2 not in self.points:
-                self.points.append(self.point_2)
+        if self.point_2 and self.point_2 not in self.points:
+            self.points.append(self.point_2)
 
         if len(self.child_lines) == 0:
             self.child_lines = load_lines_from_labels(self.child_lines_labels)

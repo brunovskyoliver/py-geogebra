@@ -187,13 +187,14 @@ class Circle_center_radius:
                 width=2 * visual_scale,
                 tags=self.tag,
             )
-        self.canvas.tag_raise(self.point_1.tag)
+
 
         if len(self.child_lines) == 0:
             self.child_lines = load_lines_from_labels(self.child_lines_labels)
 
         for p in self.points:
-            self.canvas.tag_raise(p.tag)
+            if hasattr(p, self.tag):
+                self.canvas.tag_raise(p.tag)
         for l in self.child_lines:
             if l:
                 l.parent_vector = self.vector
