@@ -71,6 +71,8 @@ def pressing(root):
 
             if not point_obj:
                 line_obj = find_line_at_position(e)
+                polyline_obj = find_polyline_at_position(e)
+                circle_obj = find_circle_at_position(e, r=2)
                 if line_obj:
                     line_obj.pos_x, line_obj.pos_y = screen_to_world(e)
                     line_obj.update()
@@ -78,14 +80,17 @@ def pressing(root):
                         line_obj.select()
                         state.selected_point = line_obj
                     state.drag_target = line_obj
-                else:
-                    polyline_obj = find_polyline_at_position(e)
-                    if polyline_obj:
-                        polyline_obj.pos_x, polyline_obj.pos_y = screen_to_world(e)
-                        polyline_obj.update()
-                        state.selected_point = polyline_obj
-                        polyline_obj.select()
-                        state.drag_target = polyline_obj
+                elif point_obj:
+                    polyline_obj.pos_x, polyline_obj.pos_y = screen_to_world(e)
+                    polyline_obj.update()
+                    state.selected_point = polyline_obj
+                    polyline_obj.select()
+                    state.drag_target = polyline_obj
+                elif circle_obj:
+                    circle_obj.pos_x, circle_obj.pos_y = screen_to_world(e)
+                    circle_obj.update()
+                    state.drag_target = circle_obj
+                    circle_obj.select()
 
         elif state.selected_tool == "point":
             state.start_pos["x"] = e.x

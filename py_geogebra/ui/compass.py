@@ -133,13 +133,12 @@ class Compass:
             x_dif, y_dif = self.prev_x - self.pos_x, self.prev_y - self.pos_y
             x1, y1 = self.point_1.pos_x, self.point_1.pos_y
 
-            for obj in self.points:
-                if (obj is self.point_1):
-                    obj.pos_x -= x_dif
-                    obj.pos_y -= y_dif
-                    x1 -= x_dif
-                    y1 -= y_dif
-                    continue
+
+            self.point_1.pos_x -= x_dif
+            self.point_1.pos_y -= y_dif
+            x1 -= x_dif
+            y1 -= y_dif
+
 
         else:
             if self.point_1 is None and e is None:
@@ -151,8 +150,8 @@ class Compass:
             else:
                 x1, y1 = self.point_1.pos_x, self.point_1.pos_y
 
-            self.anchor_1.pos_x, self.anchor_1.pos_y = x1 - self.radius, y1 - self.radius
-            self.anchor_2.pos_x, self.anchor_2.pos_y = x1 + self.radius, y1 + self.radius
+        self.anchor_1.pos_x, self.anchor_1.pos_y = x1 - self.radius, y1 - self.radius
+        self.anchor_2.pos_x, self.anchor_2.pos_y = x1 + self.radius, y1 + self.radius
 
         for obj in self.points:
             if (obj is not self.point_1) and obj:

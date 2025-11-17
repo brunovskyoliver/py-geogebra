@@ -94,7 +94,9 @@ class FreeHand:
 
         max_dev = max(abs(d - avg_r) for d in distances)
 
-        if (max_dev / avg_r) < self.circle_buffer:
+        end_points_dist = math.hypot(self.points[0][0] - self.points[-1][0], self.points[0][1] - self.points[-1][1])
+
+        if (max_dev / avg_r) < self.circle_buffer and end_points_dist < 1:
             p = Blank_point(root=self.root)
             p.pos_x, p.pos_y = cx, cy
             c = Circle_center_radius(
