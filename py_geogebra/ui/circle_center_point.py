@@ -130,10 +130,11 @@ class Circle_center_point:
 
         visual_scale = min(max(1, self.scale**0.5), 1.9)
 
+        x1, y1 = self.point_1.pos_x, self.point_1.pos_y
+
         if state.drag_target is self:
 
             x_dif, y_dif = self.prev_x - self.pos_x, self.prev_y - self.pos_y
-            x1, y1 = self.point_1.pos_x, self.point_1.pos_y
             x2, y2 = self.point_2.pos_x, self.point_2.pos_y
 
             for obj in self.points:
@@ -147,8 +148,6 @@ class Circle_center_point:
                     continue
 
         else:
-            x1, y1 = self.point_1.pos_x, self.point_1.pos_y
-
             if self.point_2 is None and e is None:
                 return
 
@@ -160,9 +159,9 @@ class Circle_center_point:
                 x2, y2 = self.point_2.pos_x, self.point_2.pos_y
 
 
-            self.radius = abs(math.hypot(x2-x1, y2-y1))
-            self.anchor_1.pos_x, self.anchor_1.pos_y = self.point_1.pos_x - self.radius, self.point_1.pos_y - self.radius
-            self.anchor_2.pos_x, self.anchor_2.pos_y = self.point_1.pos_x + self.radius, self.point_1.pos_y + self.radius
+        self.radius = abs(math.hypot(x2-x1, y2-y1))
+        self.anchor_1.pos_x, self.anchor_1.pos_y = self.point_1.pos_x - self.radius, self.point_1.pos_y - self.radius
+        self.anchor_2.pos_x, self.anchor_2.pos_y = self.point_1.pos_x + self.radius, self.point_1.pos_y + self.radius
 
         for obj in self.points:
             if (obj is not self.point_1) and (obj is not self.point_2):

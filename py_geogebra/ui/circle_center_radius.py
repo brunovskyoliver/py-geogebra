@@ -129,10 +129,10 @@ class Circle_center_radius:
 
         visual_scale = min(max(1, self.scale**0.5), 1.9)
 
-        if state.drag_target is self:
+        x1, y1 = self.point_1.pos_x, self.point_1.pos_y
 
+        if state.drag_target is self:
             x_dif, y_dif = self.prev_x - self.pos_x, self.prev_y - self.pos_y
-            x1, y1 = self.point_1.pos_x, self.point_1.pos_y
 
             for obj in self.points:
                 if (obj is self.point_1):
@@ -142,10 +142,10 @@ class Circle_center_radius:
                     y1 -= y_dif
                     continue
 
-        else:
-            x1, y1 = self.point_1.pos_x, self.point_1.pos_y
-            self.anchor_1.pos_x, self.anchor_1.pos_y = self.point_1.pos_x - self.radius, self.point_1.pos_y - self.radius
-            self.anchor_2.pos_x, self.anchor_2.pos_y = self.point_1.pos_x + self.radius, self.point_1.pos_y + self.radius
+
+
+        self.anchor_1.pos_x, self.anchor_1.pos_y = self.point_1.pos_x - self.radius, self.point_1.pos_y - self.radius
+        self.anchor_2.pos_x, self.anchor_2.pos_y = self.point_1.pos_x + self.radius, self.point_1.pos_y + self.radius
 
         for obj in self.points:
             if (obj is not self.point_1):
