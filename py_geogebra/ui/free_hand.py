@@ -1,8 +1,9 @@
 import math
 import tkinter as tk
+from typing_extensions import Set
 
 from py_geogebra import state
-from py_geogebra.tools.utils import get_lower_label
+from py_geogebra.tools.utils import find_blank_point_at_position, get_lower_label
 from py_geogebra.ui.blank_point import Blank_point
 from py_geogebra.ui.circle_center_radius import Circle_center_radius
 from py_geogebra.ui.segment import Segment
@@ -23,7 +24,7 @@ class FreeHand:
 
         self.points = []
 
-        self.line_buffer = 0.95
+        self.line_buffer = 0.98
         self.circle_buffer =0.33
 
         self.detected = False
@@ -51,11 +52,13 @@ class FreeHand:
         self.points = points
         self.update()
 
-    def detect_line(self) -> bool:
+    def detect_line(self, start_index: int = 0, stop_index:int = -1) -> bool:
+        if stop_index == -1:
+            stop_index = len(self.points)
         real_lenght = 0
-        estimated_lenght = math.hypot(self.points[-1][0] - self.points[0][0], self.points[-1][1] - self.points[0][1])
+        estimated_lenght = math.hypot(self.points[stop_index-1][0] - self.points[start_index][0], self.points[stop_index-1][1] - self.points[start_index][1])
 
-        for i in range(len(self.points)-1):
+        for i in range(start_index,stop_index-1):
             x1, y1 = self.points[i][0], self.points[i][1]
             x2, y2 = self.points[i+1][0], self.points[i+1][1]
             lenght = math.hypot(x2-x1, y2-y1)
@@ -63,10 +66,14 @@ class FreeHand:
 
         if estimated_lenght >= real_lenght * self.line_buffer:
             lower_label = get_lower_label(state)
-            p = Blank_point(root=self.root)
-            p.pos_x, p.pos_y = self.points[0][0], self.points[0][1]
+            p = find_blank_point_at_position(self.points[start_index][0], self.points[start_index][1])
+            if not p:
+                p = Blank_point(root=self.root)
+                p.pos_x, p.pos_y = self.points[start_index][0], self.points[start_index][1]
+                state.blank_points.append(p)
             p2 = Blank_point(root=self.root)
-            p2.pos_x, p2.pos_y = self.points[-1][0], self.points[-1][1]
+            p2.pos_x, p2.pos_y = self.points[stop_index-1][0], self.points[stop_index-1][1]
+            state.blank_points.append(p2)
             segment = Segment(
                 self.root,
                 unit_size=globals.axes.unit_size,
@@ -112,12 +119,24 @@ class FreeHand:
 
         return False
 
+    def detect_polyline(self) -> bool:
+        first = 0
+        while first < len(self.points)-1:
+            for last in range(len(self.points), 0, -1):
+                if (self.detect_line(first, last)):
+                    first = last - 1
+                    break
+
+        state.blank_points = []
+        return False
+
 
     def detect_shape(self) -> None:
-
         if self.detect_line():
             return
         elif self.detect_circle():
+            return
+        elif self.detect_polyline():
             return
 
 

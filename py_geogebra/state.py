@@ -48,3 +48,4 @@ selected_perpendicular_point = None
 selected_perpendicular_line = None
 selected_angle_bisector_points = []
 best_fit_line = None
+blank_points = []
