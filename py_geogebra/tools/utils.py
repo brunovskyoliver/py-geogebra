@@ -2,7 +2,10 @@ from os.path import isjunction
 import tkinter as tk
 import math
 from tkinter import image_names, messagebox
+from tkinter.constants import N
 from typing import List
+
+
 
 
 from .. import state
@@ -210,6 +213,13 @@ def find_point_at_position(e, r=2):
                 break
     return p
 
+def find_blank_point_at_position(x, y, r=2):
+    p = None
+    for obj in state.blank_points:
+        if obj.pos_x == x and obj.pos_y == y:
+            p = obj
+            break
+    return p
 
 def find_line_at_position(e, r=2, num_lines: int = 1):
     items = g().canvas.find_overlapping(e.x - r, e.y - r, e.x + r, e.y + r)

@@ -1,6 +1,6 @@
 
 import tkinter as tk
-from ..tools.utils import snap
+from ..tools.utils import snap, world_to_screen
 from .. import state
 from .. import globals
 
@@ -87,6 +87,5 @@ class Blank_point:
 
     def update(self):
 
-        x = self.cx + self.pos_x * self.unit_size * self.scale
-        y = self.cy - self.pos_y * self.unit_size * self.scale
+        x, y = world_to_screen(self.pos_x, self.pos_y)
         self.x, self.y = x, y
