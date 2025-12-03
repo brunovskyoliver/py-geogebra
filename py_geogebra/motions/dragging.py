@@ -1,4 +1,5 @@
 from py_geogebra.ui.circle_center_radius import Circle_center_radius
+from py_geogebra.ui.compass import Compass
 from .. import state
 from ..tools.utils import (
     set_cursor,
@@ -69,6 +70,7 @@ def dragging(root):
                         or isinstance(obj, Segment_with_length)
                         or isinstance(obj, Midpoint_or_center)
                         or isinstance(obj, Vector)
+
                         or isinstance(obj, Perpendicular_bisector)
                         or isinstance(obj, Perpendicular_line)
                         or isinstance(obj, Parallel_line)
@@ -104,7 +106,7 @@ def dragging(root):
                             state.drag_target.update()
                             find_translation_polyline(state.drag_target, obj)
                             obj.update()
-                    elif isinstance(obj, Circle_center_point) or isinstance(obj, Circle_center_radius):
+                    elif isinstance(obj, Circle_center_point) or isinstance(obj, Circle_center_radius) or isinstance(obj, Compass):
                         if state.drag_target in obj.points:
                             state.drag_target.pos_x = world_x
                             state.drag_target.pos_y = world_y
