@@ -1,6 +1,8 @@
 import tkinter as tk
 from types import NoneType
 
+from py_geogebra.ui import compass
+
 from ..tools.utils import world_to_screen
 from .. import globals
 import math
@@ -69,6 +71,9 @@ class Lower_label:
         from .perpendicular_line import Perpendicular_line
         from .best_fit_line import Best_fit_line
         from .polyline import Polyline
+        from .circle_center_point import Circle_center_point
+        from .circle_center_radius import Circle_center_radius
+        from .compass import Compass
 
         if (isinstance(self.obj, Line)
             or isinstance(self.obj, Ray)
@@ -156,6 +161,28 @@ class Lower_label:
             self.canvas.create_text(
                 mid.x - 3 * visual_scale,
                 mid.y + 25 * visual_scale,
+                text=self.obj.lower_label,
+                font=("Arial", int(12 * visual_scale)),
+                fill="blue",
+                tags=self.tag,
+            )
+
+        elif (isinstance(self.obj, Circle_center_point) or
+            isinstance(self.obj, Circle_center_radius) or
+            isinstance(self.obj, Compass)
+            ):
+            if not self.obj.is_drawable:
+                return
+
+            angle = 1 # it is in radians
+            pos = [self.obj.radius, 0]
+            matrix = [[math.cos(angle), -math.sin(angle)], [math.sin(angle), math.cos(angle)]]
+            pos = [matrix[0][0] * pos[0] + matrix[0][1] * pos[1], matrix[1][0] * pos[0] + matrix[1][1] * pos[1]]
+
+
+
+            self.canvas.create_text(
+                world_to_screen(pos[0] * visual_scale + self.obj.point_1.pos_x - 0.1, pos[1] * visual_scale + self.obj.point_1.pos_y - 0.1),
                 text=self.obj.lower_label,
                 font=("Arial", int(12 * visual_scale)),
                 fill="blue",
