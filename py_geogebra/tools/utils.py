@@ -2,10 +2,6 @@ from os.path import isjunction
 import tkinter as tk
 import math
 from tkinter import image_names, messagebox
-from tkinter.constants import N
-from typing import List
-
-
 
 
 from .. import state
