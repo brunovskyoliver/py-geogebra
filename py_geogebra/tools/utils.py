@@ -464,26 +464,26 @@ def find_circle_line_intersection(circle, p1, p2):
     return intersections
 
 def find_circle_circle_intersection(circle1, circle2):
-        x1, y1 = circle1.point_1.pos_x, circle1.point_1.pos_y
-        r1 = circle1.radius
-        x2, y2 = circle2.point_1.pos_x, circle2.point_1.pos_y
-        r2 = circle2.radius
+    x1, y1 = circle1.point_1.pos_x, circle1.point_1.pos_y
+    r1 = circle1.radius
+    x2, y2 = circle2.point_1.pos_x, circle2.point_1.pos_y
+    r2 = circle2.radius
 
-        dx, dy = x2 - x1, y2 - y1
-        d = (dx**2 + dy**2) ** 0.5
+    dx, dy = x2 - x1, y2 - y1
+    d = (dx**2 + dy**2) ** 0.5
 
-        if d > r1 + r2 or d < abs(r1 - r2) or d == 0:
-            return None  # no intersection or infinite
+    if d > r1 + r2 or d < abs(r1 - r2) or d == 0:
+        return None  # no intersection or infinite
 
-        a = (r1**2 - r2**2 + d**2) / (2 * d)
-        h = (r1**2 - a**2) ** 0.5
-        xm = x1 + a * dx / d
-        ym = y1 + a * dy / d
-        xs1 = xm + h * dy / d
-        ys1 = ym - h * dx / d
-        xs2 = xm - h * dy / d
-        ys2 = ym + h * dx / d
-        return [(xs1, ys1), (xs2, ys2)]
+    a = (r1**2 - r2**2 + d**2) / (2 * d)
+    h = (r1**2 - a**2) ** 0.5
+    xm = x1 + a * dx / d
+    ym = y1 + a * dy / d
+    xs1 = xm + h * dy / d
+    ys1 = ym - h * dx / d
+    xs2 = xm - h * dy / d
+    ys2 = ym + h * dx / d
+    return [(xs1, ys1), (xs2, ys2)]
 
 
 
