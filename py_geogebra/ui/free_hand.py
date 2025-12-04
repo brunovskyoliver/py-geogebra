@@ -20,6 +20,7 @@ class FreeHand:
         self.offset_y = 0.0
         self.tag = f"pen_{id(self)}"
         self.cx = 0
+
         self.cy = 0
 
         self.points = []

@@ -49,10 +49,9 @@ class Best_fit_line:
         self.prescription = ()
         self.angle = 0
         self.vector = (0, 0)
-        
+
         self.lower_label = ""
         self.lower_label_obj = Lower_label(self.root, obj=self)
-        self.objects.register(self.lower_label_obj)
 
         self.canvas.bind("<Configure>", lambda e: self.update())
 
@@ -116,7 +115,7 @@ class Best_fit_line:
         if len(self.fit_points) < 2:
             return
         self.point_1.pos_x, self.point_2.pos_x, self.point_1.pos_y, self.point_2.pos_y = calculate_points_for_best_fit_line(self.fit_points)
-    
+
 
 
         x1, y1 = self.point_1.pos_x, self.point_1.pos_y
@@ -136,7 +135,7 @@ class Best_fit_line:
 
         if self.point_2 is not None:
             self.lower_label_obj.update()
-            
+
             self.vector = calculate_vector(self.point_1, self.point_2)
 
         self.prescription = get_linear_fuction_prescription(x1, y1, x2, y2)
@@ -149,7 +148,6 @@ class Best_fit_line:
 
         x1, y1 = world_to_screen(x1, y1)
         x2, y2 = world_to_screen(x2, y2)
-        
 
 
         if self.selected:
@@ -172,7 +170,7 @@ class Best_fit_line:
             width=2 * visual_scale,
             tags=self.tag,
         )
-                
+
         if len(self.child_lines) == 0:
             self.child_lines = load_lines_from_labels(self.child_lines_labels)
 
