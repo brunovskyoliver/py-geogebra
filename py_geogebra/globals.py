@@ -1,5 +1,6 @@
 from typing import TYPE_CHECKING, Optional
 from tkinter import Canvas, Frame, Tk
+import logging
 
 
 if TYPE_CHECKING:
@@ -17,3 +18,8 @@ main_area: Optional[Frame] = None
 widgets: Optional["Widgets"] = None
 auth: Optional["Auth0Handler"] = None
 root: Optional[Tk] = None
+logger = logging.getLogger("py-geogebra")
+logger.setLevel(logging.INFO)
+console = logging.StreamHandler()
+console.setLevel(logging.INFO)
+logger.addHandler(console)

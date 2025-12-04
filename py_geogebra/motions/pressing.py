@@ -66,6 +66,7 @@ def pressing(root):
                 point_obj.select()
                 state.selected_point = point_obj
                 state.drag_target = point_obj
+                globals.logger.info(f"Selected {point_obj.tag} at x:{point_obj.pos_x} y:{point_obj.pos_y}")
             else:
                 deselect_all()
 
@@ -79,18 +80,21 @@ def pressing(root):
                     if hasattr(line_obj, "select"):
                         line_obj.select()
                         state.selected_point = line_obj
+                        globals.logger.info(f"Selected {line_obj.tag} at x:{line_obj.pos_x} y:{line_obj.pos_y}")
                     state.drag_target = line_obj
                 elif point_obj:
                     polyline_obj.pos_x, polyline_obj.pos_y = screen_to_world(e)
                     polyline_obj.update()
                     state.selected_point = polyline_obj
                     polyline_obj.select()
+                    globals.logger.info(f"Selected {polyline_obj.tag} at x:{polyline_obj.pos_x} y:{polyline_obj.pos_y}")
                     state.drag_target = polyline_obj
                 elif circle_obj:
                     circle_obj.pos_x, circle_obj.pos_y = screen_to_world(e)
                     circle_obj.update()
                     state.drag_target = circle_obj
                     circle_obj.select()
+                    globals.logger.info(f"Selected {circle_obj.tag} at x:{circle_obj.pos_x} y:{circle_obj.pos_y}")
 
         elif state.selected_tool == "point":
             state.start_pos["x"] = e.x

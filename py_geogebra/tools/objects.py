@@ -62,10 +62,18 @@ class Objects:
                 obj.cx = cx
                 obj.cy = cy
             obj.update()
+            if hasattr(obj, "pos_x") and hasattr(obj, "pos_y"):
+                globals.logger.info(f"Registered obj: {obj} x:{obj.pos_x} y:{obj.pos_y}")
+            else:
+                globals.logger.info(f"Registered obj: {obj}")
 
     def unregister(self, obj: Drawable):
         if obj in self._objects:
             self._objects.remove(obj)
+            if hasattr(obj, "pos_x") and hasattr(obj, "pos_y"):
+                globals.logger.info(f"UNREGISTER obj: {obj} x:{obj.pos_x} y:{obj.pos_y}")
+            else:
+                globals.logger.info(f"UNREGISTER obj: {obj}")
 
     def refresh(self):
         state.center = center()

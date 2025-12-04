@@ -48,6 +48,7 @@ def change_icon(img, btn, tool_name):
 
     deselect_all()
     state.selected_tool = tool_name
+    globals.logger.info(f"Switched to {tool_name}")
     state.points_for_obj = []
 
     if tool_name in ("pen", "freehand"):

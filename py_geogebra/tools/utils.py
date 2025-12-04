@@ -108,6 +108,7 @@ def delete_object(object_to_delete, state):
     from ..ui.polyline import Polyline
     from ..ui.polygon import Polygon
     from ..ui.perpendicular_bisector import Perpendicular_bisector
+    from ..ui.circle_center_point import Circle_center_point
     from ..tools.utils import reconfigure_label_order
 
     if state.points_for_obj:
@@ -130,11 +131,24 @@ def delete_object(object_to_delete, state):
                 or isinstance(obj, Segment_with_length)
                 or isinstance(obj, Midpoint_or_center)
                 or isinstance(obj,Perpendicular_bisector)
+                or isinstance(obj, Circle_center_point)
             ) and (obj.point_1 is object_to_delete or obj.point_2 is object_to_delete):
-                g().objects.unregister(obj)
-                g().canvas.delete(obj.tag)
                 if hasattr(obj, "lower_label"):
                     g().objects.unregister(obj.lower_label_obj)
+                    g().canvas.delete(obj.lower_label_obj.tag)
+                g().objects.unregister(obj)
+                g().canvas.delete(obj.tag)
+            if isinstance(obj, Polygon):
+                for segment in obj.segments:
+                    g().objects.unregister(segment)
+                    g().canvas.delete(segment.tag)
+                g().objects.unregister(obj)
+                g().canvas.delete(obj.tag)
+                object_to_delete.deselect()
+                g().objects.unregister(object_to_delete)
+                g().canvas.delete(object_to_delete.tag)
+
+
 
             if (
                 isinstance(obj, Line)
