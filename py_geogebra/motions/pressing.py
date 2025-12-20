@@ -1,8 +1,7 @@
-from inspect import stack
 import math
 from tkinter import simpledialog
+from tkinter import Tk
 
-from py_geogebra.tools import objects
 from py_geogebra.ui.compass import Compass
 
 from .. import globals, state
@@ -29,7 +28,6 @@ from ..tools.utils import (
 )
 from ..ui.angle_bisector import Angle_bisector
 from ..ui.best_fit_line import Best_fit_line
-from ..ui.blank_point import Blank_point
 from ..ui.circle_center_point import Circle_center_point
 from ..ui.circle_center_radius import Circle_center_radius
 from ..ui.free_hand import FreeHand
@@ -49,9 +47,10 @@ from ..ui.segment import Segment
 from ..ui.segment_with_lenght import Segment_with_length
 from ..ui.vector import Vector
 from ..ui.vector_from_point import Vector_from_point
+from py_geogebra.ui import parallel_line
 
 
-def pressing(root):
+def pressing(root:Tk) -> None:
     def left_click_pressed(e):
         if state.selected_tool == "arrow":
             state.start_pos["x"] = e.x
@@ -616,6 +615,7 @@ def pressing(root):
             if state.selected_perpendicular_line and state.selected_perpendicular_point:
                 pb = Perpendicular_line(
                     root,
+                    parent_line=state.selected_perpendicular_line
                 )
                 lower_label = get_lower_label(state)
                 pb.lower_label = lower_label
@@ -623,6 +623,8 @@ def pressing(root):
                 pb.point_1 = state.selected_perpendicular_point
 
                 globals.objects.register(pb)
+                globals.sidebar.items.append(pb)
+                globals.sidebar.update()
                 state.selected_perpendicular_line.child_lines.append(pb)
                 state.selected_perpendicular_line.deselect()
                 state.selected_perpendicular_point.deselect()
@@ -661,6 +663,7 @@ def pressing(root):
             if state.selected_perpendicular_line and state.selected_perpendicular_point:
                 pb = Parallel_line(
                     root,
+                    parent_line=state.selected_perpendicular_line
                 )
                 lower_label = get_lower_label(state)
                 pb.lower_label = lower_label
@@ -668,6 +671,8 @@ def pressing(root):
                 pb.point_1 = state.selected_perpendicular_point
 
                 globals.objects.register(pb)
+                globals.sidebar.items.append(pb)
+                globals.sidebar.update()
                 state.selected_perpendicular_line.child_lines.append(pb)
                 state.selected_perpendicular_line.deselect()
                 state.selected_perpendicular_point.deselect()
@@ -716,10 +721,14 @@ def pressing(root):
                 ag = Angle_bisector(
                     root
                 )
+                lower_label = get_lower_label(state)
+                ag.lower_label = lower_label
                 ag.point_1 = state.selected_angle_bisector_points[1]
                 ag.angle_point_1 = state.selected_angle_bisector_points[0]
                 ag.angle_point_2 = state.selected_angle_bisector_points[2]
                 globals.objects.register(ag)
+                globals.sidebar.items.append(ag)
+                globals.sidebar.update()
                 for p in state.selected_angle_bisector_points:
                     p.deselect()
 
@@ -982,18 +991,30 @@ def pressing(root):
         globals.objects.refresh()
 
     def left_click_pressed_sidebar(e):
-        if abs(e.x - globals.sidebar.frame.winfo_width()) <= 20:
+        if abs(e.x - globals.sidebar.canvas.winfo_width()) <= 20:
             state.sidebar_resizing = True
             state.start_pos["x"] = e.x
-            set_cursor(globals.sidebar.frame, "sb_h_double_arrow")
+            set_cursor(globals.sidebar.canvas, "sb_h_double_arrow")
+        else:
+            objs = globals.sidebar.canvas.find_overlapping(20, e.y - 3, globals.sidebar.canvas.winfo_width() - 20, e.y+3)
+            if objs:
+                deselect_all()
+                for obj in objs:
+                    item = globals.sidebar.canvas_tags.get(obj)
+                    if item and hasattr(item, "select"):
+                        item.select()
+                        state.selected_point = item
+                        break
+
+
 
     def left_click_released_sidebar(e):
         state.sidebar_resizing = False
-        set_cursor(globals.sidebar.frame, "")
+        set_cursor(globals.sidebar.canvas, "")
 
     globals.canvas.bind("<Button-1>", left_click_pressed)
     globals.canvas.bind("<Button-3>", middle_click_pressed)
     globals.canvas.bind("<ButtonRelease-2>", right_click_released)
     globals.canvas.bind("<ButtonRelease-1>", left_click_released)
-    globals.sidebar.frame.bind("<Button-1>", left_click_pressed_sidebar)
-    globals.sidebar.frame.bind("<ButtonRelease-1>", left_click_released_sidebar)
+    globals.sidebar.canvas.bind("<Button-1>", left_click_pressed_sidebar)
+    globals.sidebar.canvas.bind("<ButtonRelease-1>", left_click_released_sidebar)

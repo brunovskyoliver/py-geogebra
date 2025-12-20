@@ -177,4 +177,4 @@ def dragging(root):
     globals.canvas.bind("<B2-Motion>", right_click_drag)
     globals.canvas.bind("<B3-Motion>", middle_click_drag)
 
-    globals.sidebar.frame.bind("<B1-Motion>", left_click_drag_sidebar)
+    globals.sidebar.canvas.bind("<B1-Motion>", left_click_drag_sidebar)

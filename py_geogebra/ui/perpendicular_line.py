@@ -18,6 +18,7 @@ class Perpendicular_line:
         self,
         root: tk.Tk,
         unit_size: int = 40,
+        parent_line = "",
     ):
         self.root = root
         self.canvas = globals.canvas
@@ -46,6 +47,7 @@ class Perpendicular_line:
         self.child_lines = []
         self.child_lines_labels = []
         self.points = []
+        self.parent_line = parent_line
         self.prescription = ()
         self.angle = 0
         self.vector = (0,0)
@@ -181,8 +183,8 @@ class Perpendicular_line:
             self.is_drawable = True
         else:
             self.is_drawable = False
-            
-        self.lower_label_obj.is_drawable = self.is_drawable 
+
+        self.lower_label_obj.is_drawable = self.is_drawable
 
         if self.is_drawable:
 

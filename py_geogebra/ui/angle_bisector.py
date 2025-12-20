@@ -40,11 +40,11 @@ class Angle_bisector:
 
         self.tag = f"angle_bisector_{id(self)}"
         self.point_1 = None
-        self.point_2 = Blank_point(root, get_label(state))
-        
+        self.point_2 = Blank_point(root, "")
+
         self.angle_point_1 = None
         self.angle_point_2 = None
-                                   
+
 
 
         self.selected = False
@@ -122,7 +122,7 @@ class Angle_bisector:
 
     def update(self, e=None):
         self.canvas.delete(self.tag)
-        
+
         v1 = (
             self.angle_point_1.pos_x - self.point_1.pos_x,
             self.angle_point_1.pos_y - self.point_1.pos_y
@@ -147,16 +147,16 @@ class Angle_bisector:
                 self.vector = (0, 0)
             else:
                 self.vector = (bx / b_len, by / b_len)
-        
+
         self.point_2.pos_x = self.point_1.pos_x + self.vector[0]
         self.point_2.pos_y = self.point_1.pos_y + self.vector[1]
-        
+
 
         visual_scale = min(max(1, self.scale**0.5), 1.9)
 
         x1, y1 = self.point_1.pos_x, self.point_1.pos_y
         x2, y2 = self.point_2.pos_x, self.point_2.pos_y
-        
+
 
         for obj in self.points:
             if (obj is not self.point_1) and (obj is not self.point_2):

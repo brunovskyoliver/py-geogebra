@@ -18,6 +18,7 @@ class Parallel_line:
         self,
         root: tk.Tk,
         unit_size: int = 40,
+        parent_line = None,
     ):
         self.root = root
         self.canvas = globals.canvas
@@ -45,6 +46,7 @@ class Parallel_line:
 
         self.child_lines = []
         self.child_lines_labels = []
+        self.parent_line = parent_line
         self.points = []
         self.prescription = ()
         self.angle = 0
@@ -181,9 +183,9 @@ class Parallel_line:
             self.is_drawable = True
         else:
             self.is_drawable = False
-            
-            
-        self.lower_label_obj.is_drawable = self.is_drawable 
+
+
+        self.lower_label_obj.is_drawable = self.is_drawable
 
         if self.is_drawable:
 

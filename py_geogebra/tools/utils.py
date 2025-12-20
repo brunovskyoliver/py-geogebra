@@ -1,7 +1,6 @@
-from os.path import isjunction
 import tkinter as tk
 import math
-from tkinter import image_names, messagebox
+
 
 
 from .. import state
@@ -72,6 +71,7 @@ def get_label(state):
     else:
         label = number_to_ascii(state.label_counter)
         state.label_counter += 1
+    # print(f"using label {label} {state.label_counter}")
     return label
 
 
@@ -92,6 +92,7 @@ def set_cursor(canvas: tk.Canvas, cursor: str):
 
 def reconfigure_label_order(label: str, state):
     state.label_unused.append(label)
+    # print(f"unused: {state.label_unused}")
 
 
 def reconfigure_lower_label_order(lower_label: str, state):
@@ -108,8 +109,8 @@ def delete_object(object_to_delete, state):
     from ..ui.polyline import Polyline
     from ..ui.polygon import Polygon
     from ..ui.perpendicular_bisector import Perpendicular_bisector
+    from ..ui.angle_bisector import Angle_bisector
     from ..ui.circle_center_point import Circle_center_point
-    from ..tools.utils import reconfigure_label_order
 
     if state.points_for_obj:
         for obj in state.points_for_obj:
@@ -118,6 +119,16 @@ def delete_object(object_to_delete, state):
             if hasattr(obj, "highlight_tag"):
                 g().canvas.delete(obj.highlight_tag)
         state.points_for_obj.clear()
+
+    if isinstance(object_to_delete, Line):
+        if object_to_delete in g().sidebar.items:
+            g().sidebar.items.remove(object_to_delete)
+            g().sidebar.update()
+        if hasattr(object_to_delete, "lower_label"):
+            g().objects.unregister(object_to_delete.lower_label_obj)
+            g().canvas.delete(object_to_delete.lower_label_obj.tag)
+        if hasattr(object_to_delete, "deleted"):
+            object_to_delete.deleted = True
 
     if isinstance(object_to_delete, Point):
         if state.selected_point in g().sidebar.items:
@@ -147,6 +158,13 @@ def delete_object(object_to_delete, state):
                 object_to_delete.deselect()
                 g().objects.unregister(object_to_delete)
                 g().canvas.delete(object_to_delete.tag)
+            if isinstance(obj, Angle_bisector) and (obj.angle_point_1 is object_to_delete or obj.angle_point_2 is object_to_delete):
+                if hasattr(obj, "lower_label"):
+                    g().objects.unregister(obj.lower_label_obj)
+                    g().canvas.delete(obj.lower_label_obj.tag)
+                g().objects.unregister(obj)
+                g().canvas.delete(obj.tag)
+
 
 
 
@@ -156,23 +174,29 @@ def delete_object(object_to_delete, state):
                 or isinstance(obj, Segment)
                 or isinstance(obj, Polyline)
                 or isinstance(obj, Polygon)
+                or isinstance(obj, Angle_bisector)
             ):
                 reconfigure_lower_label_order(obj.lower_label, state)
-                g().sidebar.items.remove(obj)
-                g().sidebar.update()
+                if obj in g().sidebar.items:
+                    g().sidebar.items.remove(obj)
+                    g().sidebar.update()
 
             if isinstance(obj, Midpoint_or_center):
-                g().sidebar.items.remove(obj)
-                g().sidebar.update()
+                if obj in g().sidebar.items:
+                    g().sidebar.items.remove(obj)
+                    g().sidebar.update()
             if isinstance(obj, Polyline) and object_to_delete in obj.points:
-                g().objects.unregister(obj)
-                g().canvas.delete(obj.tag)
+                if obj in g().sidebar.items:
+                    g().objects.unregister(obj)
+                    g().canvas.delete(obj.tag)
             if isinstance(obj, Polygon) and object_to_delete in obj.points:
-                g().objects.unregister(obj)
-                g().canvas.delete(obj.tag)
+                if obj in g().sidebar.items:
+                    g().objects.unregister(obj)
+                    g().canvas.delete(obj.tag)
 
         state.selected_point = None
-        reconfigure_label_order(object_to_delete.label, state)
+        if isinstance(object_to_delete, Point):
+            reconfigure_label_order(object_to_delete.label, state)
     if isinstance(object_to_delete, Polyline):
         for obj in object_to_delete.points:
             g().objects.unregister(obj)
@@ -188,6 +212,7 @@ def delete_object(object_to_delete, state):
     g().canvas.delete(object_to_delete.tag)
     if hasattr(object_to_delete, "highlight_tag"):
         g().canvas.delete(object_to_delete.highlight_tag)
+    g().objects.refresh()
 
 
 def world_to_screen(wx, wy):
@@ -645,3 +670,4 @@ def solve_quadratic(a, b, c):
         x1 = (-b + sqrt_disc) / (2*a)
         x2 = (-b - sqrt_disc) / (2*a)
         return [x1, x2]
+
