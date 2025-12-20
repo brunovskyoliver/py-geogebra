@@ -45,7 +45,7 @@ def run_app():
     tool_bar = toolbar(root)
     tool_bar.pack(side="top", fill="x")
     main_area.pack(side="top", fill="both", expand=True)
-    sidebar.frame.pack(side="left", fill="y")
+    sidebar.canvas.pack(side="left", fill="y")
     canvas.pack(side="right", fill="both", expand=True)
     root.update_idletasks()
     state.center = (
@@ -61,8 +61,8 @@ def run_app():
     menu_bar = menu(root, widgets)
     root.config(menu=menu_bar)
     state.shift_pressed = False
-    
 
-    
+
+
 
     root.mainloop()

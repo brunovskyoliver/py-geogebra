@@ -37,6 +37,7 @@ class Line:
         self.cy = 0
 
         self.is_drawable = True
+        self.deleted = False
 
         self.tag = f"line_{id(self)}"
         self.point_1 = point_1
@@ -82,7 +83,7 @@ class Line:
                 if getattr(obj, "label", None) == label:
                     return obj
             return None
-        
+
         def find_line(label):
             for obj in globals.objects._objects:
                 if getattr(obj, "lower_label", None) == label:
@@ -120,6 +121,8 @@ class Line:
         self.update()
 
     def update(self, e=None):
+        if self.deleted:
+            return
         self.canvas.delete(self.tag)
 
         visual_scale = min(max(1, self.scale**0.5), 1.9)
@@ -167,7 +170,7 @@ class Line:
 
         if self.point_2 is not None:
             self.lower_label_obj.update()
-            
+
             self.vector = calculate_vector(self.point_1, self.point_2)
 
         self.prescription = get_linear_fuction_prescription(x1, y1, x2, y2)
@@ -180,8 +183,8 @@ class Line:
 
         x1, y1 = world_to_screen(x1, y1)
         x2, y2 = world_to_screen(x2, y2)
-        
-        
+
+
 
         if not self.point_2:
             self.is_drawable = True
@@ -189,9 +192,9 @@ class Line:
             self.is_drawable = True
         else:
             self.is_drawable = False
-            
-        self.lower_label_obj.is_drawable = self.is_drawable 
-        
+
+        self.lower_label_obj.is_drawable = self.is_drawable
+
         if self.is_drawable:
 
             if self.selected:
@@ -219,7 +222,7 @@ class Line:
             self.canvas.tag_raise(self.point_2.tag)
             if self.point_2 not in self.points:
                 self.points.append(self.point_2)
-                
+
         if len(self.child_lines) == 0:
             self.child_lines = load_lines_from_labels(self.child_lines_labels)
 
