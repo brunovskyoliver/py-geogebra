@@ -81,7 +81,8 @@ def tool_menu_init(root, bar, def_icon, buttons):
     button.image = default_icon
     button.pack(side="left", padx=4, pady=4)
 
-    menu = tk.Menu(root, tearoff=0, bg="white", activebackground="white")
+    # menu = tk.Menu(root, tearoff=0, bg="white", activebackground="white")
+    menu = tk.Menu(root, tearoff=0)
     items = []
     for b in buttons:
         icon = icons[b["icon"]]
