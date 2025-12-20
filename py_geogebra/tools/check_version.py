@@ -27,6 +27,9 @@ def check_version():
     response.raise_for_status()
     return response.json()["tag_name"].replace("v", "")
 
+def windows_launcher_path():
+    return os.path.join(get_dir(), "py-geogebra-launcher.exe")
+
 
 def download_latest(filename: str):
     response = requests.get(url=url, headers=headers)
@@ -114,33 +117,21 @@ def install_new(bin_path):
 
 
 def create_launcher(replace_original=False):
-    app_dir = get_dir()
-    current_location = curr_loc()
     system = platform.system()
 
     if system == "Windows":
-        launcher_path = os.path.join(app_dir, "pygeogebra.cmd")
-        content = f"""@echo off
-set APP_DIR={app_dir}
+        return windows_launcher_path()
 
-if not exist "%APP_DIR%" exit /b 1
+    app_dir = get_dir()
+    current_location = curr_loc()
 
-set LATEST=
-for /f "delims=" %%D in ('dir /b /ad "%APP_DIR%\\v*" ^| sort') do set LATEST=%%D
+    launcher_path = (
+        current_location + ".sh"
+        if current_location and not current_location.endswith(".sh")
+        else os.path.expanduser("~/Applications/pygeogebra")
+    )
 
-if "%LATEST%"=="" exit /b 1
-
-for %%F in ("%APP_DIR%\\%LATEST%\\py-geogebra*.exe") do set BINARY=%%F
-
-start "" "%BINARY%" %*
-"""
-    else:
-        launcher_path = (
-            current_location + ".sh"
-            if current_location and not current_location.endswith(".sh")
-            else os.path.expanduser("~/Applications/pygeogebra")
-        )
-        content = f"""#!/bin/bash
+    content = f"""#!/bin/bash
 APP_DIR="{app_dir}"
 LATEST=$(ls -v "$APP_DIR" | grep "^v" | tail -n 1)
 [ -z "$LATEST" ] && exit 1
@@ -148,29 +139,24 @@ BINARY=$(ls "$APP_DIR/$LATEST" | grep "py-geogebra")
 exec "$APP_DIR/$LATEST/$BINARY" "$@"
 """
 
-    with open(launcher_path, "w", newline="\r\n" if system == "Windows" else "\n") as f:
+    with open(launcher_path, "w") as f:
         f.write(content)
 
-    if system != "Windows":
-        os.chmod(launcher_path, 0o755)
-
-    if replace_original and current_location and os.path.exists(current_location):
-        shutil.move(current_location, current_location + ".bak")
-        shutil.copy2(launcher_path, current_location)
-
+    os.chmod(launcher_path, 0o755)
     return launcher_path
-
 
 def restart_process(binary_path):
     new_binary_path = install_new(binary_path)
-    launcher_path = create_launcher(replace_original=True)
 
     if platform.system() == "Windows":
-        subprocess.Popen([launcher_path], shell=True)
+        launcher = windows_launcher_path()
+        subprocess.Popen([launcher], close_fds=True)
     else:
-        subprocess.Popen([launcher_path])
+        launcher = create_launcher(replace_original=True)
+        subprocess.Popen([launcher])
 
     sys.exit(0)
+
 
 def handle_version(root, widgets, ask_for_update):
     current_location = curr_loc()
