@@ -116,47 +116,61 @@ def install_new(bin_path):
 def create_launcher(replace_original=False):
     app_dir = get_dir()
     current_location = curr_loc()
+    system = platform.system()
 
-    if current_location:
-        launcher_path = current_location
-        if not launcher_path.endswith(".sh"):
-            launcher_path = launcher_path + ".sh"
+    if system == "Windows":
+        launcher_path = os.path.join(app_dir, "pygeogebra.cmd")
+        content = f"""@echo off
+set APP_DIR={app_dir}
+
+if not exist "%APP_DIR%" exit /b 1
+
+set LATEST=
+for /f "delims=" %%D in ('dir /b /ad "%APP_DIR%\\v*" ^| sort') do set LATEST=%%D
+
+if "%LATEST%"=="" exit /b 1
+
+for %%F in ("%APP_DIR%\\%LATEST%\\py-geogebra*.exe") do set BINARY=%%F
+
+start "" "%BINARY%" %*
+"""
     else:
-        launcher_path = os.path.expanduser("~/Applications/pygeogebra")
-
-    with open(launcher_path, "w") as f:
-        f.write(
-            f"""#!/bin/bash
+        launcher_path = (
+            current_location + ".sh"
+            if current_location and not current_location.endswith(".sh")
+            else os.path.expanduser("~/Applications/pygeogebra")
+        )
+        content = f"""#!/bin/bash
 APP_DIR="{app_dir}"
 LATEST=$(ls -v "$APP_DIR" | grep "^v" | tail -n 1)
-if [ -z "$LATEST" ]; then
-    exit 1
-fi
+[ -z "$LATEST" ] && exit 1
 BINARY=$(ls "$APP_DIR/$LATEST" | grep "py-geogebra")
 exec "$APP_DIR/$LATEST/$BINARY" "$@"
 """
-        )
 
-    os.chmod(launcher_path, 0o755)
+    with open(launcher_path, "w", newline="\r\n" if system == "Windows" else "\n") as f:
+        f.write(content)
+
+    if system != "Windows":
+        os.chmod(launcher_path, 0o755)
 
     if replace_original and current_location and os.path.exists(current_location):
-        original_backup = current_location + ".bak"
-        shutil.move(current_location, original_backup)
+        shutil.move(current_location, current_location + ".bak")
         shutil.copy2(launcher_path, current_location)
-        os.chmod(current_location, 0o755)
 
     return launcher_path
 
 
 def restart_process(binary_path):
-    current_location = curr_loc()
-    if current_location and not os.path.exists(get_dir()):
-        init(current_location, __version__)
     new_binary_path = install_new(binary_path)
     launcher_path = create_launcher(replace_original=True)
-    subprocess.Popen([launcher_path])
-    sys.exit(0)
 
+    if platform.system() == "Windows":
+        subprocess.Popen([launcher_path], shell=True)
+    else:
+        subprocess.Popen([launcher_path])
+
+    sys.exit(0)
 
 def handle_version(root, widgets, ask_for_update):
     current_location = curr_loc()
