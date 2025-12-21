@@ -47,7 +47,7 @@ class Perpendicular_bisector:
         self.perp_point_1 = perp_point_1
         self.perp_point_2 = None
         self.selected = False
-        
+
 
         self.angle = 0
         self.points = [self.perp_point_1]
@@ -57,7 +57,8 @@ class Perpendicular_bisector:
         self.vector = (0, 0)
         self.parent_vector = (0,0)
         self.middle = (0,0)
-        
+        self.hide = False
+
         self.lower_label = ""
         self.lower_label_obj = Lower_label(self.root, obj=self)
         self.objects.register(self.lower_label_obj)
@@ -77,6 +78,7 @@ class Perpendicular_bisector:
             "offset_x": self.offset_x,
             "offset_y": self.offset_y,
             "tag": self.tag,
+            "hide": self.hide,
             "points": [p.label for p in self.points],
             "perp_point_1": self.perp_point_1.label if self.perp_point_1 else None,
             "perp_point_2": self.perp_point_2.label if self.perp_point_2 else None,
@@ -105,6 +107,7 @@ class Perpendicular_bisector:
         pb.offset_y = data.get("offset_y", 0)
         pb.lower_label = data.get("lower_label", "")
         pb.tag = data.get("tag", "")
+        pb.hide = data.get("hide", False)
         pb.pos_x = data.get("pos_x", 0)
         pb.pos_y = data.get("pos_y", 0)
         pb.points = [find_point(lbl) for lbl in data.get("points", []) if lbl]
@@ -168,7 +171,7 @@ class Perpendicular_bisector:
 
         x1, y1 = mid_x - rotated_x * span, mid_y - rotated_y * span
         x2, y2 = mid_x + rotated_x * span, mid_y + rotated_y * span
-        
+
         self.point_1.pos_x, self.point_1.pos_y = x1, y1
         self.point_2.pos_x, self.point_2.pos_y = x2, y2
 
@@ -190,9 +193,11 @@ class Perpendicular_bisector:
             self.is_drawable = True
         else:
             self.is_drawable = False
-            
-        self.lower_label_obj.is_drawable = self.is_drawable 
 
+        self.lower_label_obj.is_drawable = self.is_drawable
+
+        if self.hide:
+            return
         if self.is_drawable:
 
             if self.selected:

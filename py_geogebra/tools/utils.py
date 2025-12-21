@@ -111,6 +111,7 @@ def delete_object(object_to_delete, state):
     from ..ui.perpendicular_bisector import Perpendicular_bisector
     from ..ui.angle_bisector import Angle_bisector
     from ..ui.circle_center_point import Circle_center_point
+    from ..ui.circle_3_points import Circle_3_points
 
     if state.points_for_obj:
         for obj in state.points_for_obj:
@@ -149,6 +150,20 @@ def delete_object(object_to_delete, state):
                     g().canvas.delete(obj.lower_label_obj.tag)
                 g().objects.unregister(obj)
                 g().canvas.delete(obj.tag)
+            if isinstance(obj, Circle_3_points) and (obj.point_1 is object_to_delete or obj.point_2 is object_to_delete or obj.point_3 is object_to_delete):
+                if hasattr(obj, "lower_label"):
+                    g().objects.unregister(obj.lower_label_obj)
+                    g().canvas.delete(obj.lower_label_obj.tag)
+                if hasattr(obj, "bisector_1"):
+                    g().objects.unregister(obj.bisector_1)
+                    g().canvas.delete(obj.bisector_1.tag)
+                if hasattr(obj, "bisector_2"):
+                    g().objects.unregister(obj.bisector_2)
+                    g().canvas.delete(obj.bisector_2.tag)
+
+                g().objects.unregister(obj)
+                g().canvas.delete(obj.tag)
+
             if isinstance(obj, Polygon):
                 for segment in obj.segments:
                     g().objects.unregister(segment)
