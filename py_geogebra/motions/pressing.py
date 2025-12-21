@@ -47,7 +47,7 @@ from ..ui.segment import Segment
 from ..ui.segment_with_lenght import Segment_with_length
 from ..ui.vector import Vector
 from ..ui.vector_from_point import Vector_from_point
-from py_geogebra.ui import parallel_line
+from ..ui.circle_3_points import Circle_3_points
 
 
 def pressing(root:Tk) -> None:
@@ -863,11 +863,6 @@ def pressing(root:Tk) -> None:
                 state.current_polygon = None
                 state.points_for_obj = []
 
-
-
-
-
-
         elif state.selected_tool == "circle_center_point":
             state.start_pos["x"] = e.x
             state.start_pos["y"] = e.y
@@ -968,7 +963,48 @@ def pressing(root:Tk) -> None:
                 state.points_for_obj[2].update(e)
                 state.points_for_obj = []
 
+        elif state.selected_tool == "circle_3_points":
+            world_x, world_y = screen_to_world(e)
+            p = find_point_at_position(e)
 
+            if p is None:
+                p = Point(
+                    root,
+                    e=None,
+                    label=get_label(state),
+                    unit_size=globals.axes.unit_size,
+                    pos_x=world_x,
+                    pos_y=world_y,
+                )
+                globals.objects.register(p)
+
+            if len(state.points_for_obj) == 0:
+                state.points_for_obj.append(p)
+
+                c = Circle_3_points(
+                    root,
+                    unit_size=globals.axes.unit_size,
+                    point_1=p,
+                )
+                c.lower_label = get_lower_label(state)
+                globals.objects.register(c)
+
+                state.points_for_obj.append(c)
+
+            elif len(state.points_for_obj) == 2:
+                state.points_for_obj.append(p)
+                state.points_for_obj[1].point_2 = p
+                state.points_for_obj[1].update()
+
+            elif len(state.points_for_obj) == 3:
+                state.points_for_obj.append(p)
+                state.points_for_obj[1].point_3 = p
+                state.points_for_obj[1].update()
+
+                globals.sidebar.items.append(state.points_for_obj[1])
+                globals.sidebar.update()
+
+                state.points_for_obj = []
 
 
 

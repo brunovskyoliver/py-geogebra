@@ -73,6 +73,7 @@ class Lower_label:
         from .polyline import Polyline
         from .circle_center_point import Circle_center_point
         from .circle_center_radius import Circle_center_radius
+        from .circle_3_points import Circle_3_points
         from .compass import Compass
 
         if (isinstance(self.obj, Line)
@@ -169,9 +170,12 @@ class Lower_label:
 
         elif (isinstance(self.obj, Circle_center_point) or
             isinstance(self.obj, Circle_center_radius) or
-            isinstance(self.obj, Compass)
+            isinstance(self.obj, Compass) or isinstance(self.obj, Circle_3_points)
             ):
             if not self.obj.is_drawable:
+                return
+
+            if isinstance(self.obj, Circle_3_points) and self.obj.point_3 is None:
                 return
 
             angle = 1 # it is in radians
@@ -181,10 +185,20 @@ class Lower_label:
 
 
 
-            self.canvas.create_text(
-                world_to_screen(pos[0] * visual_scale + self.obj.point_1.pos_x - 0.1, pos[1] * visual_scale + self.obj.point_1.pos_y - 0.1),
-                text=self.obj.lower_label,
-                font=("Arial", int(12 * visual_scale)),
-                fill="blue",
-                tags=self.tag,
-            )
+            if not isinstance(self.obj, Circle_3_points):
+                self.canvas.create_text(
+                    world_to_screen(pos[0] * visual_scale + self.obj.point_1.pos_x - 0.1, pos[1] * visual_scale + self.obj.point_1.pos_y - 0.1),
+                    text=self.obj.lower_label,
+                    font=("Arial", int(12 * visual_scale)),
+                    fill="blue",
+                    tags=self.tag,
+                )
+            else:
+                self.canvas.create_text(
+                    world_to_screen(pos[0] * visual_scale + self.obj.pos_x - 0.1, pos[1] * visual_scale + self.obj.pos_y - 0.1),
+                    text=self.obj.lower_label,
+                    font=("Arial", int(12 * visual_scale)),
+                    fill="blue",
+                    tags=self.tag,
+                )
+
