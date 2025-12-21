@@ -54,6 +54,14 @@ jobs:
           name: py-geogebra${{ matrix.suffix }}
           path: dist/py-geogebra${{ matrix.suffix }}${{ matrix.ext }}
           if-no-files-found: error
+      - name: Upload Windows launcher
+        if: matrix.os == 'windows-latest'
+        uses: actions/upload-artifact@v4
+        with:
+          name: py-geogebra-launcher
+          path: py-geogebra-launcher.exe
+          if-no-files-found: error
+
 
 
   release:
@@ -90,6 +98,7 @@ jobs:
           name: "PyGeoGebra v${{ env.version }}"
           make_latest: true
           files: |
+            dist/**/py-geogebra-launcher.exe
             dist/**/py-geogebra*-windows.exe
             dist/**/py-geogebra*-darwin.tar.gz
             dist/**/py-geogebra*-linux.tar.gz
