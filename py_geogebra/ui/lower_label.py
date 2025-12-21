@@ -177,6 +177,8 @@ class Lower_label:
 
             if isinstance(self.obj, Circle_3_points) and self.obj.point_3 is None:
                 return
+            elif isinstance(self.obj, Compass) and self.obj.point_1 is None:
+                return
 
             angle = 1 # it is in radians
             pos = [self.obj.radius, 0]
@@ -187,7 +189,7 @@ class Lower_label:
 
             if not isinstance(self.obj, Circle_3_points):
                 self.canvas.create_text(
-                    world_to_screen(pos[0] * visual_scale + self.obj.point_1.pos_x - 0.1, pos[1] * visual_scale + self.obj.point_1.pos_y - 0.1),
+                    world_to_screen(pos[0] + self.obj.point_1.pos_x - 0.1, pos[1] + self.obj.point_1.pos_y - 0.1),
                     text=self.obj.lower_label,
                     font=("Arial", int(12 * visual_scale)),
                     fill="blue",
