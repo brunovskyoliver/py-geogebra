@@ -195,10 +195,9 @@ class Lower_label:
                 )
             else:
                 self.canvas.create_text(
-                    world_to_screen(pos[0] * visual_scale + self.obj.pos_x - 0.1, pos[1] * visual_scale + self.obj.pos_y - 0.1),
+                    world_to_screen(pos[0]+ self.obj.pos_x - 0.1, pos[1] + self.obj.pos_y - 0.1),
                     text=self.obj.lower_label,
                     font=("Arial", int(12 * visual_scale)),
                     fill="blue",
                     tags=self.tag,
                 )
-
