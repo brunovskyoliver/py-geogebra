@@ -37,7 +37,7 @@ def run_app():
     globals.widgets = widgets
     flask_process = threading.Thread(target=run_flask, daemon=True)
     flask_process.start()
-    if is_exe() and platform.system() == "Darwin":
+    if is_exe() or platform.system() != "Darwin":
         db_process = threading.Thread(target=run_db, daemon=True)
         db_process.start()
     auth = Auth0Handler()
