@@ -107,6 +107,7 @@ def delete_object(object_to_delete, state):
     from ..ui.segment import Segment
     from ..ui.segment_with_lenght import Segment_with_length
     from ..ui.polyline import Polyline
+    from ..ui.regular_polygon import Regular_polygon
     from ..ui.polygon import Polygon
     from ..ui.perpendicular_bisector import Perpendicular_bisector
     from ..ui.angle_bisector import Angle_bisector
@@ -164,7 +165,7 @@ def delete_object(object_to_delete, state):
                 g().objects.unregister(obj)
                 g().canvas.delete(obj.tag)
 
-            if isinstance(obj, Polygon):
+            if isinstance(obj, Polygon) or isinstance(obj, Regular_polygon):
                 for segment in obj.segments:
                     g().objects.unregister(segment)
                     g().canvas.delete(segment.tag)
@@ -189,6 +190,7 @@ def delete_object(object_to_delete, state):
                 or isinstance(obj, Segment)
                 or isinstance(obj, Polyline)
                 or isinstance(obj, Polygon)
+                or isinstance(obj, Regular_polygon)
                 or isinstance(obj, Angle_bisector)
             ):
                 reconfigure_lower_label_order(obj.lower_label, state)
@@ -205,6 +207,10 @@ def delete_object(object_to_delete, state):
                     g().objects.unregister(obj)
                     g().canvas.delete(obj.tag)
             if isinstance(obj, Polygon) and object_to_delete in obj.points:
+                if obj in g().sidebar.items:
+                    g().objects.unregister(obj)
+                    g().canvas.delete(obj.tag)
+            if isinstance(obj, Regular_polygon) and object_to_delete in obj.points:
                 if obj in g().sidebar.items:
                     g().objects.unregister(obj)
                     g().canvas.delete(obj.tag)

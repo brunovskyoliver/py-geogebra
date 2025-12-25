@@ -831,6 +831,7 @@ def pressing(root:Tk) -> None:
                 "pocet stran",
                 minvalue=3,
                 )
+                state.current_polygon.num_points = num_points
                 angle = (num_points*180 - 360) / num_points
                 rad_angle = math.radians(angle)
                 angle_matrix = [[math.cos(rad_angle), -math.sin(rad_angle)],
@@ -860,6 +861,8 @@ def pressing(root:Tk) -> None:
                 state.current_polygon.lower_label = get_lower_label(state)
                 state.current_polygon.handle_segments()
                 state.current_polygon.update()
+                globals.sidebar.items.append(state.current_polygon)
+                globals.sidebar.update()
                 state.current_polygon = None
                 state.points_for_obj = []
 
