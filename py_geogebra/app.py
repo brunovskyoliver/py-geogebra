@@ -19,6 +19,7 @@ from .flask.app import app
 from .tools.db import start
 import threading
 import sys
+import platform
 
 def is_exe():
     return getattr(sys, "frozen", False) and hasattr(sys, "_MEIPASS")
@@ -36,7 +37,7 @@ def run_app():
     globals.widgets = widgets
     flask_process = threading.Thread(target=run_flask, daemon=True)
     flask_process.start()
-    if is_exe():
+    if is_exe() and platform.system() == "Darwin":
         db_process = threading.Thread(target=run_db, daemon=True)
         db_process.start()
     auth = Auth0Handler()
