@@ -11,6 +11,7 @@ from ..ui.ray import Ray
 from ..ui.perpendicular_bisector import Perpendicular_bisector
 from ..ui.perpendicular_line import Perpendicular_line
 from ..ui.parallel_line import Parallel_line
+from ..ui.regular_polygon import Regular_polygon
 
 
 
@@ -25,6 +26,7 @@ class Sidebar:
         self.items = []
         self.canvas_tags = {}
         self.base_font_size = 16
+        self.num_of_regular_polygons = 0
         self.font_family = "Calibri, mathsans, sans-serif"
         self.font = tkfont.Font(family=self.font_family, size=self.base_font_size)
 
@@ -61,6 +63,7 @@ class Sidebar:
     def update(self):
         self.canvas.delete("all")
         self.canvas_tags.clear()
+        self.num_of_regular_polygons = 0
 
         y = 10
         for i, item in enumerate(self.items):
@@ -177,6 +180,27 @@ class Sidebar:
                 bbox = self.canvas.bbox(text)
                 height = bbox[3] - bbox[1]
                 y += height + 10
+
+            elif isinstance(item, Regular_polygon):
+                self.num_of_regular_polygons += 1
+                ctx = [p.label for p in item.line_points[:2]]
+                ctx.append(str(item.num_points))
+                text = self.canvas.create_text(
+                    10, y,
+                    anchor="nw",
+                    text=(
+                        f"poly{self.num_of_regular_polygons} = Polygon({', '.join(ctx)})\n"
+                        f"{' ' * (len(item.lower_label)-1)}= {round(item.length, 2)}"
+                    ),
+                    font=self.font,
+                    fill="black",
+                    tags=f"sidebar_text_{i}"
+                )
+                self.canvas_tags[text] = item
+                bbox = self.canvas.bbox(text)
+                height = bbox[3] - bbox[1]
+                y += height + 10
+
 
 
             elif isinstance(item, Perpendicular_bisector):

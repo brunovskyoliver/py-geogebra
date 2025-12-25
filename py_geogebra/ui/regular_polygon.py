@@ -27,6 +27,7 @@ class Regular_polygon:
 
         self.cx = 0
         self.cy = 0
+        self.num_points = 0
 
         self.tag = f"regular_polygon_{id(self)}"
 
