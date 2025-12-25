@@ -13,7 +13,7 @@ RELAY_URI = (
     "ws://172.29.5.92:8989/host"
     f"?id={urllib.parse.quote(HOST_ID)}"
 )
-RELAY_URI = f"ws://172.29.5.92:8989/host?id={HOST_ID}"
+RELAY_URI = f"ws://94.228.85.222:8989/host?id={HOST_ID}"
 
 def calc_path(from_path):
     path = (ROOT / from_path).resolve()
