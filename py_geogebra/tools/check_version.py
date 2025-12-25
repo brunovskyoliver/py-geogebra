@@ -151,9 +151,11 @@ def restart_process(binary_path):
     if platform.system() == "Windows":
         launcher = windows_launcher_path()
         subprocess.Popen([launcher], close_fds=True)
+        os._exit(0)
     else:
         launcher = create_launcher(replace_original=True)
         subprocess.Popen([launcher])
+        os._exit(0)
 
     sys.exit(0)
 
