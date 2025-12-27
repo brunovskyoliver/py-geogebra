@@ -81,7 +81,7 @@ def pressing(root:Tk) -> None:
                         state.selected_point = line_obj
                         globals.logger.info(f"Selected {line_obj.tag} at x:{line_obj.pos_x} y:{line_obj.pos_y}")
                     state.drag_target = line_obj
-                elif point_obj:
+                elif polyline_obj:
                     polyline_obj.pos_x, polyline_obj.pos_y = screen_to_world(e)
                     polyline_obj.update()
                     state.selected_point = polyline_obj
