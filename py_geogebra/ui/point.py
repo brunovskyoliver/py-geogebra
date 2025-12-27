@@ -111,7 +111,6 @@ class Point:
     def update(self):
         self.canvas.delete(self.tag)
         self.canvas.delete(self.highlight_tag)
-
         x = self.cx + self.pos_x * self.unit_size * self.scale
         y = self.cy - self.pos_y * self.unit_size * self.scale
         self.x, self.y = x, y
@@ -154,4 +153,3 @@ class Point:
                     fill="blue",
                     tags=(self.tag, "point_label"),
                 )
-

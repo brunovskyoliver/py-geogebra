@@ -82,7 +82,7 @@ class Axes:
                     self.canvas.create_text(
                         x,
                         cy + 12,
-                        text=f"{val:.2f}",
+                        text=f"{val:.3f}",
                         font=("Arial", 10),
                         tags="axes",
                         fill="black",
@@ -104,7 +104,7 @@ class Axes:
                     self.canvas.create_text(
                         cx + 15,
                         y,
-                        text=f"{(val*-1):.2f}",
+                        text=f"{(val*-1):.3f}",
                         font=("Arial", 10),
                         tags="axes",
                         fill="black",
