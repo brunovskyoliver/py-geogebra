@@ -1,71 +1,88 @@
+from threading import stack_size
 from .. import state
-from ..tools.utils import center
+from ..tools.utils import center, center_screen, screen_to_world, world_to_screen
 from .. import globals
 
 
 def scrolling(root):
+    global _zoom
     zoom = Zoom()
 
-    def scroll(e):
-        scale_before = state.scale
-        scale_factor = 1.1 if e.delta > 0 else 1 / 1.1
-        scale_after = scale_before * scale_factor
-        state.center = center()
-        cx, cy = state.center
+    def on_scroll(e):
+        zoom.on_scroll(e)
 
-        state.scale = scale_after
-
-        pos_x = (e.x - cx) / (globals.objects.unit_size * globals.objects.scale)
-        pos_y = (cy - e.y) / (globals.objects.unit_size * globals.objects.scale)
-
-        x = cx + pos_x * globals.objects.unit_size * globals.objects.scale
-        y = cy - pos_y * globals.objects.unit_size * globals.objects.scale
-
-        offset_x_after = ((cx - x) * scale_factor) - (cx - x)
-        offset_y_after = ((cy - y) * scale_factor) - (cy - y)
-
-        # globals.objects.offset_x += offset_x_after
-        # globals.objects.offset_y += offset_y_after
-        # globals.objects.refresh()
-
-        zoom.smooth_zoom(scale_before, scale_after, offset_x_after, offset_y_after)
-
-    root.bind_all("<MouseWheel>", scroll)
+    root.bind_all("<MouseWheel>", on_scroll)
 
 
 class Zoom:
     def __init__(self):
         self.canvas = globals.canvas
         self.objects = globals.objects
-        self.animation_id = None
-        self.target_scale = None
-        self.steps = 10
-        self.delay = 2
 
-    def smooth_zoom(self, zoom_start, zoom_end, offset_x_end, offset_y_end):
-        if self.animation_id is not None:
-            self.canvas.after_cancel(self.animation_id)
-            self.animation_id = None
+        self.target_scale = state.scale
+        self.animating = False
 
-        self.target_scale = zoom_end
-        diff = (zoom_end - zoom_start) / self.steps
-        x_diff = (offset_x_end) / self.steps
-        y_diff = (offset_y_end) / self.steps
+        self.anchor_x = 0
+        self.anchor_y = 0
 
-        def step(i=0, current=zoom_start):
-            if i > self.steps:
-                self.objects.scale = self.target_scale
-                self.objects.refresh()
-                return
+        self.smoothness = 0.7
+        self.delay = 10
 
-            self.objects.scale = current
-            self.objects.offset_x += x_diff
-            self.objects.offset_y += y_diff
+        self.diff_x = 0
+        self.diff_y = 0
 
-            self.objects.refresh()
+        self.MIN_SCALE = 0.01
+        self.MAX_SCALE = 1e7
 
-            self.animation_id = self.canvas.after(
-                self.delay, step, i + 1, current + diff
-            )
+    def on_scroll(self, e):
+        cx,cy = center()
+        scx, scy = center_screen()
+        factor = 1.02 if e.delta > 0 else (1 / 1.02)
 
-        step()
+        self.target_scale *= factor
+        self.target_scale = max(self.MIN_SCALE, min(self.target_scale, self.MAX_SCALE))
+        self.start_scale = state.scale
+
+        start_x = e.x
+        start_y = e.y
+        target_x = (start_x - cx) * factor + cx
+        target_y = (start_y - cy) * factor + cy
+        self.diff_x += start_x - target_x
+        self.diff_y += start_y - target_y
+
+
+
+        if not self.animating:
+            self.animating = True
+            self.animate()
+
+
+
+
+
+    def animate(self):
+        current = state.scale
+        target = self.target_scale
+
+        new_scale = current + (target - current) * self.smoothness
+
+        if abs(new_scale - target) < 1e-6:
+            new_scale = target
+            self.animating = False
+            self.diff_x = 0
+            self.diff_y = 0
+
+        state.scale = new_scale
+        self.objects.scale = new_scale
+
+
+        self.objects.offset_x += self.diff_x * self.smoothness
+        self.objects.offset_y += self.diff_y * self.smoothness
+
+        self.diff_x -= self.diff_x * self.smoothness
+        self.diff_y -= self.diff_y * self.smoothness
+
+        self.objects.refresh()
+
+        if self.animating:
+            self.canvas.after(self.delay, self.animate)
