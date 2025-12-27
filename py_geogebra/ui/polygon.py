@@ -201,8 +201,9 @@ class Polygon:
                     *coords,
                     fill="lightgrey",
                     width=2 * 3 * visual_scale,
-                    tags=self.tag,
+                    tags=(self.tag, "under_line"),
                 )
+            self.canvas.tag_lower("under_line")
 
             items = self.canvas.find_all()
 
@@ -212,6 +213,7 @@ class Polygon:
                 outline="",
                 tags=(self.tag, "polygon_fill"),
             )
+
 
             if items:
                 self.canvas.tag_lower(polygon_fill, items[0])
@@ -238,9 +240,9 @@ class Polygon:
             self.lower_label_obj.update()
         self.length = length
 
-        for p in self.line_points:
-            self.canvas.tag_raise(p.tag)
         for p in self.points:
+            self.canvas.tag_raise(p.tag)
+        for p in self.line_points:
             self.canvas.tag_raise(p.tag)
 
 
