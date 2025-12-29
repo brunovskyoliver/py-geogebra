@@ -19,7 +19,7 @@ class Circle_center_point:
         self,
         root: tk.Tk,
         unit_size: int = 40,
-        point_1=None,
+        center=None,
     ):
         self.root = root
         self.canvas = globals.canvas
@@ -42,14 +42,14 @@ class Circle_center_point:
         self.is_drawable = True
 
         self.tag = f"circle_center_point_{id(self)}"
-        self.point_1 = point_1
+        self.center = center
         self.point_2 = None
         self.anchor_1 = Blank_point(self.root)
         self.anchor_2 = Blank_point(self.root)
         self.selected = False
         self.translation = None
 
-        self.points = [self.point_1]
+        self.points = [self.center]
         self.child_lines_labels = []
         self.child_lines = []
         self.lower_label = ""
@@ -74,7 +74,7 @@ class Circle_center_point:
             "offset_y": self.offset_y,
             "tag": self.tag,
             "points": [p.label for p in self.points],
-            "point_1": self.point_1.label if self.point_1 else None,
+            "center": self.center.label if self.center else None,
             "point_2": self.point_2.label if self.point_2 else None,
             "prescription": [p for p in self.prescription],
             "vector": self.vector,
@@ -95,9 +95,9 @@ class Circle_center_point:
                     return obj
             return None
 
-        p1 = find_point(data.get("point_1"))
+        p1 = find_point(data.get("center"))
         p2 = find_point(data.get("point_2"))
-        c = cls(root=root, point_1=p1, unit_size=data.get("unit_size", 40))
+        c = cls(root=root, center=p1, unit_size=data.get("unit_size", 40))
         c.point_2 = p2
         c.scale = data.get("scale", 1.0)
         c.is_drawable = data.get("is_drawable", True)
@@ -130,7 +130,7 @@ class Circle_center_point:
 
         visual_scale = min(max(1, self.scale**0.5), 1.9)
 
-        x1, y1 = self.point_1.pos_x, self.point_1.pos_y
+        x1, y1 = self.center.pos_x, self.center.pos_y
 
         if state.drag_target is self:
 
@@ -138,7 +138,7 @@ class Circle_center_point:
             x2, y2 = self.point_2.pos_x, self.point_2.pos_y
 
             for obj in self.points:
-                if (obj is self.point_1) or (obj is self.point_2):
+                if (obj is self.center) or (obj is self.point_2):
                     obj.pos_x -= x_dif
                     obj.pos_y -= y_dif
                     x1 -= x_dif
@@ -160,11 +160,11 @@ class Circle_center_point:
 
 
         self.radius = abs(math.hypot(x2-x1, y2-y1))
-        self.anchor_1.pos_x, self.anchor_1.pos_y = self.point_1.pos_x - self.radius, self.point_1.pos_y - self.radius
-        self.anchor_2.pos_x, self.anchor_2.pos_y = self.point_1.pos_x + self.radius, self.point_1.pos_y + self.radius
+        self.anchor_1.pos_x, self.anchor_1.pos_y = self.center.pos_x - self.radius, self.center.pos_y - self.radius
+        self.anchor_2.pos_x, self.anchor_2.pos_y = self.center.pos_x + self.radius, self.center.pos_y + self.radius
 
         for obj in self.points:
-            if (obj is not self.point_1) and (obj is not self.point_2):
+            if (obj is not self.center) and (obj is not self.point_2):
                 find_translation_circle(obj, self)
                 snap_to_circle(obj, self)
                 obj.update()
@@ -175,7 +175,7 @@ class Circle_center_point:
 
         if not self.point_2:
             self.is_drawable = True
-        elif self.point_1.is_drawable and self.point_2.is_drawable:
+        elif self.center.is_drawable and self.point_2.is_drawable:
             self.is_drawable = True
         else:
             self.is_drawable = False
@@ -205,7 +205,7 @@ class Circle_center_point:
                 width=2 * visual_scale,
                 tags=self.tag,
             )
-        self.canvas.tag_raise(self.point_1.tag)
+        self.canvas.tag_raise(self.center.tag)
         if self.point_2 is not None:
             self.canvas.tag_raise(self.point_2.tag)
             if self.point_2 not in self.points:

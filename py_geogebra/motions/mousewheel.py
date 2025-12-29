@@ -31,15 +31,13 @@ class Zoom:
         self.diff_x = 0
         self.diff_y = 0
 
-        self.MIN_SCALE = 0.02
-        self.MAX_SCALE = 1e7
+
 
     def on_scroll(self, e):
         cx,cy = center()
         factor = 1.06 if e.delta > 0 else (1 / 1.06)
 
         self.target_scale *= factor
-        self.target_scale = max(self.MIN_SCALE, min(self.target_scale, self.MAX_SCALE))
         self.start_scale = state.scale
 
         start_x = e.x

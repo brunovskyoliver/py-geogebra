@@ -41,7 +41,7 @@ class Compass:
         self.is_drawable = True
 
         self.tag = f"circle_compass_{id(self)}"
-        self.point_1 = None
+        self.center = None
         self.anchor_1 = Blank_point(self.root)
         self.anchor_2 = Blank_point(self.root)
         self.r_point_1 = None
@@ -49,7 +49,7 @@ class Compass:
         self.selected = False
         self.translation = None
 
-        self.points = [self.point_1]
+        self.points = [self.center]
         self.child_lines_labels = []
         self.child_lines = []
         self.lower_label = ""
@@ -71,9 +71,8 @@ class Compass:
             "offset_y": self.offset_y,
             "tag": self.tag,
             "points": [p.label for p in self.points if p],
-            "point_1": self.point_1.label if self.point_1 else None,
+            "center": self.center.label if self.center else None,
             "child_lines_labels": [l.lower_label for l in self.child_lines],
-            "point_1": self.point_1.label if self.point_1 else None,
             "r_point_1": self.r_point_1.label if self.r_point_1 else None,
             "r_point_2": self.r_point_2.label if self.r_point_2 else None
         }
@@ -92,7 +91,7 @@ class Compass:
                     return obj
             return None
 
-        p1 = find_point(data.get("point_1"))
+        p1 = find_point(data.get("center"))
         c = cls(root=root, unit_size=data.get("unit_size", 40))
         c.scale = data.get("scale", 1.0)
         c.is_drawable = data.get("is_drawable", True)
@@ -105,7 +104,7 @@ class Compass:
         c.points = [find_point(lbl) for lbl in data.get("points", []) if lbl]
         c.r_point_1 = find_point(data.get("r_point_1"))
         c.r_point_2 = find_point(data.get("r_point_2"))
-        c.point_1 = find_point(data.get("point_1"))
+        c.center = find_point(data.get("center"))
         cx, cy = state.center
         c.cx = cx
         c.cy = cy
@@ -131,30 +130,30 @@ class Compass:
         if state.drag_target is self:
 
             x_dif, y_dif = self.prev_x - self.pos_x, self.prev_y - self.pos_y
-            x1, y1 = self.point_1.pos_x, self.point_1.pos_y
+            x1, y1 = self.center.pos_x, self.center.pos_y
 
 
-            self.point_1.pos_x -= x_dif
-            self.point_1.pos_y -= y_dif
+            self.center.pos_x -= x_dif
+            self.center.pos_y -= y_dif
             x1 -= x_dif
             y1 -= y_dif
 
 
         else:
-            if self.point_1 is None and e is None:
+            if self.center is None and e is None:
                 return
-            if self.point_1 is None:
+            if self.center is None:
                 cx, cy = state.center
                 x1 = (e.x - cx) / (self.unit_size * self.scale)
                 y1 = (cy - e.y) / (self.unit_size * self.scale)
             else:
-                x1, y1 = self.point_1.pos_x, self.point_1.pos_y
+                x1, y1 = self.center.pos_x, self.center.pos_y
 
         self.anchor_1.pos_x, self.anchor_1.pos_y = x1 - self.radius, y1 - self.radius
         self.anchor_2.pos_x, self.anchor_2.pos_y = x1 + self.radius, y1 + self.radius
 
         for obj in self.points:
-            if (obj is not self.point_1) and obj:
+            if (obj is not self.center) and obj:
                 find_translation_circle(obj, self)
                 snap_to_circle(obj, self)
                 obj.update()
@@ -163,8 +162,8 @@ class Compass:
         x1, y1 = world_to_screen(self.anchor_1.pos_x, self.anchor_1.pos_y)
         x2, y2 = world_to_screen(self.anchor_2.pos_x, self.anchor_2.pos_y)
 
-        if self.point_1:
-            if self.point_1.is_drawable:
+        if self.center:
+            if self.center.is_drawable:
                 self.is_drawable = True
             else:
                 self.is_drawable = False

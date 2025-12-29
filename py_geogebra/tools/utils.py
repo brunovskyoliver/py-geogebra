@@ -403,12 +403,12 @@ def snap_to_polyline(point, polyline):
 
 
 def snap_to_circle(point, circle):
-    dx = point.pos_x - circle.point_1.pos_x
-    dy = point.pos_y - circle.point_1.pos_y
+    dx = point.pos_x - circle.center.pos_x
+    dy = point.pos_y - circle.center.pos_y
     dist = math.hypot(dx, dy)
     k = point.translation / dist
-    point.pos_x = circle.point_1.pos_x + dx * k
-    point.pos_y = circle.point_1.pos_y + dy * k
+    point.pos_x = circle.center.pos_x + dx * k
+    point.pos_y = circle.center.pos_y + dy * k
 
 def find_translation(point, line):
     x1, y1 = line.point_1.pos_x, line.point_1.pos_y
