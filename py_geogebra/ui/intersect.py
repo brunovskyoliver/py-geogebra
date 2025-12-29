@@ -224,6 +224,7 @@ class Intersect:
         if not self.line_2:
             self.line_2 = self.find_obj(self.line_2_label)
 
+
         intersection_point = None
 
         if "circle" not in self.line_1.tag and "circle" not in self.line_2.tag:

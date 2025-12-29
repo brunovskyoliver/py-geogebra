@@ -181,6 +181,7 @@ class Circle_center_point:
             self.is_drawable = False
 
         self.lower_label_obj.is_drawable = self.is_drawable
+        self.lower_label_obj.update()
 
         if self.is_drawable:
 

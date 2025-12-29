@@ -2,6 +2,9 @@ import tkinter as tk
 from tkinter import font as tkfont
 
 from py_geogebra.ui.angle_bisector import Angle_bisector
+from py_geogebra.ui.circle_center_point import Circle_center_point
+from py_geogebra.ui.circle_center_radius import Circle_center_radius
+from py_geogebra.ui.semicircle import Semicircle
 from ..ui.point import Point
 from ..ui.line import Line
 from ..ui.segment import Segment
@@ -287,4 +290,59 @@ class Sidebar:
                 height = bbox[3] - bbox[1]
                 y += height + 10
 
+            elif isinstance(item, Semicircle):
+                text = self.canvas.create_text(
+                    10, y,
+                    anchor="nw",
+                    text=(
+                        f"{item.lower_label}: Semicircle({item.point_1.label}, {item.point_2.label})\n"
+                        f"= {item.radius*3.14:.2f}"
+                    ),
+                    font=self.font,
+                    fill="black",
+                    tags=f"sidebar_text_{i}"
+                )
+                self.canvas_tags[text] = item
+                bbox = self.canvas.bbox(text)
+                height = bbox[3] - bbox[1]
+                y += height + 10
 
+            elif isinstance(item, Circle_center_point):
+                squared = "²"
+                sign_x = '+' if item.point_1.pos_x < 0 else '-'
+                sign_y = '+' if item.point_1.pos_y < 0 else '-'
+                text = self.canvas.create_text(
+                    10, y,
+                    anchor="nw",
+                    text=(
+                        f"{item.lower_label}: Circle({item.point_1.label}, {item.point_2.label})\n"
+                        f"= (x {sign_x} {abs(item.point_1.pos_x):.2f}){squared} + (y {sign_y} {abs(item.point_1.pos_y):.2f}){squared} = {item.radius**2:.2f})"
+                    ),
+                    font=self.font,
+                    fill="black",
+                    tags=f"sidebar_text_{i}"
+                )
+                self.canvas_tags[text] = item
+                bbox = self.canvas.bbox(text)
+                height = bbox[3] - bbox[1]
+                y += height + 10
+
+            elif isinstance(item, Circle_center_radius):
+                squared = "²"
+                sign_x = '+' if item.point_1.pos_x < 0 else '-'
+                sign_y = '+' if item.point_1.pos_y < 0 else '-'
+                text = self.canvas.create_text(
+                    10, y,
+                    anchor="nw",
+                    text=(
+                        f"{item.lower_label}: Circle({item.point_1.label}, {item.radius})\n"
+                        f"= (x {sign_x} {abs(item.point_1.pos_x):.2f}){squared} + (y {sign_y} {abs(item.point_1.pos_y):.2f}){squared} = {item.radius**2:.2f})"
+                    ),
+                    font=self.font,
+                    fill="black",
+                    tags=f"sidebar_text_{i}"
+                )
+                self.canvas_tags[text] = item
+                bbox = self.canvas.bbox(text)
+                height = bbox[3] - bbox[1]
+                y += height + 10

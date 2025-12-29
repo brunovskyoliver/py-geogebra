@@ -1,19 +1,20 @@
-from this import s
 import tkinter as tk
 from ..tools.utils import (
+    snap_to_circle,
     world_to_screen,
-    snap_to_line,
-    get_linear_fuction_prescription,
+    snap_to_circle,
+    find_translation_circle,
     calculate_vector,
     load_lines_from_labels,
 )
 from .. import state
 from .lower_label import Lower_label
+from .blank_point import Blank_point
 import math
 from .. import globals
 
 
-class Line:
+class Semicircle:
     def __init__(
         self,
         root: tk.Tk,
@@ -34,32 +35,27 @@ class Line:
         self.scale = 1.0  # zoom factor
         self.unit_size = unit_size
 
-        self.cx = 0
-        self.cy = 0
-
         self.is_drawable = True
-        self.deleted = False
 
-        self.tag = f"line_{id(self)}"
+        self.tag = f"semicircle_{id(self)}"
         self.point_1 = point_1
         self.point_2 = None
+        self.anchor_1 = Blank_point(self.root)
+        self.anchor_2 = Blank_point(self.root)
         self.selected = False
+        self.translation = None
+
+        self.radius = 0
 
         self.points = [self.point_1]
-        self.child_lines_labels = []
-        self.child_lines = []
         self.lower_label = ""
         self.lower_label_obj = Lower_label(self.root, obj=self)
         self.objects.register(self.lower_label_obj)
-        self.prescription = ()
-        self.angle = 0
-        self.vector = (0, 0)
 
-        self.canvas.bind("<Configure>", lambda e: self.update())
 
     def to_dict(self) -> dict:
         return {
-            "type": "Line",
+            "type": "Semicircle",
             "lower_label": self.lower_label,
             "pos_x": self.pos_x,
             "pos_y": self.pos_y,
@@ -72,9 +68,6 @@ class Line:
             "points": [p.label for p in self.points],
             "point_1": self.point_1.label if self.point_1 else None,
             "point_2": self.point_2.label if self.point_2 else None,
-            "prescription": [p for p in self.prescription],
-            "vector": self.vector,
-            "child_lines_labels": [l.lower_label for l in self.child_lines]
         }
 
     @classmethod
@@ -85,33 +78,21 @@ class Line:
                     return obj
             return None
 
-        def find_line(label):
-            for obj in globals.objects._objects:
-                if getattr(obj, "lower_label", None) == label:
-                    return obj
-            return None
-
         p1 = find_point(data.get("point_1"))
         p2 = find_point(data.get("point_2"))
-        line = cls(root=root, point_1=p1, unit_size=data.get("unit_size", 40))
-        line.point_2 = p2
-        line.scale = data.get("scale", 1.0)
-        line.is_drawable = data.get("is_drawable", True)
-        line.offset_x = data.get("offset_x", 0)
-        line.offset_y = data.get("offset_y", 0)
-        line.lower_label = data.get("lower_label", "")
-        line.tag = data.get("tag", "")
-        line.pos_x = data.get("pos_x", 0)
-        line.pos_y = data.get("pos_y", 0)
-        line.points = [find_point(lbl) for lbl in data.get("points", []) if lbl]
-        cx, cy = state.center
-        line.cx = cx
-        line.cy = cy
-        line.prescription = data.get("prescription", {})
-        line.vector = data.get("vector")
-        line.child_lines_labels = [lbl for lbl in data.get("child_lines_labels", [])]
-        line.update()
-        return line
+        c = cls(root=root, point_1=p1, unit_size=data.get("unit_size", 40))
+        c.point_2 = p2
+        c.scale = data.get("scale", 1.0)
+        c.is_drawable = data.get("is_drawable", True)
+        c.offset_x = data.get("offset_x", 0)
+        c.offset_y = data.get("offset_y", 0)
+        c.lower_label = data.get("lower_label", "")
+        c.tag = data.get("tag", "")
+        c.pos_x = data.get("pos_x", 0)
+        c.pos_y = data.get("pos_y", 0)
+        c.points = [find_point(lbl) for lbl in data.get("points", []) if lbl]
+        c.update()
+        return c
 
     def select(self):
         self.selected = True
@@ -122,16 +103,15 @@ class Line:
         self.update()
 
     def update(self, e=None):
-        if self.deleted:
-            return
         self.canvas.delete(self.tag)
 
         visual_scale = min(max(1, self.scale**0.5), 1.9)
 
+        x1, y1 = self.point_1.pos_x, self.point_1.pos_y
+
         if state.drag_target is self:
 
             x_dif, y_dif = self.prev_x - self.pos_x, self.prev_y - self.pos_y
-            x1, y1 = self.point_1.pos_x, self.point_1.pos_y
             x2, y2 = self.point_2.pos_x, self.point_2.pos_y
 
             for obj in self.points:
@@ -145,8 +125,6 @@ class Line:
                     continue
 
         else:
-            x1, y1 = self.point_1.pos_x, self.point_1.pos_y
-
             if self.point_2 is None and e is None:
                 return
 
@@ -157,35 +135,27 @@ class Line:
             else:
                 x2, y2 = self.point_2.pos_x, self.point_2.pos_y
 
-        for obj in self.points:
-            if (obj is not self.point_1) and (obj is not self.point_2):
-                snap_to_line(obj, self)
-                obj.update()
 
-        self.angle = math.atan2(y2 - y1, x2 - x1)
-        span = max(self.canvas.winfo_width(), self.canvas.winfo_height()) / (
-            self.unit_size * self.scale
-        )
-        cos_a = math.cos(self.angle)
-        sin_a = math.sin(self.angle)
+        angle = math.atan2(y2 - y1, x2 - x1)
+        angle = (angle / 6.28) * 360
 
-        if self.point_2 is not None:
-            self.lower_label_obj.update()
+        self.radius = math.hypot(x2-x1, y2-y1) / 2
 
-            self.vector = calculate_vector(self.point_1, self.point_2)
+        cx =( x1 + x2) / 2
+        cy = (y1 + y2) / 2
 
-        self.prescription = get_linear_fuction_prescription(x1, y1, x2, y2)
+        self.anchor_1.pos_x, self.anchor_1.pos_y = cx - self.radius, cy - self.radius
+        self.anchor_2.pos_x, self.anchor_2.pos_y = cx + self.radius, cy + self.radius
 
-        span *= 10
-        x1 -= span * cos_a
-        y1 -= span * sin_a
-        x2 += span * cos_a
-        y2 += span * sin_a
-
-        x1, y1 = world_to_screen(x1, y1)
-        x2, y2 = world_to_screen(x2, y2)
+        # for obj in self.points:
+        #     if (obj is not self.point_1) and (obj is not self.point_2):
+        #         find_translation_circle(obj, self)
+        #         snap_to_circle(obj, self)
+        #         obj.update()
 
 
+        x1, y1 = world_to_screen(self.anchor_1.pos_x, self.anchor_1.pos_y)
+        x2, y2 = world_to_screen(self.anchor_2.pos_x, self.anchor_2.pos_y)
 
         if not self.point_2:
             self.is_drawable = True
@@ -199,22 +169,28 @@ class Line:
         if self.is_drawable:
 
             if self.selected:
-                self.canvas.create_line(
+                self.canvas.create_arc(
                     x1,
                     y1,
                     x2,
                     y2,
-                    fill="lightgrey",
-                    width=2 * 3 * visual_scale,
+                    start=angle,
+                    extent=180,
+                    style=tk.ARC,
+                    outline="lightgrey",
+                    width=2*3 * visual_scale,
                     tags=self.tag,
                 )
 
-            self.canvas.create_line(
+            self.canvas.create_arc(
                 x1,
                 y1,
                 x2,
                 y2,
-                fill="black",
+                start=angle,
+                extent=180,
+                style=tk.ARC,
+                outline="black",
                 width=2 * visual_scale,
                 tags=self.tag,
             )
@@ -224,14 +200,9 @@ class Line:
             if self.point_2 not in self.points:
                 self.points.append(self.point_2)
 
-        if len(self.child_lines) == 0:
-            self.child_lines = load_lines_from_labels(self.child_lines_labels)
-
         for p in self.points:
             self.canvas.tag_raise(p.tag)
-        for l in self.child_lines:
-            if l:
-                l.parent_vector = self.vector
-                l.update()
+
+
         self.prev_x, self.prev_y = self.pos_x, self.pos_y
         self.canvas.tag_raise(self.lower_label_obj.tag)

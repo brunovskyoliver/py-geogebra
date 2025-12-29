@@ -2,6 +2,7 @@ from typing import List, Protocol
 
 from py_geogebra.ui.compass import Compass
 from py_geogebra.ui.lower_label import Lower_label
+from py_geogebra.ui.semicircle import Semicircle
 from .utils import center
 from .. import state
 import json
@@ -221,6 +222,9 @@ class Objects:
             elif od["type"] == "Intersect":
                 i = Intersect.from_dict(root, od)
                 self.register(i)
+            elif od["type"] == "Semicircle":
+                c = Semicircle.from_dict(root, od)
+                self.register(c)
 
         for od in data.get("objects", []):
             if od["type"] == "Lower_label":
