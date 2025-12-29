@@ -38,6 +38,7 @@ class Semicircle:
         self.is_drawable = True
 
         self.tag = f"semicircle_{id(self)}"
+        self.center = Blank_point(self.root)
         self.point_1 = point_1
         self.point_2 = None
         self.anchor_1 = Blank_point(self.root)
@@ -144,14 +145,17 @@ class Semicircle:
         cx =( x1 + x2) / 2
         cy = (y1 + y2) / 2
 
+        self.center.pos_x = cx
+        self.center.pos_y = cy
+
         self.anchor_1.pos_x, self.anchor_1.pos_y = cx - self.radius, cy - self.radius
         self.anchor_2.pos_x, self.anchor_2.pos_y = cx + self.radius, cy + self.radius
 
-        # for obj in self.points:
-        #     if (obj is not self.point_1) and (obj is not self.point_2):
-        #         find_translation_circle(obj, self)
-        #         snap_to_circle(obj, self)
-        #         obj.update()
+        for obj in self.points:
+            if (obj is not self.point_1) and (obj is not self.point_2):
+                find_translation_circle(obj, self)
+                snap_to_circle(obj, self)
+                obj.update()
 
 
         x1, y1 = world_to_screen(self.anchor_1.pos_x, self.anchor_1.pos_y)

@@ -116,7 +116,6 @@ def pressing(root:Tk) -> None:
                 pos_y=world_y,
             )
 
-
             if pb is not None:
                 p.is_detachable = True
                 p.is_atachable = False
@@ -887,7 +886,7 @@ def pressing(root:Tk) -> None:
                 c = Circle_center_point(
                     root,
                     unit_size=globals.axes.unit_size,
-                    point_1=p,
+                    center=p,
                 )
                 lower_label = get_lower_label(state)
                 c.lower_label = lower_label
@@ -926,7 +925,7 @@ def pressing(root:Tk) -> None:
             c = Circle_center_radius(
                 root,
                 unit_size=globals.axes.unit_size,
-                point_1=p,
+                center=p,
             )
             lower_label = get_lower_label(state)
             c.lower_label = lower_label
@@ -968,7 +967,7 @@ def pressing(root:Tk) -> None:
 
 
             elif len(state.points_for_obj) == 4:
-                state.points_for_obj[2].point_1 = p
+                state.points_for_obj[2].center = p
                 state.points_for_obj[2].update(e)
 
                 globals.sidebar.items.append(state.points_for_obj[2])

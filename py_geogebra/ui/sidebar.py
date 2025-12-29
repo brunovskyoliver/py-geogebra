@@ -310,14 +310,14 @@ class Sidebar:
 
             elif isinstance(item, Circle_center_point):
                 squared = "²"
-                sign_x = '+' if item.point_1.pos_x < 0 else '-'
-                sign_y = '+' if item.point_1.pos_y < 0 else '-'
+                sign_x = '+' if item.center.pos_x < 0 else '-'
+                sign_y = '+' if item.center.pos_y < 0 else '-'
                 text = self.canvas.create_text(
                     10, y,
                     anchor="nw",
                     text=(
-                        f"{item.lower_label}: Circle({item.point_1.label}, {item.point_2.label})\n"
-                        f"= (x {sign_x} {abs(item.point_1.pos_x):.2f}){squared} + (y {sign_y} {abs(item.point_1.pos_y):.2f}){squared} = {item.radius**2:.2f})"
+                        f"{item.lower_label}: Circle({item.center.label}, {item.point_2.label})\n"
+                        f"= (x {sign_x} {abs(item.center.pos_x):.2f}){squared} + (y {sign_y} {abs(item.center.pos_y):.2f}){squared} = {item.radius**2:.2f})"
                     ),
                     font=self.font,
                     fill="black",
@@ -330,14 +330,14 @@ class Sidebar:
 
             elif isinstance(item, Circle_center_radius):
                 squared = "²"
-                sign_x = '+' if item.point_1.pos_x < 0 else '-'
-                sign_y = '+' if item.point_1.pos_y < 0 else '-'
+                sign_x = '+' if item.center.pos_x < 0 else '-'
+                sign_y = '+' if item.center.pos_y < 0 else '-'
                 text = self.canvas.create_text(
                     10, y,
                     anchor="nw",
                     text=(
-                        f"{item.lower_label}: Circle({item.point_1.label}, {item.radius})\n"
-                        f"= (x {sign_x} {abs(item.point_1.pos_x):.2f}){squared} + (y {sign_y} {abs(item.point_1.pos_y):.2f}){squared} = {item.radius**2:.2f})"
+                        f"{item.lower_label}: Circle({item.center.label}, {item.radius})\n"
+                        f"= (x {sign_x} {abs(item.center.pos_x):.2f}){squared} + (y {sign_y} {abs(item.center.pos_y):.2f}){squared} = {item.radius**2:.2f})"
                     ),
                     font=self.font,
                     fill="black",
@@ -350,14 +350,14 @@ class Sidebar:
 
             elif isinstance(item, Compass):
                 squared = "²"
-                sign_x = '+' if item.point_1.pos_x < 0 else '-'
-                sign_y = '+' if item.point_1.pos_y < 0 else '-'
+                sign_x = '+' if item.center.pos_x < 0 else '-'
+                sign_y = '+' if item.center.pos_y < 0 else '-'
                 text = self.canvas.create_text(
                     10, y,
                     anchor="nw",
                     text=(
-                        f"{item.lower_label}: Circle({item.point_1.label}, Segment({item.r_point_1.label},{item.r_point_2.label})\n"
-                        f"= (x {sign_x} {abs(item.point_1.pos_x):.2f}){squared} + (y {sign_y} {abs(item.point_1.pos_y):.2f}){squared} = {item.radius**2:.2f})"
+                        f"{item.lower_label}: Circle({item.center.label}, Segment({item.r_point_1.label},{item.r_point_2.label})\n"
+                        f"= (x {sign_x} {abs(item.center.pos_x):.2f}){squared} + (y {sign_y} {abs(item.center.pos_y):.2f}){squared} = {item.radius**2:.2f})"
                     ),
                     font=self.font,
                     fill="black",

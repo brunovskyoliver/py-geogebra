@@ -39,6 +39,7 @@ def motion(root):
             state.points_for_obj[1].update(e)
 
         elif state.selected_tool == "compass" and 2 < len(state.points_for_obj) < 4:
+            print(state.points_for_obj[2])
             state.points_for_obj[2].update(e)
 
         elif state.selected_tool == "semi_circle" and len(state.points_for_obj) == 2:

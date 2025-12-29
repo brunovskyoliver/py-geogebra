@@ -44,6 +44,7 @@ class Circle_3_points:
         self.is_drawable = True
 
         self.tag = f"circle_3_points_{id(self)}"
+        self.center = Blank_point(self.root)
         self.point_1 = point_1
         self.point_2 = None
         self.point_3 = None
@@ -237,6 +238,8 @@ class Circle_3_points:
                 self.pos_x, self.pos_y = px, py
                 self.anchor_1.pos_x, self.anchor_1.pos_y = px - self.radius, py - self.radius
                 self.anchor_2.pos_x, self.anchor_2.pos_y = px + self.radius, py + self.radius
+
+                self.center.pos_x, self.center.pos_y = px, py
 
                 for obj in self.points:
                     if (obj is not self.point_1) and (obj is not self.point_2) and (obj is not self.point_3):
