@@ -965,10 +965,17 @@ def pressing(root:Tk) -> None:
                 globals.objects.register(c)
                 c.update(e)
                 state.points_for_obj.append(c)
+
+
             elif len(state.points_for_obj) == 4:
                 state.points_for_obj[2].point_1 = p
                 state.points_for_obj[2].update(e)
+
+                globals.sidebar.items.append(state.points_for_obj[2])
+                globals.sidebar.update()
+
                 state.points_for_obj = []
+
 
         elif state.selected_tool == "circle_3_points":
             world_x, world_y = screen_to_world(e)

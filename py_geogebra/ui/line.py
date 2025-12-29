@@ -1,4 +1,3 @@
-from this import s
 import tkinter as tk
 from ..tools.utils import (
     world_to_screen,
@@ -11,6 +10,7 @@ from .. import state
 from .lower_label import Lower_label
 import math
 from .. import globals
+
 
 
 class Line:
