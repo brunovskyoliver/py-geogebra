@@ -3,6 +3,8 @@ import math
 
 
 
+
+
 from .. import state
 
 import importlib
@@ -322,14 +324,19 @@ def find_circle_at_position(e, r=2):
     from ..ui.circle_center_point import Circle_center_point
     from ..ui.circle_center_radius import Circle_center_radius
     from ..ui.compass import Compass
+    from py_geogebra.ui.semicircle import Semicircle
+
 
     items = g().canvas.find_overlapping(e.x - r, e.y - r, e.x + r, e.y + r)
     line = None
     for obj in g().objects._objects:
-        if hasattr(obj, "tag") and any(obj.tag in g().canvas.gettags(i) for i in items) and (isinstance(obj, Circle_center_radius) or isinstance(obj, Circle_center_point) or isinstance(obj, Compass)):
-            if "circle" in obj.tag:
-                line = obj
-                break
+        if (hasattr(obj, "tag") and any(obj.tag in g().canvas.gettags(i) for i in items)
+        and (isinstance(obj, Circle_center_radius)
+        or isinstance(obj, Circle_center_point)
+        or isinstance(obj, Compass)
+        or isinstance(obj, Semicircle))):
+            line = obj
+            break
     return line
 
 
@@ -691,4 +698,3 @@ def solve_quadratic(a, b, c):
         x1 = (-b + sqrt_disc) / (2*a)
         x2 = (-b - sqrt_disc) / (2*a)
         return [x1, x2]
-
