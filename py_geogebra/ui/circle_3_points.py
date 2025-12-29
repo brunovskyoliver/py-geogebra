@@ -156,7 +156,7 @@ class Circle_3_points:
             x2, y2 = self.point_2.pos_x, self.point_2.pos_y
 
             for obj in self.points:
-                if (obj is self.point_1) or (obj is self.point_2):
+                if (obj is self.point_1) or (obj is self.point_2) or (obj is self.point_3):
                     obj.pos_x -= x_dif
                     obj.pos_y -= y_dif
                     x1 -= x_dif
@@ -239,7 +239,7 @@ class Circle_3_points:
                 self.anchor_2.pos_x, self.anchor_2.pos_y = px + self.radius, py + self.radius
 
                 for obj in self.points:
-                    if (obj is not self.point_1) and (obj is not self.point_2):
+                    if (obj is not self.point_1) and (obj is not self.point_2) and (obj is not self.point_3):
                         find_translation_circle(obj, self)
                         snap_to_circle(obj, self)
                         obj.update()
@@ -280,10 +280,16 @@ class Circle_3_points:
                         tags=self.tag,
                     )
                 self.canvas.tag_raise(self.point_1.tag)
+
                 if self.point_2 is not None:
                     self.canvas.tag_raise(self.point_2.tag)
                     if self.point_2 not in self.points:
                         self.points.append(self.point_2)
+
+                if self.point_3 is not None:
+                    self.canvas.tag_raise(self.point_3.tag)
+                    if self.point_3 not in self.points:
+                        self.points.append(self.point_3)
 
                 if len(self.child_lines) == 0:
                     self.child_lines = load_lines_from_labels(self.child_lines_labels)

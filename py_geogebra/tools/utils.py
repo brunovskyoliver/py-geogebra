@@ -325,6 +325,7 @@ def find_circle_at_position(e, r=2):
     from ..ui.circle_center_radius import Circle_center_radius
     from ..ui.compass import Compass
     from py_geogebra.ui.semicircle import Semicircle
+    from py_geogebra.ui.circle_3_points import Circle_3_points
 
 
     items = g().canvas.find_overlapping(e.x - r, e.y - r, e.x + r, e.y + r)
@@ -334,7 +335,8 @@ def find_circle_at_position(e, r=2):
         and (isinstance(obj, Circle_center_radius)
         or isinstance(obj, Circle_center_point)
         or isinstance(obj, Compass)
-        or isinstance(obj, Semicircle))):
+        or isinstance(obj, Semicircle)
+        or isinstance(obj, Circle_3_points))):
             line = obj
             break
     return line
@@ -421,7 +423,6 @@ def find_translation(point, line):
     point.translation = (p_dist * math.cos(beta)) / dist
 
 def find_translation_circle(point, circle):
-
     point.translation = circle.radius
 
 def find_translation_between_points(point, point_1, point_2):
