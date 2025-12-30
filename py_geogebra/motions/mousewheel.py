@@ -25,7 +25,7 @@ class Zoom:
         self.anchor_x = 0
         self.anchor_y = 0
 
-        self.smoothness = 0.1
+        self.smoothness = 0.2
         self.delay = 10
 
         self.diff_x = 0
@@ -35,7 +35,7 @@ class Zoom:
 
     def on_scroll(self, e):
         cx,cy = center()
-        factor = 1.06 if e.delta > 0 else (1 / 1.06)
+        factor = 1.1 if e.delta > 0 else (1 / 1.1)
 
         self.target_scale *= factor
         self.start_scale = state.scale

@@ -1034,6 +1034,8 @@ def pressing(root:Tk) -> None:
                 )
                 globals.objects.register(p)
 
+            p.select()
+
             if len(state.points_for_obj) == 0:
                 state.points_for_obj.append(p)
 
@@ -1046,6 +1048,8 @@ def pressing(root:Tk) -> None:
 
                 state.points_for_obj.append(c)
 
+
+
             elif len(state.points_for_obj) == 2:
                 state.points_for_obj.append(p)
                 state.points_for_obj[1].point_2 = p
@@ -1054,7 +1058,11 @@ def pressing(root:Tk) -> None:
                 globals.sidebar.items.append(state.points_for_obj[1])
                 globals.sidebar.update()
 
+                state.points_for_obj[0].deselect()
+                state.points_for_obj[2].deselect()
+
                 state.points_for_obj = []
+
 
 
 
