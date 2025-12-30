@@ -114,7 +114,9 @@ def delete_object(object_to_delete, state):
     from ..ui.perpendicular_bisector import Perpendicular_bisector
     from ..ui.angle_bisector import Angle_bisector
     from ..ui.circle_center_point import Circle_center_point
+    from ..ui.circle_center_radius import Circle_center_radius
     from ..ui.circle_3_points import Circle_3_points
+    from ..ui.semicircle import Semicircle
 
     if state.points_for_obj:
         for obj in state.points_for_obj:
@@ -146,7 +148,7 @@ def delete_object(object_to_delete, state):
                 or isinstance(obj, Segment_with_length)
                 or isinstance(obj, Midpoint_or_center)
                 or isinstance(obj,Perpendicular_bisector)
-                or isinstance(obj, Circle_center_point)
+                or isinstance(obj, Semicircle)
             ) and (obj.point_1 is object_to_delete or obj.point_2 is object_to_delete):
                 if hasattr(obj, "lower_label"):
                     g().objects.unregister(obj.lower_label_obj)
@@ -177,6 +179,15 @@ def delete_object(object_to_delete, state):
                 g().objects.unregister(object_to_delete)
                 g().canvas.delete(object_to_delete.tag)
             if isinstance(obj, Angle_bisector) and (obj.angle_point_1 is object_to_delete or obj.angle_point_2 is object_to_delete):
+                if hasattr(obj, "lower_label"):
+                    g().objects.unregister(obj.lower_label_obj)
+                    g().canvas.delete(obj.lower_label_obj.tag)
+                g().objects.unregister(obj)
+                g().canvas.delete(obj.tag)
+            if (
+                isinstance(obj, Circle_center_point)
+                or isinstance(obj, Circle_center_radius)
+            ) and (obj.center is object_to_delete or obj.point_2 is object_to_delete):
                 if hasattr(obj, "lower_label"):
                     g().objects.unregister(obj.lower_label_obj)
                     g().canvas.delete(obj.lower_label_obj.tag)
