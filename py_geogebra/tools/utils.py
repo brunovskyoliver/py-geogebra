@@ -710,3 +710,6 @@ def solve_quadratic(a, b, c):
         x1 = (-b + sqrt_disc) / (2*a)
         x2 = (-b - sqrt_disc) / (2*a)
         return [x1, x2]
+
+def dot(v1, v2) -> float:
+    return sum(x*y for x, y in zip(v1, v2))

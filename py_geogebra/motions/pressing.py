@@ -60,10 +60,10 @@ def pressing(root:Tk) -> None:
 
             point_obj = find_point_at_position(e)
             if point_obj:
-                point_obj.update()
                 if state.selected_point and state.selected_point != point_obj:
                     state.selected_point.deselect()
-                point_obj.select()
+                else:
+                    point_obj.select()
                 state.selected_point = point_obj
                 state.drag_target = point_obj
                 globals.logger.info(f"Selected {point_obj.tag} at x:{point_obj.pos_x} y:{point_obj.pos_y}")
