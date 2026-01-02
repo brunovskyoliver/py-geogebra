@@ -16,18 +16,14 @@ from .ui.sidebar import Sidebar
 from . import globals
 from .tools.auth0_handler import Auth0Handler
 from .flask.app import app
-from .tools.db import start
 import threading
 import sys
-import platform
 
 def is_exe():
     return getattr(sys, "frozen", False) and hasattr(sys, "_MEIPASS")
 
 def run_flask():
     app.run(host="127.0.0.1", port=5000, debug=False, use_reloader=False)
-def run_db():
-    start()
 
 
 def run_app():
@@ -37,9 +33,6 @@ def run_app():
     globals.widgets = widgets
     flask_process = threading.Thread(target=run_flask, daemon=True)
     flask_process.start()
-    if is_exe() or platform.system() != "Darwin":
-        db_process = threading.Thread(target=run_db, daemon=True)
-        db_process.start()
     auth = Auth0Handler()
     globals.auth = auth
     root = tk.Tk()
