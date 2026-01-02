@@ -1,11 +1,13 @@
 import tkinter as tk
+
+
+from py_geogebra.ui.point import Point
 from ..tools.utils import (
     snap_to_circle,
     world_to_screen,
     snap_to_circle,
     find_translation_circle,
-    calculate_vector,
-    load_lines_from_labels,
+    dot,
 )
 from .. import state
 from .lower_label import Lower_label
@@ -19,7 +21,7 @@ class Semicircle:
         self,
         root: tk.Tk,
         unit_size: int = 40,
-        point_1=None,
+        point_1 = None,
     ):
         self.root = root
         self.canvas = globals.canvas
@@ -48,7 +50,10 @@ class Semicircle:
 
         self.radius = 0
 
-        self.points = [self.point_1]
+        self.vector = []
+        self.n_vector = []
+
+        self.points : list[Point] = [self.point_1]
         self.lower_label = ""
         self.lower_label_obj = Lower_label(self.root, obj=self)
         self.objects.register(self.lower_label_obj)
@@ -151,15 +156,29 @@ class Semicircle:
         self.anchor_1.pos_x, self.anchor_1.pos_y = cx - self.radius, cy - self.radius
         self.anchor_2.pos_x, self.anchor_2.pos_y = cx + self.radius, cy + self.radius
 
+        self.vector = [self.point_2.pos_x - self.point_1.pos_x, self.point_2.pos_y - self.point_1.pos_y]
+        self.n_vector = [self.vector[1], -self.vector[0]]
+
         for obj in self.points:
             if (obj is not self.point_1) and (obj is not self.point_2):
+                dot_product = dot(self.n_vector, [obj.pos_x - self.point_1.pos_x, obj.pos_y - self.point_1.pos_y])
+
+
+                if dot_product < 0:
+                    obj.color = "#349AFF"
+                else:
+                    obj.color = "red"
+                    # pridem na to jak to clampnut teraz sa mi nechce tak to bude iba cervene
+
                 find_translation_circle(obj, self)
                 snap_to_circle(obj, self)
                 obj.update()
 
 
+
         x1, y1 = world_to_screen(self.anchor_1.pos_x, self.anchor_1.pos_y)
         x2, y2 = world_to_screen(self.anchor_2.pos_x, self.anchor_2.pos_y)
+
 
         if not self.point_2:
             self.is_drawable = True
