@@ -163,7 +163,6 @@ class Semicircle:
             if (obj is not self.point_1) and (obj is not self.point_2):
                 dot_product = dot(self.n_vector, [obj.pos_x - self.point_1.pos_x, obj.pos_y - self.point_1.pos_y])
 
-
                 if dot_product < 0:
                     obj.color = "#349AFF"
                 else:

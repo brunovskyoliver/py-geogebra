@@ -1,3 +1,4 @@
+from ast import Return
 import tkinter as tk
 import math
 
@@ -511,19 +512,24 @@ def find_2lines_intersection(points):
         points[3].pos_y,
     )
 
-    px = ((x1 * y2 - y1 * x2) * (x3 - x4) - (x1 - x2) * (x3 * y4 - y3 * x4)) / (
-        (x1 - x2) * (y3 - y4) - (y1 - y2) * (x3 - x4)
-    )
-    py = ((x1 * y2 - y1 * x2) * (y3 - y4) - (y1 - y2) * (x3 * y4 - y3 * x4)) / (
-        (x1 - x2) * (y3 - y4) - (y1 - y2) * (x3 - x4)
-    )
+    try:
+        px = ((x1 * y2 - y1 * x2) * (x3 - x4) - (x1 - x2) * (x3 * y4 - y3 * x4)) / (
+            (x1 - x2) * (y3 - y4) - (y1 - y2) * (x3 - x4)
+        )
+        py = ((x1 * y2 - y1 * x2) * (y3 - y4) - (y1 - y2) * (x3 * y4 - y3 * x4)) / (
+            (x1 - x2) * (y3 - y4) - (y1 - y2) * (x3 - x4)
+        )
+    except ZeroDivisionError:
+        # why the fuck by niekto robil intersect rovnobeziek?
+        return None
+
 
     return (px, py)
 
 def find_circle_line_intersection(circle, p1, p2):
     x1,y1 = p1.pos_x, p1.pos_y
     x2,y2 = p2.pos_x, p2.pos_y
-    c_pt = circle.point_1
+    c_pt = circle.center
     vector = (x2-x1, y2 - y1)
     a = vector[0]**2 + vector[1]**2
     b = 2*x1*vector[0] - 2*c_pt.pos_x*vector[0] + 2*y1*vector[1] - 2*c_pt.pos_y*vector[1]
@@ -539,16 +545,16 @@ def find_circle_line_intersection(circle, p1, p2):
     return intersections
 
 def find_circle_circle_intersection(circle1, circle2):
-    x1, y1 = circle1.point_1.pos_x, circle1.point_1.pos_y
+    x1, y1 = circle1.point_1.pos_x, circle1.center.pos_y
     r1 = circle1.radius
-    x2, y2 = circle2.point_1.pos_x, circle2.point_1.pos_y
+    x2, y2 = circle2.point_1.pos_x, circle2.center.pos_y
     r2 = circle2.radius
 
     dx, dy = x2 - x1, y2 - y1
     d = (dx**2 + dy**2) ** 0.5
 
     if d > r1 + r2 or d < abs(r1 - r2) or d == 0:
-        return None  # no intersection or infinite
+        return None
 
     a = (r1**2 - r2**2 + d**2) / (2 * d)
     h = (r1**2 - a**2) ** 0.5
