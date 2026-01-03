@@ -1,4 +1,5 @@
 import json, inspect
+from pickle import NONE
 
 
 def to_dict() -> dict:
@@ -49,3 +50,5 @@ selected_perpendicular_line = None
 selected_angle_bisector_points = []
 best_fit_line = None
 blank_points = []
+tangents_point = None
+tangents_circle = None
