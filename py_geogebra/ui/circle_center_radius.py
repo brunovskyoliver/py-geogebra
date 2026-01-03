@@ -50,14 +50,9 @@ class Circle_center_radius:
         self.translation = None
 
         self.points = [self.center]
-        self.child_lines_labels = []
-        self.child_lines = []
         self.lower_label = ""
         self.lower_label_obj = Lower_label(self.root, obj=self)
         self.objects.register(self.lower_label_obj)
-        self.prescription = ()
-        self.angle = 0
-        self.vector = (0, 0)
 
         self.canvas.bind("<Configure>", lambda e: self.update())
 
@@ -75,9 +70,6 @@ class Circle_center_radius:
             "tag": self.tag,
             "points": [p.label for p in self.points],
             "center": self.center.label if self.center else None,
-            "prescription": [p for p in self.prescription],
-            "vector": self.vector,
-            "child_lines_labels": [l.lower_label for l in self.child_lines],
             "radius": self.radius
         }
 
@@ -109,9 +101,6 @@ class Circle_center_radius:
         cx, cy = state.center
         c.cx = cx
         c.cy = cy
-        c.prescription = data.get("prescription", {})
-        c.vector = data.get("vector")
-        c.child_lines_labels = [lbl for lbl in data.get("child_lines_labels", [])]
         c.radius = data.get("radius", 0)
         c.update()
         return c
@@ -189,15 +178,9 @@ class Circle_center_radius:
             )
 
 
-        if len(self.child_lines) == 0:
-            self.child_lines = load_lines_from_labels(self.child_lines_labels)
-
         for p in self.points:
             if hasattr(p, self.tag):
                 self.canvas.tag_raise(p.tag)
-        for l in self.child_lines:
-            if l:
-                l.parent_vector = self.vector
-                l.update()
+
         self.prev_x, self.prev_y = self.pos_x, self.pos_y
         self.canvas.tag_raise(self.lower_label_obj.tag)
