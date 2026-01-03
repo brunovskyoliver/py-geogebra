@@ -1,5 +1,4 @@
-import json, inspect
-from pickle import NONE
+import inspect
 
 
 def to_dict() -> dict:
