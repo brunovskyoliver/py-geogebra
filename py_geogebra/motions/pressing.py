@@ -26,6 +26,7 @@ from ..tools.utils import (
     snap_to_circle,
     snap_to_line,
     snap_to_polyline,
+    create_or_find_point_at_position,
 )
 from ..ui.angle_bisector import Angle_bisector
 from ..ui.best_fit_line import Best_fit_line
@@ -100,54 +101,7 @@ def pressing(root:Tk) -> None:
             state.start_pos["x"] = e.x
             state.start_pos["y"] = e.y
 
-            world_x, world_y = screen_to_world(e)
-
-            pb = find_line_at_position(e, r=2)
-            polyline = find_polyline_at_position(e, r=2)
-            circle = find_circle_at_position(e, r=2)
-
-            label = get_label(state)
-            p = Point(
-                root,
-                e,
-                label=label,
-                unit_size=globals.axes.unit_size,
-                pos_x=world_x,
-                pos_y=world_y,
-            )
-
-            if pb is not None:
-                p.is_detachable = True
-                p.is_atachable = False
-                p.parent_line = pb
-                find_translation(p, pb)
-                pb.points.append(p)
-                snap_to_line(p, pb)
-                p.color = "#349AFF"
-                pb.update()
-            elif polyline is not None:
-                p.is_detachable = True
-                p.is_atachable = False
-                p.parent_line = polyline
-                find_translation_polyline(p, polyline)
-                polyline.points.append(p)
-                snap_to_polyline(p, polyline)
-                p.color = "#349AFF"
-                polyline.update()
-            elif circle is not None:
-                p.is_detachable = True
-                p.is_atachable = False
-                p.parent_line = circle
-                find_translation_circle(p,circle)
-                circle.points.append(p)
-                snap_to_circle(p, circle)
-                p.color = "#349AFF"
-                circle.update()
-
-
-
-
-            globals.objects.register(p)
+            create_or_find_point_at_position(e, root)
 
         elif state.selected_tool == "attach_detach_point":
             point_obj = find_point_at_position(e)
@@ -278,18 +232,12 @@ def pressing(root:Tk) -> None:
             state.start_pos["x"] = e.x
             state.start_pos["y"] = e.y
             world_x, world_y = screen_to_world(e)
-            p = find_point_at_position(e)
-            if p == None or (len(state.points_for_obj) == 2 and p in state.points_for_obj[1].points):
-                label = get_label(state)
-                p = Point(
-                    root,
-                    e,
-                    label=label,
-                    unit_size=globals.axes.unit_size,
-                    pos_x=world_x,
-                    pos_y=world_y,
-                )
-                globals.objects.register(p)
+
+            l = None
+            if len(state.points_for_obj) == 2:
+                l = state.points_for_obj[1]
+            p = create_or_find_point_at_position(e, root, exception=l)
+
             if len(state.points_for_obj) < 2:
                 c = Line(
                     root,
@@ -313,18 +261,12 @@ def pressing(root:Tk) -> None:
             state.start_pos["x"] = e.x
             state.start_pos["y"] = e.y
             world_x, world_y = screen_to_world(e)
-            p = find_point_at_position(e)
-            if p == None:
-                label = get_label(state)
-                p = Point(
-                    root,
-                    e,
-                    label=label,
-                    unit_size=globals.axes.unit_size,
-                    pos_x=world_x,
-                    pos_y=world_y,
-                )
-                globals.objects.register(p)
+
+            l = None
+            if len(state.points_for_obj) == 2:
+                l = state.points_for_obj[1]
+            p = create_or_find_point_at_position(e, root, exception=l)
+
             if len(state.points_for_obj) < 2:
                 lower_label = get_lower_label(state)
                 segment = Segment(
@@ -349,18 +291,12 @@ def pressing(root:Tk) -> None:
             state.start_pos["x"] = e.x
             state.start_pos["y"] = e.y
             world_x, world_y = screen_to_world(e)
-            p = find_point_at_position(e)
-            if p == None:
-                label = get_label(state)
-                p = Point(
-                    root,
-                    e,
-                    label=label,
-                    unit_size=globals.axes.unit_size,
-                    pos_x=world_x,
-                    pos_y=world_y,
-                )
-                globals.objects.register(p)
+
+            l = None
+            if len(state.points_for_obj) == 2:
+                l = state.points_for_obj[1]
+            p = create_or_find_point_at_position(e, root, exception=l)
+
             if len(state.points_for_obj) < 2:
                 ray = Ray(
                     root,
@@ -389,6 +325,7 @@ def pressing(root:Tk) -> None:
                 polyline = Polyline(root, globals.axes.unit_size)
                 state.current_polyline = polyline
                 globals.objects.register(polyline)
+
             p = find_point_at_position(e)
             if p == None:
                 label = get_label(state)
@@ -422,18 +359,9 @@ def pressing(root:Tk) -> None:
 
         elif state.selected_tool == "segment_with_length":
             world_x, world_y = screen_to_world(e)
-            p = find_point_at_position(e)
-            if p == None:
-                label = get_label(state)
-                p = Point(
-                    root,
-                    e,
-                    label=label,
-                    unit_size=globals.axes.unit_size,
-                    pos_x=world_x,
-                    pos_y=world_y,
-                )
-                globals.objects.register(p)
+
+            p = create_or_find_point_at_position(e, root)
+
             length = simpledialog.askfloat(
                 "Dĺžka úsečky",
                 "Zadajte dĺžku úsečky (kladné číslo):",
@@ -508,18 +436,12 @@ def pressing(root:Tk) -> None:
             state.start_pos["x"] = e.x
             state.start_pos["y"] = e.y
             world_x, world_y = screen_to_world(e)
-            p = find_point_at_position(e)
-            if p == None:
-                label = get_label(state)
-                p = Point(
-                    root,
-                    e,
-                    label=label,
-                    unit_size=globals.axes.unit_size,
-                    pos_x=world_x,
-                    pos_y=world_y,
-                )
-                globals.objects.register(p)
+
+            l = None
+            if len(state.points_for_obj) == 2:
+                l = state.points_for_obj[1]
+            p = create_or_find_point_at_position(e, root, exception=l)
+
             if len(state.points_for_obj) < 2:
                 lower_label = get_lower_label(state)
                 vector = Vector(

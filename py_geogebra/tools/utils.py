@@ -6,6 +6,8 @@ import math
 
 
 
+
+
 from .. import state
 
 import importlib
@@ -291,11 +293,13 @@ def find_blank_point_at_position(x, y, r=2):
             break
     return p
 
-def find_line_at_position(e, r=2, num_lines: int = 1):
+def find_line_at_position(e, r=2, num_lines: int = 1, exception = None):
     items = g().canvas.find_overlapping(e.x - r, e.y - r, e.x + r, e.y + r)
     lines = []
     line_count = 0
     for obj in g().objects._objects:
+        if obj is exception:
+            continue
         if hasattr(obj, "tag") and any(obj.tag in g().canvas.gettags(i) for i in items):
             if (
                 ("line" in obj.tag and "polyline" not in obj.tag)
@@ -719,3 +723,60 @@ def solve_quadratic(a, b, c):
 
 def dot(v1, v2) -> float:
     return sum(x*y for x, y in zip(v1, v2))
+
+def create_or_find_point_at_position(e, root, exception = None):
+    from py_geogebra.ui.point import Point
+    from .. import globals, state
+
+    world_x, world_y = screen_to_world(e)
+
+    p = find_point_at_position(e, r=2)
+    if p:
+        return p
+
+    pb = find_line_at_position(e, r=2, exception = exception)
+    polyline = find_polyline_at_position(e, r=2)
+    circle = find_circle_at_position(e, r=2)
+
+
+    label = get_label(state)
+    p = Point(
+        root,
+        e,
+        label=label,
+        unit_size=globals.axes.unit_size,
+        pos_x=world_x,
+        pos_y=world_y,
+    )
+
+    if pb is not None:
+        p.is_detachable = True
+        p.is_atachable = False
+        p.parent_line = pb
+        find_translation(p, pb)
+        pb.points.append(p)
+        snap_to_line(p, pb)
+        p.color = "#349AFF"
+        pb.update()
+    elif polyline is not None:
+        p.is_detachable = True
+        p.is_atachable = False
+        p.parent_line = polyline
+        find_translation_polyline(p, polyline)
+        polyline.points.append(p)
+        snap_to_polyline(p, polyline)
+        p.color = "#349AFF"
+        polyline.update()
+    elif circle is not None:
+        p.is_detachable = True
+        p.is_atachable = False
+        p.parent_line = circle
+        find_translation_circle(p,circle)
+        circle.points.append(p)
+        snap_to_circle(p, circle)
+        p.color = "#349AFF"
+        circle.update()
+
+    globals.objects.register(p)
+
+    return(p)
