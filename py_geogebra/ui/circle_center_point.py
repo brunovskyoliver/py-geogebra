@@ -47,17 +47,11 @@ class Circle_center_point:
         self.anchor_1 = Blank_point(self.root)
         self.anchor_2 = Blank_point(self.root)
         self.selected = False
-        self.translation = None
 
         self.points = [self.center]
-        self.child_lines_labels = []
-        self.child_lines = []
         self.lower_label = ""
         self.lower_label_obj = Lower_label(self.root, obj=self)
         self.objects.register(self.lower_label_obj)
-        self.prescription = ()
-        self.angle = 0
-        self.vector = (0, 0)
 
         self.canvas.bind("<Configure>", lambda e: self.update())
 
@@ -76,9 +70,6 @@ class Circle_center_point:
             "points": [p.label for p in self.points],
             "center": self.center.label if self.center else None,
             "point_2": self.point_2.label if self.point_2 else None,
-            "prescription": [p for p in self.prescription],
-            "vector": self.vector,
-            "child_lines_labels": [l.lower_label for l in self.child_lines]
         }
 
     @classmethod
@@ -111,9 +102,6 @@ class Circle_center_point:
         cx, cy = state.center
         c.cx = cx
         c.cy = cy
-        c.prescription = data.get("prescription", {})
-        c.vector = data.get("vector")
-        c.child_lines_labels = [lbl for lbl in data.get("child_lines_labels", [])]
         c.update()
         return c
 
@@ -211,14 +199,8 @@ class Circle_center_point:
             if self.point_2 not in self.points:
                 self.points.append(self.point_2)
 
-        if len(self.child_lines) == 0:
-            self.child_lines = load_lines_from_labels(self.child_lines_labels)
-
         for p in self.points:
             self.canvas.tag_raise(p.tag)
-        for l in self.child_lines:
-            if l:
-                l.parent_vector = self.vector
-                l.update()
+
         self.prev_x, self.prev_y = self.pos_x, self.pos_y
         self.canvas.tag_raise(self.lower_label_obj.tag)
