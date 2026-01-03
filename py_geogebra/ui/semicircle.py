@@ -156,8 +156,9 @@ class Semicircle:
         self.anchor_1.pos_x, self.anchor_1.pos_y = cx - self.radius, cy - self.radius
         self.anchor_2.pos_x, self.anchor_2.pos_y = cx + self.radius, cy + self.radius
 
-        self.vector = [self.point_2.pos_x - self.point_1.pos_x, self.point_2.pos_y - self.point_1.pos_y]
-        self.n_vector = [self.vector[1], -self.vector[0]]
+        if self.point_2:
+            self.vector = [self.point_2.pos_x - self.point_1.pos_x, self.point_2.pos_y - self.point_1.pos_y]
+            self.n_vector = [self.vector[1], -self.vector[0]]
 
         for obj in self.points:
             if (obj is not self.point_1) and (obj is not self.point_2):

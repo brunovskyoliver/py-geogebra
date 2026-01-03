@@ -336,7 +336,7 @@ def find_polyline_at_position(e, r=2):
                 break
     return line
 
-def find_circle_at_position(e, r=2):
+def find_circle_at_position(e, r=2, exception = None):
     from ..ui.circle_center_point import Circle_center_point
     from ..ui.circle_center_radius import Circle_center_radius
     from ..ui.compass import Compass
@@ -347,6 +347,8 @@ def find_circle_at_position(e, r=2):
     items = g().canvas.find_overlapping(e.x - r, e.y - r, e.x + r, e.y + r)
     line = None
     for obj in g().objects._objects:
+        if obj is exception:
+            continue
         if (hasattr(obj, "tag") and any(obj.tag in g().canvas.gettags(i) for i in items)
         and (isinstance(obj, Circle_center_radius)
         or isinstance(obj, Circle_center_point)
@@ -549,9 +551,9 @@ def find_circle_line_intersection(circle, p1, p2):
     return intersections
 
 def find_circle_circle_intersection(circle1, circle2):
-    x1, y1 = circle1.point_1.pos_x, circle1.center.pos_y
+    x1, y1 = circle1.center.pos_x, circle1.center.pos_y
     r1 = circle1.radius
-    x2, y2 = circle2.point_1.pos_x, circle2.center.pos_y
+    x2, y2 = circle2.center.pos_x, circle2.center.pos_y
     r2 = circle2.radius
 
     dx, dy = x2 - x1, y2 - y1
@@ -736,7 +738,7 @@ def create_or_find_point_at_position(e, root, exception = None):
 
     pb = find_line_at_position(e, r=2, exception = exception)
     polyline = find_polyline_at_position(e, r=2)
-    circle = find_circle_at_position(e, r=2)
+    circle = find_circle_at_position(e, r=2, exception = exception)
 
 
     label = get_label(state)
@@ -778,5 +780,7 @@ def create_or_find_point_at_position(e, root, exception = None):
         circle.update()
 
     globals.objects.register(p)
+
+    p.select()
 
     return(p)
