@@ -279,7 +279,7 @@ def pressing(root:Tk) -> None:
             state.start_pos["y"] = e.y
             world_x, world_y = screen_to_world(e)
             p = find_point_at_position(e)
-            if p == None:
+            if p == None or (len(state.points_for_obj) == 2 and p in state.points_for_obj[1].points):
                 label = get_label(state)
                 p = Point(
                     root,
