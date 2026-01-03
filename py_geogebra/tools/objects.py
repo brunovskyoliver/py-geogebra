@@ -3,6 +3,7 @@ from typing import List, Protocol
 from py_geogebra.ui.compass import Compass
 from py_geogebra.ui.lower_label import Lower_label
 from py_geogebra.ui.semicircle import Semicircle
+from py_geogebra.ui.tangents import Tangents
 from .utils import center
 from .. import state
 import json
@@ -224,6 +225,9 @@ class Objects:
                 self.register(i)
             elif od["type"] == "Semicircle":
                 c = Semicircle.from_dict(root, od)
+                self.register(c)
+            elif od["type"] == "Tangnets":
+                c = Tangents.from_dict(root, od)
                 self.register(c)
 
         for od in data.get("objects", []):

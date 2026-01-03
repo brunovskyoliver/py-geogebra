@@ -4,6 +4,7 @@ from tkinter import Tk
 
 from py_geogebra.ui.compass import Compass
 from py_geogebra.ui.semicircle import Semicircle
+from py_geogebra.ui.tangents import Tangents
 
 from .. import globals, state
 from ..tools.utils import (
@@ -907,6 +908,35 @@ def semi_circle(e, root):
 
         state.points_for_obj = []
 
+def tangents(e, root):
+    state.start_pos["x"] = e.x
+    state.start_pos["y"] = e.y
+
+    p = find_point_at_position(e)
+    if p:
+        state.tangents_point = p
+        p.select()
+
+    c = find_circle_at_position(e)
+    if c:
+        state.tangents_circle = c
+        c.select()
+
+    if state.tangents_circle and state.tangents_point:
+        t = Tangents(root, point_1=state.tangents_point)
+        t.circle = state.tangents_circle
+        globals.objects.register(t)
+        t.update()
+
+        globals.objects.register(t.line_1)
+        globals.objects.register(t.line_2)
+
+        state.tangents_circle.deselect()
+        state.tangents_point.deselect()
+        state.tangents_circle = None
+        state.tangents_point = None
+
+
 
 def pressing(root:Tk) -> None:
     def left_click_pressed(e):
@@ -963,7 +993,7 @@ def pressing(root:Tk) -> None:
         elif state.selected_tool == "angle_bisector":
             angle_bisector(e, root)
         elif state.selected_tool == "tangents":
-            pass
+            tangents(e, root)
         elif state.selected_tool == "polar_or_diameter_line":
             pass
         elif state.selected_tool == "best_fit_line":

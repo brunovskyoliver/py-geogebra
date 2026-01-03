@@ -35,6 +35,8 @@ class Blank_point:
         self.x = 0
         self.y = 0
 
+        self.tag = 0
+
         self.pos_x = 0
         self.pos_y = 0
 
