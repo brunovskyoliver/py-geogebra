@@ -405,18 +405,9 @@ def pressing(root:Tk) -> None:
 
         elif state.selected_tool == "midpoint_or_center":
             world_x, world_y = screen_to_world(e)
-            p = find_point_at_position(e)
-            if p == None:
-                label = get_label(state)
-                p = Point(
-                    root,
-                    e,
-                    label=label,
-                    unit_size=globals.axes.unit_size,
-                    pos_x=world_x,
-                    pos_y=world_y,
-                )
-                globals.objects.register(p)
+
+            p = create_or_find_point_at_position(e, root)
+
             p.select()
             state.points_for_obj.append(p)
             if len(state.points_for_obj) == 2:
@@ -516,18 +507,8 @@ def pressing(root:Tk) -> None:
                     state.selected_perpendicular_line = pb
                     pb.select()
                 else:
-                    label = get_label(state)
-                    p = Point(
-                        root,
-                        e,
-                        label=label,
-                        unit_size=globals.axes.unit_size,
-                        pos_x=world_x,
-                        pos_y=world_y,
-                    )
-                    p.select()
+                    p = create_or_find_point_at_position(e, root)
                     state.selected_perpendicular_point = p
-                    globals.objects.register(p)
             else:
                 state.selected_perpendicular_point = p
                 p.select()
@@ -564,18 +545,8 @@ def pressing(root:Tk) -> None:
                     state.selected_perpendicular_line = pb
                     pb.select()
                 else:
-                    label = get_label(state)
-                    p = Point(
-                        root,
-                        e,
-                        label=label,
-                        unit_size=globals.axes.unit_size,
-                        pos_x=world_x,
-                        pos_y=world_y,
-                    )
-                    p.select()
+                    p = create_or_find_point_at_position(e, root)
                     state.selected_perpendicular_point = p
-                    globals.objects.register(p)
             else:
                 state.selected_perpendicular_point = p
                 p.select()
@@ -792,18 +763,12 @@ def pressing(root:Tk) -> None:
             state.start_pos["x"] = e.x
             state.start_pos["y"] = e.y
             world_x, world_y = screen_to_world(e)
-            p = find_point_at_position(e)
-            if p == None:
-                label = get_label(state)
-                p = Point(
-                    root,
-                    e=None,
-                    label=label,
-                    unit_size=globals.axes.unit_size,
-                    pos_x=world_x,
-                    pos_y=world_y,
-                )
-                globals.objects.register(p)
+
+            l = None
+            if len(state.points_for_obj) == 2:
+                l = state.points_for_obj[1]
+            p = create_or_find_point_at_position(e, root, exception=l)
+
             if len(state.points_for_obj) < 2:
                 c = Circle_center_point(
                     root,
@@ -827,18 +792,9 @@ def pressing(root:Tk) -> None:
             state.start_pos["x"] = e.x
             state.start_pos["y"] = e.y
             world_x, world_y = screen_to_world(e)
-            p = find_point_at_position(e)
-            if p is None:
-                label = get_label(state)
-                p = Point(
-                    root,
-                    e=None,
-                    label=label,
-                    unit_size=globals.axes.unit_size,
-                    pos_x=world_x,
-                    pos_y=world_y,
-                )
-                globals.objects.register(p)
+
+            p = create_or_find_point_at_position(e, root)
+
             radius = simpledialog.askfloat(
             "radius",
             "radius",
@@ -861,18 +817,12 @@ def pressing(root:Tk) -> None:
             state.start_pos["x"] = e.x
             state.start_pos["y"] = e.y
             world_x, world_y = screen_to_world(e)
-            p = find_point_at_position(e)
-            if p is None:
-                label = get_label(state)
-                p = Point(
-                    root,
-                    e=None,
-                    label=label,
-                    unit_size=globals.axes.unit_size,
-                    pos_x=world_x,
-                    pos_y=world_y,
-                )
-                globals.objects.register(p)
+
+            l = None
+            if len(state.points_for_obj) == 3:
+                l = state.points_for_obj[2]
+            p = create_or_find_point_at_position(e, root, exception=l)
+
             state.points_for_obj.append(p)
 
             if len(state.points_for_obj) == 2:
@@ -900,18 +850,11 @@ def pressing(root:Tk) -> None:
 
         elif state.selected_tool == "circle_3_points":
             world_x, world_y = screen_to_world(e)
-            p = find_point_at_position(e)
 
-            if p is None:
-                p = Point(
-                    root,
-                    e=None,
-                    label=get_label(state),
-                    unit_size=globals.axes.unit_size,
-                    pos_x=world_x,
-                    pos_y=world_y,
-                )
-                globals.objects.register(p)
+            l = None
+            if len(state.points_for_obj) == 2:
+                l = state.points_for_obj[1]
+            p = create_or_find_point_at_position(e, root, exception=l)
 
             if len(state.points_for_obj) == 0:
                 state.points_for_obj.append(p)
@@ -943,20 +886,12 @@ def pressing(root:Tk) -> None:
 
         elif state.selected_tool == "semi_circle":
             world_x, world_y = screen_to_world(e)
-            p = find_point_at_position(e)
 
-            if p is None:
-                p = Point(
-                    root,
-                    e=None,
-                    label=get_label(state),
-                    unit_size=globals.axes.unit_size,
-                    pos_x=world_x,
-                    pos_y=world_y,
-                )
-                globals.objects.register(p)
+            l = None
+            if len(state.points_for_obj) == 2:
+                l = state.points_for_obj[1]
+            p = create_or_find_point_at_position(e, root, exception=l)
 
-            p.select()
 
             if len(state.points_for_obj) == 0:
                 state.points_for_obj.append(p)
