@@ -844,6 +844,8 @@ def circle_3_points(e, root):
         l = state.points_for_obj[1]
     p = create_or_find_point_at_position(e, root, exception=l)
 
+    p.select()
+
     if len(state.points_for_obj) == 0:
         state.points_for_obj.append(p)
 
