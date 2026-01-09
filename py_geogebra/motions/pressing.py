@@ -908,6 +908,7 @@ def semi_circle(e, root):
 
         state.points_for_obj = []
 
+
 def tangents(e, root):
     state.start_pos["x"] = e.x
     state.start_pos["y"] = e.y
