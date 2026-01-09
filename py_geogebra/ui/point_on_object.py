@@ -4,14 +4,12 @@ from .. import state
 from .. import globals
 
 
-class Point:
-
+class Point_on_object:
     def __init__(
         self,
         root: tk.Tk,
         e,
         label: str = "",
-        unit_size = 40,
         pos_x: int = 0,
         pos_y: int = 0,
         color="blue",
@@ -39,9 +37,9 @@ class Point:
         self.is_detachable = False
         self.is_atachable = True
 
-        self.parent_line = None
+        self.parent_obj = None
 
-        self.tag = f"point_{id(self)}"
+        self.tag = f"point_on_object_{id(self)}"
         self.selected = False
         self.highlight_tag = f"{self.tag}_highlight"
 
@@ -50,7 +48,7 @@ class Point:
 
     def to_dict(self) -> dict:
         return {
-            "type": "Point",
+            "type": "Point_on_object",
             "label": self.label,
             "pos_x": self.pos_x,
             "pos_y": self.pos_y,

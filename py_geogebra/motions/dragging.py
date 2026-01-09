@@ -1,5 +1,6 @@
 from py_geogebra.ui.circle_center_radius import Circle_center_radius
 from py_geogebra.ui.compass import Compass
+from py_geogebra.ui.point_on_object import Point_on_object
 from .. import state
 from ..tools.utils import (
     set_cursor,
@@ -57,6 +58,8 @@ def dragging(root):
 
                 if state.shift_pressed and not isinstance(state.drag_target, Intersect):
                     state.drag_target.snap_point(e)
+                elif isinstance(state.drag_target, Point_on_object):
+                    pass
                 else:
                     state.drag_target.pos_x = world_x
                     state.drag_target.pos_y = world_y

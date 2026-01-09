@@ -3,6 +3,7 @@ from tkinter import simpledialog
 from tkinter import Tk
 
 from py_geogebra.ui.compass import Compass
+from py_geogebra.ui.point_on_object import Point_on_object
 from py_geogebra.ui.semicircle import Semicircle
 from py_geogebra.ui.tangents import Tangents
 
@@ -16,6 +17,7 @@ from ..tools.utils import (
     find_circle_at_position,
     find_line_at_position,
     find_point_at_position,
+    find_polygon_at_position,
     find_polyline_at_position,
     find_translation,
     find_translation_circle,
@@ -938,6 +940,22 @@ def tangents(e, root):
         state.tangents_circle = None
         state.tangents_point = None
 
+def point_on_object(e, root):
+    p = find_point_at_position(e)
+    if p:
+        return
+
+    poly = find_polygon_at_position(e)
+    if not poly:
+        create_or_find_point_at_position(e, root)
+        return
+
+    world_x, world_y = screen_to_world(e)
+    label = get_label(state=state)
+    p = Point_on_object(root, e, label=label, pos_x=world_x, pos_y=world_y)
+    globals.objects.register(p)
+    p.update()
+
 
 
 def pressing(root:Tk) -> None:
@@ -955,7 +973,7 @@ def pressing(root:Tk) -> None:
         elif state.selected_tool == "point":
             point(e, root)
         elif state.selected_tool == "point_on_object":
-            pass
+            point_on_object(e, root)
         elif state.selected_tool == "attach_detach_point":
             attach_detach_point(e, root)
         elif state.selected_tool == "intersect":
