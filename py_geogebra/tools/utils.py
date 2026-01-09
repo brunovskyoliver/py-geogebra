@@ -252,7 +252,7 @@ def delete_object(object_to_delete, state):
     g().objects.refresh()
 
 
-def world_to_screen(wx, wy):
+def world_to_screen(wx, wy) -> tuple[float, float]:
     cx, cy = state.center
     sx = cx + wx * g().objects.unit_size * g().objects.scale
     sy = cy - wy * g().objects.unit_size * g().objects.scale
@@ -746,7 +746,6 @@ def create_or_find_point_at_position(e, root, exception = None):
         root,
         e,
         label=label,
-        unit_size=globals.axes.unit_size,
         pos_x=world_x,
         pos_y=world_y,
     )
