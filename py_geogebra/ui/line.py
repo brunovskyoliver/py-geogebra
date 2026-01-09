@@ -1,5 +1,7 @@
+from os import fsencode
 import tkinter as tk
 from ..tools.utils import (
+    screen_to_world,
     world_to_screen,
     snap_to_line,
     get_linear_fuction_prescription,
@@ -29,8 +31,6 @@ class Line:
         self.prev_x = 0.0
         self.prev_y = 0.0
 
-        self.offset_x = 0.0
-        self.offset_y = 0.0
         self.scale = 1.0  # zoom factor
         self.unit_size = unit_size
 
@@ -66,8 +66,6 @@ class Line:
             "unit_size": self.unit_size,
             "scale": self.scale,
             "is_drawable": self.is_drawable,
-            "offset_x": self.offset_x,
-            "offset_y": self.offset_y,
             "tag": self.tag,
             "points": [p.label for p in self.points],
             "point_1": self.point_1.label if self.point_1 else None,
@@ -97,8 +95,6 @@ class Line:
         line.point_2 = p2
         line.scale = data.get("scale", 1.0)
         line.is_drawable = data.get("is_drawable", True)
-        line.offset_x = data.get("offset_x", 0)
-        line.offset_y = data.get("offset_y", 0)
         line.lower_label = data.get("lower_label", "")
         line.tag = data.get("tag", "")
         line.pos_x = data.get("pos_x", 0)
@@ -121,48 +117,33 @@ class Line:
         self.selected = False
         self.update()
 
-    def update(self, e=None):
-        if self.deleted:
-            return
-        self.canvas.delete(self.tag)
 
-        visual_scale = min(max(1, self.scale**0.5), 1.9)
+    def resolve_coords(self, e=None) -> tuple[float, float, float, float]:
+        w_x1, w_y1 = self.point_1.pos_x, self.point_1.pos_y
 
         if state.drag_target is self:
 
             x_dif, y_dif = self.prev_x - self.pos_x, self.prev_y - self.pos_y
-            x1, y1 = self.point_1.pos_x, self.point_1.pos_y
-            x2, y2 = self.point_2.pos_x, self.point_2.pos_y
+            w_x2, w_y2 = self.point_2.pos_x, self.point_2.pos_y
+            for obj in [self.point_1, self.point_2]:
+                obj.pos_x -= x_dif
+                obj.pos_y -= y_dif
 
-            for obj in self.points:
-                if (obj is self.point_1) or (obj is self.point_2):
-                    obj.pos_x -= x_dif
-                    obj.pos_y -= y_dif
-                    x1 -= x_dif
-                    y1 -= y_dif
-                    x2 -= x_dif
-                    y2 -= y_dif
-                    continue
+            w_x1 -= x_dif
+            w_y1 -= y_dif
+            w_x2 -= x_dif
+            w_y2 -= y_dif
 
         else:
-            x1, y1 = self.point_1.pos_x, self.point_1.pos_y
-
-            if self.point_2 is None and e is None:
-                return
 
             if self.point_2 is None:
-                cx, cy = state.center
-                x2 = (e.x - cx) / (self.unit_size * self.scale)
-                y2 = (cy - e.y) / (self.unit_size * self.scale)
+                w_x2, w_y2 = screen_to_world(e)
             else:
-                x2, y2 = self.point_2.pos_x, self.point_2.pos_y
+                w_x2, w_y2 = self.point_2.pos_x, self.point_2.pos_y
 
-        for obj in self.points:
-            if (obj is not self.point_1) and (obj is not self.point_2):
-                snap_to_line(obj, self)
-                obj.update()
 
-        self.angle = math.atan2(y2 - y1, x2 - x1)
+
+        self.angle = math.atan2(w_y2 - w_y1, w_x2 - w_x1)
         span = max(self.canvas.winfo_width(), self.canvas.winfo_height()) / (
             self.unit_size * self.scale
         )
@@ -174,55 +155,75 @@ class Line:
 
             self.vector = calculate_vector(self.point_1, self.point_2)
 
-        self.prescription = get_linear_fuction_prescription(x1, y1, x2, y2)
+        self.prescription = get_linear_fuction_prescription(w_x1, w_y1, w_x2, w_y2)
 
         span *= 10
-        x1 -= span * cos_a
-        y1 -= span * sin_a
-        x2 += span * cos_a
-        y2 += span * sin_a
+        w_x1 -= span * cos_a
+        w_y1 -= span * sin_a
+        w_x2 += span * cos_a
+        w_y2 += span * sin_a
 
-        x1, y1 = world_to_screen(x1, y1)
-        x2, y2 = world_to_screen(x2, y2)
+        x1, y1 = world_to_screen(w_x1, w_y1)
+        x2, y2 = world_to_screen(w_x2, w_y2)
+
+        return x1, y1, x2, y2
+
+    def snap_points(self):
+        for obj in self.points:
+            if (obj is not self.point_1) and (obj is not self.point_2):
+                snap_to_line(obj, self)
+                obj.update()
+
+    def _is_drawable(self) -> bool:
+        if self.point_2 is None:
+            return True
+        return self.point_1.is_drawable and self.point_2.is_drawable
+
+    def draw_outline(self):
+        self.canvas.create_line(
+            self.x1,
+            self.y1,
+            self.x2,
+            self.y2,
+            fill="lightgrey",
+            width=2 * 3 * self.visual_scale,
+            tags=self.tag,
+        )
+
+    def draw_line(self):
+        self.canvas.create_line(
+            self.x1,
+            self.y1,
+            self.x2,
+            self.y2,
+            fill="black",
+            width=2 * self.visual_scale,
+            tags=self.tag,
+        )
 
 
+    def update(self, e=None):
+        if self.deleted or (self.point_2 is None and e is None):
+            return
+        self.canvas.delete(self.tag)
 
-        if not self.point_2:
-            self.is_drawable = True
-        elif self.point_1.is_drawable and self.point_2.is_drawable:
-            self.is_drawable = True
-        else:
-            self.is_drawable = False
+        self.visual_scale = min(max(1, self.scale**0.5), 1.9)
 
+        self.x1,self.y1,self.x2,self.y2 = self.resolve_coords(e=e)
+
+        self.snap_points()
+
+        self.is_drawable = self._is_drawable()
         self.lower_label_obj.is_drawable = self.is_drawable
 
         if self.is_drawable:
-
             if self.selected:
-                self.canvas.create_line(
-                    x1,
-                    y1,
-                    x2,
-                    y2,
-                    fill="lightgrey",
-                    width=2 * 3 * visual_scale,
-                    tags=self.tag,
-                )
+                self.draw_outline()
+            self.draw_line()
 
-            self.canvas.create_line(
-                x1,
-                y1,
-                x2,
-                y2,
-                fill="black",
-                width=2 * visual_scale,
-                tags=self.tag,
-            )
-        self.canvas.tag_raise(self.point_1.tag)
-        if self.point_2 is not None:
-            self.canvas.tag_raise(self.point_2.tag)
-            if self.point_2 not in self.points:
-                self.points.append(self.point_2)
+
+        if self.point_2 and self.point_2 not in self.points:
+            self.points.append(self.point_2)
 
         if len(self.child_lines) == 0:
             self.child_lines = load_lines_from_labels(self.child_lines_labels)
@@ -233,5 +234,6 @@ class Line:
             if l:
                 l.parent_vector = self.vector
                 l.update()
+
         self.prev_x, self.prev_y = self.pos_x, self.pos_y
         self.canvas.tag_raise(self.lower_label_obj.tag)
