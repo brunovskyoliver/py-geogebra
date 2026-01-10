@@ -170,7 +170,7 @@ class Line:
 
     def snap_points(self):
         for obj in self.points:
-            if (obj is not self.point_1) and (obj is not self.point_2):
+            if (obj is not self.point_1) and (obj is not self.point_2) and obj in globals.objects._objects:
                 snap_to_line(obj, self)
                 obj.update()
 

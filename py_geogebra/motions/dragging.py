@@ -1,5 +1,6 @@
 from py_geogebra.ui.circle_center_radius import Circle_center_radius
 from py_geogebra.ui.compass import Compass
+from py_geogebra.ui.point_on_object import Point_on_object
 from .. import state
 from ..tools.utils import (
     set_cursor,

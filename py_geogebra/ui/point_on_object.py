@@ -1,17 +1,15 @@
 import tkinter as tk
-from ..tools.utils import snap, world_to_screen
+from ..tools.utils import snap, snap_to_polyline, world_to_screen
 from .. import state
 from .. import globals
 
 
-class Point:
-
+class Point_on_object:
     def __init__(
         self,
         root: tk.Tk,
         e,
         label: str = "",
-        unit_size = 40,
         pos_x: int = 0,
         pos_y: int = 0,
         color="blue",
@@ -26,6 +24,9 @@ class Point:
             self.pos_y = pos_y
         else:
             self.pos_x, self.pos_y = snap(e=e)
+
+        self.prev_pos_x = pos_x
+        self.prev_pos_y = pos_y
         self.label = label
 
         self.scale = 1.0  # zoom factor
@@ -39,9 +40,9 @@ class Point:
         self.is_detachable = False
         self.is_atachable = True
 
-        self.parent_line = None
+        self.parent_obj = None
 
-        self.tag = f"point_{id(self)}"
+        self.tag = f"point_on_object_{id(self)}"
         self.selected = False
         self.highlight_tag = f"{self.tag}_highlight"
 
@@ -50,7 +51,7 @@ class Point:
 
     def to_dict(self) -> dict:
         return {
-            "type": "Point",
+            "type": "Point_on_object",
             "label": self.label,
             "pos_x": self.pos_x,
             "pos_y": self.pos_y,
@@ -131,6 +132,20 @@ class Point:
 
         self.x, self.y = world_to_screen(self.pos_x, self.pos_y)
 
+
+        # prichadza najdebilnejsi kod co som vymyslel je mi to luto
+        if state.drag_target is self:
+            items = self.canvas.find_overlapping(self.x, self.y, self.x+1, self.y+1)
+            tags = [self.canvas.gettags(item) for item in items]
+            found = False
+            for tag in tags:
+                if "polygon_fill" in tag:
+                    found = True
+                    self.prev_pos_x = self.pos_x
+                    self.prev_pos_y = self.pos_y
+                    break
+            if not found:
+                self.x, self.y = world_to_screen(self.prev_pos_x, self.prev_pos_y)
 
 
         self.visual_scale = min(max(1, self.scale**0.5), 1.9)
