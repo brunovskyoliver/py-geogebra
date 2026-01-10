@@ -132,10 +132,11 @@ class Point_on_object:
 
         self.x, self.y = world_to_screen(self.pos_x, self.pos_y)
 
+
+        # prichadza najdebilnejsi kod co som vymyslel je mi to luto
         if state.drag_target is self:
             items = self.canvas.find_overlapping(self.x, self.y, self.x+1, self.y+1)
             tags = [self.canvas.gettags(item) for item in items]
-            print(tags)
             found = False
             for tag in tags:
                 if "polygon_fill" in tag:
@@ -144,9 +145,7 @@ class Point_on_object:
                     self.prev_pos_y = self.pos_y
                     break
             if not found:
-                print(self.x)
                 self.x, self.y = world_to_screen(self.prev_pos_x, self.prev_pos_y)
-                print(self.x)
 
 
         self.visual_scale = min(max(1, self.scale**0.5), 1.9)
