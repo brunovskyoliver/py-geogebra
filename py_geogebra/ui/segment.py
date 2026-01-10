@@ -142,7 +142,7 @@ class Segment:
             return
 
         for obj in self.points:
-            if (obj is self.point_1) or (obj is self.point_2):
+            if (obj is self.point_1) or (obj is self.point_2) or obj in globals.objects._objects:
                 continue
             if obj.translation > 1:
                 obj.translation = 1
