@@ -953,6 +953,7 @@ def point_on_object(e, root):
     world_x, world_y = screen_to_world(e)
     label = get_label(state=state)
     p = Point_on_object(root, e, label=label, pos_x=world_x, pos_y=world_y)
+    p.parent_obj = poly
     globals.objects.register(p)
     p.update()
 
