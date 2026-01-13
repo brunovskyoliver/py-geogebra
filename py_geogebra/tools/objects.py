@@ -28,6 +28,7 @@ from ..ui.regular_polygon import Regular_polygon
 from ..ui.circle_center_point import Circle_center_point
 from ..ui.circle_center_radius import Circle_center_radius
 from ..ui.circle_3_points import Circle_3_points
+from ..ui.point_on_object import Point_on_object
 from .. import globals
 import requests
 import subprocess
@@ -233,6 +234,11 @@ class Objects:
         for od in data.get("objects", []):
             if od["type"] == "Lower_label":
                 ll = Lower_label.from_dict(root, od)
+                self.register(ll)
+
+        for od in data.get("objects", []):
+            if od["type"] == "Point_on_object":
+                ll = Point_on_object.from_dict(root, od)
                 self.register(ll)
 
         if "sidebar" in data and "order" in data["sidebar"]:
