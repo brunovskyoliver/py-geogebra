@@ -217,9 +217,9 @@ def freehand(e, root):
     world_x = (e.x - cx) / (globals.objects.unit_size * globals.objects.scale)
     world_y = (cy - e.y) / (globals.objects.unit_size * globals.objects.scale)
 
-    state.current_freehand = FreeHand(root, globals.objects.unit_size)
-    state.current_freehand.add_point(world_x, world_y)
-    globals.objects.register(state.current_freehand)
+    state.current_pen = FreeHand(root, globals.objects.unit_size)
+    state.current_pen.add_point(world_x, world_y)
+    globals.objects.register(state.current_pen)
 
 def line(e, root):
     state.start_pos["x"] = e.x

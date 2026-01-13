@@ -7,29 +7,13 @@ DISTDIR := dist
 
 build:
 	$(PYTHON) -m PyInstaller \
-		--onefile \
-		--noconsole \
-		--noconfirm \
-		--name "$(NAME)" \
-		--add-data "locales:locales" \
-		--add-data "resources:resources" \
-		--add-data ".env:." \
-		--add-data "py_geogebra/flask/templates:py_geogebra/flask/templates" \
-		--hidden-import=requests \
-		--hidden-import=struct \
-		--hidden-import=_struct \
-		--hidden-import=dotenv \
-		--hidden-import=libsql_client \
-		--hidden-import=requests\
-		--hidden-import=flask\
-		--hidden-import=threading\
-		--hidden-import=libsql\
-		--collect-all libsql\
-		$(APP)
+	--onefile --noconsole --noconfirm \
+	--hidden-import struct --hidden-import _struct --add-data "locales:locales" --name py-geogebra --add-data "resources:resources" --hidden-import=requests --hidden-import=dotenv --hidden-import=libsql_client --hidden-import=requests --hidden-import=flask --hidden-import=threading --add-data ".env:." --add-data "py_geogebra/flask/templates:py_geogebra/flask/templates" \
+	--hidden-import=libsql --hidden-import=websockets --collect-all libsql main.py \
+
 
 clean:
 	rm -rf build $(DISTDIR) *.spec
 
 run: build
 	./$(DISTDIR)/$(NAME)
-

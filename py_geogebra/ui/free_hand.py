@@ -26,7 +26,7 @@ class FreeHand:
         self.points = []
 
         self.line_buffer = 0.98
-        self.circle_buffer =0.33
+        self.circle_buffer =0.5
 
         self.detected = False
 
@@ -109,7 +109,7 @@ class FreeHand:
             p.pos_x, p.pos_y = cx, cy
             c = Circle_center_radius(
                 root=self.root,
-                point_1=p
+                center=p
             )
             c.radius = avg_r
             lower_label = get_lower_label(state)

@@ -147,7 +147,6 @@ class Point_on_object:
             if not found:
                 self.x, self.y = world_to_screen(self.prev_pos_x, self.prev_pos_y)
 
-
         self.visual_scale = min(max(1, self.scale**0.5), 1.9)
 
         self.r = 6.0 * self.visual_scale
