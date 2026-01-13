@@ -2,6 +2,7 @@ dist/
 build/
 .DS_Store
 py_geogebra/__pycache__/
+prezentacia/
 __pycache__/
 *.py[cod]
 .env
@@ -10,3 +11,4 @@ __pycache__/
 *.db-shm
 *.db-info
 *.db-wal
+*.json
