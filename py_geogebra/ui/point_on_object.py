@@ -1,5 +1,5 @@
 import tkinter as tk
-from ..tools.utils import snap, snap_to_polyline, world_to_screen
+from ..tools.utils import find_translation_polyline, snap, snap_to_polyline, world_to_screen
 from .. import state
 from .. import globals
 
@@ -145,7 +145,12 @@ class Point_on_object:
                     self.prev_pos_y = self.pos_y
                     break
             if not found:
-                self.x, self.y = world_to_screen(self.prev_pos_x, self.prev_pos_y)
+                find_translation_polyline(self, self.parent_obj)
+                if self.translation > 1:
+                    self.translation = 1
+                if self.translation < 0:
+                    self.translation = 0
+                snap_to_polyline(self, self.parent_obj)
 
         self.visual_scale = min(max(1, self.scale**0.5), 1.9)
 
