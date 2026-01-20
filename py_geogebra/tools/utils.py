@@ -435,6 +435,51 @@ def snap_to_polyline(point, polyline):
     point.pos_y = proj_y
 
 
+def snap_point_on_obj(point, polygon):
+    smallest_dist = float("inf")
+    index_1 = 0
+    index_2 = 0
+    for i in range(len(polyline.line_points) - 1):
+        dist = (
+            distance(
+                point.x,
+                point.y,
+                polyline.line_points[i].pos_x,
+                polyline.line_points[i].pos_y,
+            )
+            + distance(
+                point.pos_x,
+                point.pos_y,
+                polyline.line_points[i + 1].pos_x,
+                polyline.line_points[i + 1].pos_y,
+            )
+            - distance(
+                polyline.line_points[i].pos_x,
+                polyline.line_points[i].pos_y,
+                polyline.line_points[i + 1].pos_x,
+                polyline.line_points[i + 1].pos_y,
+            )
+        )
+        if dist < smallest_dist:
+            smallest_dist = dist
+            index_1 = i
+            index_2 = i + 1
+
+    x1, y1 = polyline.line_points[index_1].pos_x, polyline.line_points[index_1].pos_y
+    x2, y2 = polyline.line_points[index_2].pos_x, polyline.line_points[index_2].pos_y
+
+    dx, dy = x2 - x1, y2 - y1
+
+    t = point.translation
+
+    proj_x = x1 + t * dx
+    proj_y = y1 + t * dy
+
+    point.pos_x = proj_x
+    point.pos_y = proj_y
+
+
+
 def snap_to_circle(point, circle):
     dx = point.pos_x - circle.center.pos_x
     dy = point.pos_y - circle.center.pos_y
