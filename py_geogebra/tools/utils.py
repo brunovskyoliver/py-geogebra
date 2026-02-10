@@ -357,6 +357,7 @@ def find_circle_at_position(e, r=2, exception = None):
     from ..ui.compass import Compass
     from py_geogebra.ui.semicircle import Semicircle
     from py_geogebra.ui.circle_3_points import Circle_3_points
+    from py_geogebra.ui.circular_arc import Circular_arc
 
 
     items = g().canvas.find_overlapping(e.x - r, e.y - r, e.x + r, e.y + r)
@@ -369,7 +370,9 @@ def find_circle_at_position(e, r=2, exception = None):
         or isinstance(obj, Circle_center_point)
         or isinstance(obj, Compass)
         or isinstance(obj, Semicircle)
-        or isinstance(obj, Circle_3_points))):
+        or isinstance(obj, Circle_3_points)
+        or isinstance(obj, Circular_arc)
+        )):
             line = obj
             break
     return line
