@@ -122,29 +122,19 @@ class Circular_arc:
 
 
 
-        # if state.drag_target is self:
-        #     x_dif, y_dif = self.prev_x - self.pos_x, self.prev_y - self.pos_y
-        #     x2, y2 = self.point_2.pos_x, self.point_2.pos_y
+        if state.drag_target is self:
+            x_dif, y_dif = self.prev_x - self.pos_x, self.prev_y - self.pos_y
+            x2, y2 = self.point_2.pos_x, self.point_2.pos_y
 
-        #     for obj in self.points:
-        #         if (obj is self.point_1) or (obj is self.point_2):
-        #             obj.pos_x -= x_dif
-        #             obj.pos_y -= y_dif
-        #             x1 -= x_dif
-        #             y1 -= y_dif
-        #             x2 -= x_dif
-        #             y2 -= y_dif
-        #             continue
-
-        # else:
-        #     if self.point_2 is None and e is None:
-        #         return
-
-        #     if self.point_2 is None:
-        #         cx, cy = state.center
-        #         x2, y2 = screen_to_world(e)
-        #     else:
-        #         x2, y2 = self.point_2.pos_x, self.point_2.pos_y
+            for obj in self.points:
+                if (obj is self.point_1) or (obj is self.point_2):
+                    obj.pos_x -= x_dif
+                    obj.pos_y -= y_dif
+                    x1 -= x_dif
+                    y1 -= y_dif
+                    x2 -= x_dif
+                    y2 -= y_dif
+                    continue
 
 
         angle = -math.atan2(y1 - y_c, x1 - x_c)
@@ -153,6 +143,8 @@ class Circular_arc:
         vec2 = (x2 - x_c, y2 - y_c)
         angle_between = math.acos((vec1[0]*vec2[0] + vec1[1]*vec2[1]) / (distance(x_c, y_c, x1, y1) * distance(x_c, y_c, x2, y2)))
         angle_between = (angle_between / 6.28) * 360
+        if (dot(vec1, (vec2[1], -vec2[0]))) > 0:
+            angle_between = 360 - angle_between
 
 
         r = distance(x_c, y_c, x1, y1)
