@@ -35,8 +35,6 @@ import subprocess
 
 
 class Drawable(Protocol):
-    offset_x: float
-    offset_y: float
     scale: float
 
     def update(self) -> None: ...

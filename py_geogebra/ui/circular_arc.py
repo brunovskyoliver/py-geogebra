@@ -2,6 +2,7 @@ import tkinter as tk
 
 
 from py_geogebra.tools.objects import Objects
+from py_geogebra.ui.line import Line
 from py_geogebra.ui.point import Point
 from ..tools.utils import (
     screen_to_world,
@@ -24,7 +25,6 @@ class Circular_arc:
         self,
         root: tk.Tk,
         unit_size: int = 40,
-        point_1 = None,
     ):
         self.root = root
         self.canvas = globals.canvas
@@ -44,10 +44,8 @@ class Circular_arc:
 
         self.tag = f"circular_arc{id(self)}"
         self.center = None
-        self.point_1 = point_1
+        self.point_1 = None
         self.point_2 = None
-        self.anchor_1 = Blank_point(self.root)
-        self.anchor_2 = Blank_point(self.root)
         self.selected = False
         self.translation = None
 
@@ -56,7 +54,7 @@ class Circular_arc:
         self.vector = []
         self.n_vector = []
 
-        self.points : list[Point] = [self.point_1]
+        self.points : list[Point] = []
         self.lower_label = ""
         self.lower_label_obj = Lower_label(self.root, obj=self)
         self.objects.register(self.lower_label_obj)
@@ -116,26 +114,21 @@ class Circular_arc:
 
         visual_scale = min(max(1, self.scale**0.5), 1.9)
 
-        x1, y1 = world_to_screen(self.point_1.pos_x, self.point_1.pos_y)
-        x2, y2 = world_to_screen(self.point_2.pos_x, self.point_2.pos_y)
-        x_c, y_c = world_to_screen(self.center.pos_x, self.center.pos_y)
 
 
 
         if state.drag_target is self:
             x_dif, y_dif = self.prev_x - self.pos_x, self.prev_y - self.pos_y
-            x2, y2 = self.point_2.pos_x, self.point_2.pos_y
 
             for obj in self.points:
-                if (obj is self.point_1) or (obj is self.point_2):
+                if (obj is self.point_1) or (obj is self.point_2) or (obj is self.center):
                     obj.pos_x -= x_dif
                     obj.pos_y -= y_dif
-                    x1 -= x_dif
-                    y1 -= y_dif
-                    x2 -= x_dif
-                    y2 -= y_dif
                     continue
 
+        x2, y2 = world_to_screen(self.point_2.pos_x, self.point_2.pos_y)
+        x1, y1 = world_to_screen(self.point_1.pos_x, self.point_1.pos_y)
+        x_c, y_c = world_to_screen(self.center.pos_x, self.center.pos_y)
 
         angle = -math.atan2(y1 - y_c, x1 - x_c)
         angle = (angle / 6.28) * 360
@@ -155,17 +148,47 @@ class Circular_arc:
         square_y2 = y_c - r
 
 
+        if self.is_drawable:
+
+            if self.selected:
+                self.canvas.create_arc(
+                    sqaure_x,
+                    sqaure_y,
+                    square_x2,
+                    square_y2,
+                    start=angle,
+                    extent=angle_between,
+                    style=tk.ARC,
+                    outline="lightgrey",
+                    width=2 * 3 * visual_scale,
+                    tags=self.tag,
+                )
 
 
-        self.canvas.create_arc(
-            sqaure_x,
-            sqaure_y,
-            square_x2,
-            square_y2,
-            start=angle,
-            extent=angle_between,
-            style=tk.ARC,
-            outline="black",
-            width=2 * visual_scale,
-            tags=self.tag,
-        )
+            self.canvas.create_arc(
+                sqaure_x,
+                sqaure_y,
+                square_x2,
+                square_y2,
+                start=angle,
+                extent=angle_between,
+                style=tk.ARC,
+                outline="black",
+                width=2 * visual_scale,
+                tags=self.tag,
+            )
+
+        if self.center and self.center not in self.points:
+            self.points.append(self.center)
+        if self.point_1 and self.point_1 not in self.points:
+            self.points.append(self.point_1)
+        if self.point_2 and self.point_2 not in self.points:
+            self.points.append(self.point_2)
+
+
+        for p in self.points:
+            self.canvas.tag_raise(p.tag)
+
+
+        self.prev_x = self.pos_x
+        self.prev_y = self.pos_y
