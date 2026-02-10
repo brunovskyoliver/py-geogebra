@@ -1,7 +1,6 @@
 import tkinter as tk
 
 
-from py_geogebra.tools.objects import Objects
 from py_geogebra.ui.line import Line
 from py_geogebra.ui.point import Point
 from ..tools.utils import (
@@ -75,6 +74,7 @@ class Circular_arc:
             "points": [p.label for p in self.points],
             "point_1": self.point_1.label if self.point_1 else None,
             "point_2": self.point_2.label if self.point_2 else None,
+            "center": self.center.label if self.center else None,
         }
 
     @classmethod
@@ -87,8 +87,11 @@ class Circular_arc:
 
         p1 = find_point(data.get("point_1"))
         p2 = find_point(data.get("point_2"))
-        c = cls(root=root, point_1=p1, unit_size=data.get("unit_size", 40))
+        pc = find_point(data.get("center"))
+        c = cls(root=root, unit_size=data.get("unit_size", 40))
+        c.point_1 = p1
         c.point_2 = p2
+        c.center = pc
         c.scale = data.get("scale", 1.0)
         c.is_drawable = data.get("is_drawable", True)
         c.offset_x = data.get("offset_x", 0)
@@ -140,13 +143,20 @@ class Circular_arc:
             angle_between = 360 - angle_between
 
 
-        r = distance(x_c, y_c, x1, y1)
+        self.radius = distance(x_c, y_c, x1, y1)
 
-        sqaure_x = x_c + r
-        sqaure_y = y_c + r
-        square_x2 = x_c - r
-        square_y2 = y_c - r
+        sqaure_x = x_c + self.radius
+        sqaure_y = y_c + self.radius
+        square_x2 = x_c - self.radius
+        square_y2 = y_c - self.radius
 
+
+        for obj in self.points:
+            if (obj is not self.point_1) and (obj is not self.point_2) and (obj is not self.center):
+
+                find_translation_circle(obj, self)
+                snap_to_circle(obj, self)
+                obj.update()
 
         if self.is_drawable:
 

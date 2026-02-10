@@ -29,6 +29,7 @@ from ..ui.circle_center_point import Circle_center_point
 from ..ui.circle_center_radius import Circle_center_radius
 from ..ui.circle_3_points import Circle_3_points
 from ..ui.point_on_object import Point_on_object
+from py_geogebra.ui.circular_arc import Circular_arc
 from .. import globals
 import requests
 import subprocess
@@ -227,6 +228,9 @@ class Objects:
                 self.register(c)
             elif od["type"] == "Tangnets":
                 c = Tangents.from_dict(root, od)
+                self.register(c)
+            elif od["type"] == "Circular_arc":
+                c = Circular_arc.from_dict(root, od)
                 self.register(c)
 
         for od in data.get("objects", []):
