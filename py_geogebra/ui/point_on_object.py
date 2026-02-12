@@ -49,6 +49,7 @@ class Point_on_object:
         self.sidebar.items.append(self)
         self.sidebar.update()
 
+
     def to_dict(self) -> dict:
         return {
             "type": "Point_on_object",

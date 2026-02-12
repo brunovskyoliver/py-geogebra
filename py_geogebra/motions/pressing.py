@@ -3,6 +3,7 @@ from tkinter import simpledialog
 from tkinter import Tk
 
 from py_geogebra.ui import point_on_object
+from py_geogebra.ui.circular_arc import Circular_arc
 from py_geogebra.ui.compass import Compass
 from py_geogebra.ui.point_on_object import Point_on_object
 from py_geogebra.ui.semicircle import Semicircle
@@ -995,6 +996,24 @@ def point_on_object(e, root):
     globals.objects.register(p)
     p.update()
 
+def circular_arc(e, root):
+    p = create_or_find_point_at_position(e, root)
+    state.points_for_obj.append(p)
+    globals.objects.register(p)
+
+    if (len(state.points_for_obj) == 3):
+        arc = Circular_arc(root)
+        arc.center = state.points_for_obj[0]
+        arc.point_1 = state.points_for_obj[1]
+        arc.point_2 = state.points_for_obj[2]
+        lower_label = get_lower_label(state)
+        arc.lower_label = lower_label
+        globals.objects.register(arc)
+
+        state.points_for_obj = []
+
+
+
 
 
 def pressing(root:Tk) -> None:
@@ -1082,7 +1101,7 @@ def pressing(root:Tk) -> None:
         elif state.selected_tool == "semi_circle":
             semi_circle(e, root)
         elif state.selected_tool == "circular_arc":
-            pass
+            circular_arc(e, root)
         elif state.selected_tool == "circumcircular_arc":
             pass
         elif state.selected_tool == "circular_sector":
