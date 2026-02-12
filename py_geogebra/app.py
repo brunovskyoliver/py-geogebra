@@ -26,13 +26,15 @@ def run_flask():
     app.run(host="127.0.0.1", port=5000, debug=False, use_reloader=False)
 
 
-def run_app():
+
+def run_app(args):
     global widgets
     set_language("sk")
     widgets = Widgets()
     globals.widgets = widgets
-    flask_process = threading.Thread(target=run_flask, daemon=True)
-    flask_process.start()
+    if not "noserver" in args:
+        flask_process = threading.Thread(target=run_flask, daemon=True)
+        flask_process.start()
     auth = Auth0Handler()
     globals.auth = auth
     root = tk.Tk()

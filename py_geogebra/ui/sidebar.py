@@ -16,6 +16,7 @@ from ..ui.perpendicular_bisector import Perpendicular_bisector
 from ..ui.perpendicular_line import Perpendicular_line
 from ..ui.parallel_line import Parallel_line
 from ..ui.regular_polygon import Regular_polygon
+from ..ui.angle import Angle
 
 
 
@@ -358,6 +359,24 @@ class Sidebar:
                     text=(
                         f"{item.lower_label}: Circle({item.center.label}, Segment({item.r_point_1.label},{item.r_point_2.label})\n"
                         f"= (x {sign_x} {abs(item.center.pos_x):.2f}){squared} + (y {sign_y} {abs(item.center.pos_y):.2f}){squared} = {item.radius**2:.2f})"
+                    ),
+                    font=self.font,
+                    fill="black",
+                    tags=f"sidebar_text_{i}"
+                )
+                self.canvas_tags[text] = item
+                bbox = self.canvas.bbox(text)
+                height = bbox[3] - bbox[1]
+                y += height + 10
+
+            elif isinstance(item, Angle):
+                ctx = [item.point_1.label,item.anchor.label,item.point_2.label]
+                text = self.canvas.create_text(
+                    10, y,
+                    anchor="nw",
+                    text=(
+                        f"a = Angle({', '.join(ctx)})\n"
+                        f" = {round(item.angle, 2)}"
                     ),
                     font=self.font,
                     fill="black",

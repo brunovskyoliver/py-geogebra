@@ -2,6 +2,7 @@ import math
 from tkinter import simpledialog
 from tkinter import Tk
 
+from py_geogebra.ui import point_on_object
 from py_geogebra.ui.compass import Compass
 from py_geogebra.ui.point_on_object import Point_on_object
 from py_geogebra.ui.semicircle import Semicircle
@@ -53,6 +54,7 @@ from ..ui.segment_with_lenght import Segment_with_length
 from ..ui.vector import Vector
 from ..ui.vector_from_point import Vector_from_point
 from ..ui.circle_3_points import Circle_3_points
+from ..ui.angle import Angle
 
 def arrow(e, root):
     state.start_pos["x"] = e.x
@@ -941,6 +943,41 @@ def tangents(e, root):
         state.tangents_circle = None
         state.tangents_point = None
 
+def angle(e, root):
+    state.start_pos["x"] = e.x
+    state.start_pos["y"] = e.y
+    world_x, world_y = screen_to_world(e)
+
+    a = None
+    if len(state.points_for_obj) == 2:
+        a = state.points_for_obj[1]
+    p = create_or_find_point_at_position(e, root, exception=a)
+    p.select()
+
+    if len(state.points_for_obj) < 2:
+        a = Angle(
+            root,
+            e,
+            unit_size=globals.axes.unit_size,
+            point_1=p,
+
+        )
+        globals.objects.register(a)
+        state.points_for_obj.append(p)
+        state.points_for_obj.append(a)
+
+    elif len(state.points_for_obj) == 2:
+        state.points_for_obj[1].anchor = p
+        state.points_for_obj[1].update()
+        state.points_for_obj.append(p)
+    else:
+        state.points_for_obj[1].point_2 = p
+        state.points_for_obj[1].update()
+        globals.sidebar.items.append(state.points_for_obj[1])
+        globals.sidebar.update()
+        deselect_all()
+        state.points_for_obj = []
+
 def point_on_object(e, root):
     p = find_point_at_position(e)
     if p:
@@ -1052,6 +1089,8 @@ def pressing(root:Tk) -> None:
             pass
         elif state.selected_tool == "circumcircular_sector":
             pass
+        elif state.selected_tool == "angle":
+            angle(e,root)
 
 
 
