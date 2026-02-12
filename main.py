@@ -1,5 +1,6 @@
 from py_geogebra.app import run_app
-import this
+# import this
+import sys
 
 if __name__ == "__main__":
-    run_app()
+    run_app(sys.argv)

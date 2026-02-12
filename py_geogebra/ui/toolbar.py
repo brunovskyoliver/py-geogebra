@@ -194,6 +194,21 @@ def toolbar(root):
             {"name": _("Kruhový výsek určený 3 bodmi"), "icon": "circumcircular_sector"},
         ],
     )
+    tool_menu_init(
+        root,
+        bar,
+        def_icon="angle",
+        buttons=[
+            {"name": _("Uhol"), "icon": "angle"},
+            {"name": _("Uhol danej veľkosti"), "icon": "angle_with_given_size"},
+            {"name": _("Vzdialenosť alebo dĺžka"), "icon": "length"},
+            {"name": _("Obsah"), "icon": "area"},
+            {"name": _("Smernica"), "icon": "slope"},
+            {"name": _("Vytvoriť zoznam"), "icon": "list"},
+            {"name": _("Vzťah"), "icon": "relation"},
+            {"name": _("Vyšetrenie priebehu funkcie"), "icon": "function_inspector"},
+        ],
+    )
     state.selected_tool = "arrow"
 
     return bar
