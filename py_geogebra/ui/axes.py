@@ -1,5 +1,10 @@
+from argparse import ZERO_OR_MORE
 import tkinter as tk
 import math
+
+from py_geogebra.ui.blank_point import Blank_point
+from py_geogebra.ui.line import Line
+
 from .. import state
 from .. import globals
 
@@ -14,6 +19,19 @@ class Axes:
         self.scale = 1.0
         self.current_step = 1.0
         self.unit_size = unit_size
+
+        self.zero_point = Blank_point(root)
+        self.zero_point.pos_x = 0
+        self.zero_point.pos_y = 0
+
+        self.x_point = Blank_point(root)
+        self.x_point.pos_x = 1
+        self.x_point.pos_y = 0
+        self.x_point.is_drawable = False
+
+        self.x_axis = Line(root, point_1 = self.zero_point);
+        self.x_axis.point_2 = self.x_point;
+        globals.objects.register(self.x_axis)
 
     def to_dict(self) -> dict:
         return {
