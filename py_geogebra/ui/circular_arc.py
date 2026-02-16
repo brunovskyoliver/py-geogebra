@@ -48,6 +48,7 @@ class Circular_arc:
         self.selected = False
         self.translation = None
 
+        self.s_radius = 0
         self.radius = 0
 
         self.vector = []
@@ -143,12 +144,13 @@ class Circular_arc:
             angle_between = 360 - angle_between
 
 
-        self.radius = distance(x_c, y_c, x1, y1)
+        self.s_radius = distance(x_c, y_c, x1, y1)
+        self.radius = self.s_radius / self.unit_size
 
-        sqaure_x = x_c + self.radius
-        sqaure_y = y_c + self.radius
-        square_x2 = x_c - self.radius
-        square_y2 = y_c - self.radius
+        sqaure_x = x_c + self.s_radius
+        sqaure_y = y_c + self.s_radius
+        square_x2 = x_c - self.s_radius
+        square_y2 = y_c - self.s_radius
 
 
         for obj in self.points:
