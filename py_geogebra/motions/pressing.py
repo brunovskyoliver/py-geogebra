@@ -976,6 +976,24 @@ def circular_arc(e, root):
         state.points_for_obj = []
 
 
+def roots(e, root):
+    obj = find_line_at_position(e)
+
+    if not obj:
+        obj = find_polyline_at_position(e)
+        if not obj:
+            obj = find_circle_at_position(e)
+
+    if not obj:
+        return
+
+    i = Create_Intersect(obj, globals.axes.x_axis, root)
+
+
+
+
+
+
 
 
 
@@ -1006,7 +1024,7 @@ def pressing(root:Tk) -> None:
         elif state.selected_tool == "extremum":
             pass
         elif state.selected_tool == "roots":
-            pass
+            roots(e, root)
 
 
         elif state.selected_tool == "line":

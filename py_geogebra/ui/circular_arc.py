@@ -158,6 +158,7 @@ class Circular_arc:
 
                 find_translation_circle(obj, self)
                 snap_to_circle(obj, self)
+
                 obj.update()
 
         if self.is_drawable:
