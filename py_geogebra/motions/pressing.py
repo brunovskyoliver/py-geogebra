@@ -1,8 +1,8 @@
 import math
-from tkinter import simpledialog
-from tkinter import Tk
+from tkinter import Tk, simpledialog
 
 from py_geogebra.ui.circular_arc import Circular_arc
+from py_geogebra.ui.circumcircular_arc import Circumcircular_arc
 from py_geogebra.ui.compass import Compass
 from py_geogebra.ui.point_on_object import Point_on_object
 from py_geogebra.ui.semicircle import Semicircle
@@ -12,6 +12,7 @@ from .. import globals, state
 from ..tools.utils import (
     attach_point,
     center,
+    create_or_find_point_at_position,
     delete_object,
     deselect_all,
     detach_point,
@@ -30,10 +31,10 @@ from ..tools.utils import (
     snap_to_circle,
     snap_to_line,
     snap_to_polyline,
-    create_or_find_point_at_position,
 )
 from ..ui.angle_bisector import Angle_bisector
 from ..ui.best_fit_line import Best_fit_line
+from ..ui.circle_3_points import Circle_3_points
 from ..ui.circle_center_point import Circle_center_point
 from ..ui.circle_center_radius import Circle_center_radius
 from ..ui.free_hand import FreeHand
@@ -53,7 +54,7 @@ from ..ui.segment import Segment
 from ..ui.segment_with_lenght import Segment_with_length
 from ..ui.vector import Vector
 from ..ui.vector_from_point import Vector_from_point
-from ..ui.circle_3_points import Circle_3_points
+
 
 def arrow(e, root):
     state.start_pos["x"] = e.x
@@ -68,7 +69,9 @@ def arrow(e, root):
             point_obj.select()
         state.selected_point = point_obj
         state.drag_target = point_obj
-        globals.logger.info(f"Selected {point_obj.tag} at x:{point_obj.pos_x} y:{point_obj.pos_y}")
+        globals.logger.info(
+            f"Selected {point_obj.tag} at x:{point_obj.pos_x} y:{point_obj.pos_y}"
+        )
     else:
         deselect_all()
 
@@ -82,27 +85,35 @@ def arrow(e, root):
             if hasattr(line_obj, "select"):
                 line_obj.select()
                 state.selected_point = line_obj
-                globals.logger.info(f"Selected {line_obj.tag} at x:{line_obj.pos_x} y:{line_obj.pos_y}")
+                globals.logger.info(
+                    f"Selected {line_obj.tag} at x:{line_obj.pos_x} y:{line_obj.pos_y}"
+                )
             state.drag_target = line_obj
         elif polyline_obj:
             polyline_obj.pos_x, polyline_obj.pos_y = screen_to_world(e)
             polyline_obj.update()
             state.selected_point = polyline_obj
             polyline_obj.select()
-            globals.logger.info(f"Selected {polyline_obj.tag} at x:{polyline_obj.pos_x} y:{polyline_obj.pos_y}")
+            globals.logger.info(
+                f"Selected {polyline_obj.tag} at x:{polyline_obj.pos_x} y:{polyline_obj.pos_y}"
+            )
             state.drag_target = polyline_obj
         elif circle_obj:
             circle_obj.pos_x, circle_obj.pos_y = screen_to_world(e)
             circle_obj.update()
             state.drag_target = circle_obj
             circle_obj.select()
-            globals.logger.info(f"Selected {circle_obj.tag} at x:{circle_obj.pos_x} y:{circle_obj.pos_y}")
+            globals.logger.info(
+                f"Selected {circle_obj.tag} at x:{circle_obj.pos_x} y:{circle_obj.pos_y}"
+            )
+
 
 def point(e, root):
     state.start_pos["x"] = e.x
     state.start_pos["y"] = e.y
 
     create_or_find_point_at_position(e, root)
+
 
 def attach_detach_point(e, root):
     state.start_pos["x"] = e.x
@@ -117,7 +128,9 @@ def attach_detach_point(e, root):
             point_obj.select()
         state.selected_point = point_obj
         state.drag_target = point_obj
-        globals.logger.info(f"Selected {point_obj.tag} at x:{point_obj.pos_x} y:{point_obj.pos_y}")
+        globals.logger.info(
+            f"Selected {point_obj.tag} at x:{point_obj.pos_x} y:{point_obj.pos_y}"
+        )
     else:
         deselect_all()
 
@@ -131,21 +144,28 @@ def attach_detach_point(e, root):
             if hasattr(line_obj, "select"):
                 line_obj.select()
                 state.selected_point = line_obj
-                globals.logger.info(f"Selected {line_obj.tag} at x:{line_obj.pos_x} y:{line_obj.pos_y}")
+                globals.logger.info(
+                    f"Selected {line_obj.tag} at x:{line_obj.pos_x} y:{line_obj.pos_y}"
+                )
             state.drag_target = line_obj
         elif polyline_obj:
             polyline_obj.pos_x, polyline_obj.pos_y = screen_to_world(e)
             polyline_obj.update()
             state.selected_point = polyline_obj
             polyline_obj.select()
-            globals.logger.info(f"Selected {polyline_obj.tag} at x:{polyline_obj.pos_x} y:{polyline_obj.pos_y}")
+            globals.logger.info(
+                f"Selected {polyline_obj.tag} at x:{polyline_obj.pos_x} y:{polyline_obj.pos_y}"
+            )
             state.drag_target = polyline_obj
         elif circle_obj:
             circle_obj.pos_x, circle_obj.pos_y = screen_to_world(e)
             circle_obj.update()
             state.drag_target = circle_obj
             circle_obj.select()
-            globals.logger.info(f"Selected {circle_obj.tag} at x:{circle_obj.pos_x} y:{circle_obj.pos_y}")
+            globals.logger.info(
+                f"Selected {circle_obj.tag} at x:{circle_obj.pos_x} y:{circle_obj.pos_y}"
+            )
+
 
 def intersect(e, root):
     pbs = find_line_at_position(e, r=2, num_lines=2)
@@ -168,10 +188,10 @@ def intersect(e, root):
                         return
                     else:
                         i = Create_Intersect(
-                        state.selected_intersect_line_1,
-                        pb,
-                        root,
-                        unit_size=globals.axes.unit_size,
+                            state.selected_intersect_line_1,
+                            pb,
+                            root,
+                            unit_size=globals.axes.unit_size,
                         )
                         state.selected_intersect_line_1 = None
                 else:
@@ -192,10 +212,10 @@ def intersect(e, root):
                     return
                 else:
                     i = Create_Intersect(
-                    state.selected_intersect_line_1,
-                    pb,
-                    root,
-                    unit_size=globals.axes.unit_size,
+                        state.selected_intersect_line_1,
+                        pb,
+                        root,
+                        unit_size=globals.axes.unit_size,
                     )
                     state.selected_intersect_line_1 = None
             else:
@@ -203,6 +223,7 @@ def intersect(e, root):
 
                 state.selected_intersect_line_1 = pb
                 pb.select()
+
 
 def pen(e, root):
     cx, cy = state.center
@@ -213,6 +234,7 @@ def pen(e, root):
     state.current_pen.add_point(world_x, world_y)
     globals.objects.register(state.current_pen)
 
+
 def freehand(e, root):
     cx, cy = state.center
     world_x = (e.x - cx) / (globals.objects.unit_size * globals.objects.scale)
@@ -221,6 +243,7 @@ def freehand(e, root):
     state.current_pen = FreeHand(root, globals.objects.unit_size)
     state.current_pen.add_point(world_x, world_y)
     globals.objects.register(state.current_pen)
+
 
 def line(e, root):
     state.start_pos["x"] = e.x
@@ -250,6 +273,7 @@ def line(e, root):
         globals.sidebar.items.append(state.points_for_obj[1])
         globals.sidebar.update()
         state.points_for_obj = []
+
 
 def segment(e, root):
     state.start_pos["x"] = e.x
@@ -281,6 +305,7 @@ def segment(e, root):
         globals.sidebar.update()
         state.points_for_obj = []
 
+
 def ray(e, root):
     state.start_pos["x"] = e.x
     state.start_pos["y"] = e.y
@@ -310,6 +335,7 @@ def ray(e, root):
         globals.sidebar.update()
 
         state.points_for_obj = []
+
 
 def polyline(e, root):
     state.start_pos["x"] = e.x
@@ -350,6 +376,7 @@ def polyline(e, root):
         else:
             state.current_polyline.line_points.append(p)
         state.current_polyline.update(e)
+
 
 def segmnet_with_lenght(e, root):
     world_x, world_y = screen_to_world(e)
@@ -397,6 +424,7 @@ def segmnet_with_lenght(e, root):
     globals.objects.register(swl)
     globals.objects.refresh()
 
+
 def midpoint_or_center(e, root):
     world_x, world_y = screen_to_world(e)
 
@@ -416,6 +444,7 @@ def midpoint_or_center(e, root):
 
         globals.objects.register(midpoint)
         state.points_for_obj = []
+
 
 def vector(e, root):
     state.start_pos["x"] = e.x
@@ -446,6 +475,7 @@ def vector(e, root):
         globals.sidebar.update()
         state.points_for_obj = []
 
+
 def vector_from_point(e, root):
     state.start_pos["x"] = e.x
     state.start_pos["y"] = e.y
@@ -468,8 +498,16 @@ def vector_from_point(e, root):
             e,
             label=label,
             unit_size=globals.axes.unit_size,
-            pos_x=state.selected_vector_point.pos_x + (state.selected_vector.point_2.pos_x - state.selected_vector.point_1.pos_x),
-            pos_y=state.selected_vector_point.pos_y + (state.selected_vector.point_2.pos_y - state.selected_vector.point_1.pos_y),
+            pos_x=state.selected_vector_point.pos_x
+            + (
+                state.selected_vector.point_2.pos_x
+                - state.selected_vector.point_1.pos_x
+            ),
+            pos_y=state.selected_vector_point.pos_y
+            + (
+                state.selected_vector.point_2.pos_y
+                - state.selected_vector.point_1.pos_y
+            ),
         )
         vector = Vector_from_point(
             root,
@@ -487,6 +525,7 @@ def vector_from_point(e, root):
         state.selected_vector_point.deselect()
         state.selected_vector_point = None
         state.selected_vector = None
+
 
 def perpendicular_line(e, root):
     state.start_pos["x"] = e.x
@@ -506,12 +545,8 @@ def perpendicular_line(e, root):
         p.select()
         globals.objects.register(p)
 
-
     if state.selected_perpendicular_line and state.selected_perpendicular_point:
-        pb = Perpendicular_line(
-            root,
-            parent_line=state.selected_perpendicular_line
-        )
+        pb = Perpendicular_line(root, parent_line=state.selected_perpendicular_line)
         lower_label = get_lower_label(state)
         pb.lower_label = lower_label
         pb.parent_vector = state.selected_perpendicular_line.vector
@@ -525,6 +560,7 @@ def perpendicular_line(e, root):
         state.selected_perpendicular_point.deselect()
         state.selected_perpendicular_line = None
         state.selected_perpendicular_point = None
+
 
 def parallel_line(e, root):
     state.start_pos["x"] = e.x
@@ -544,12 +580,8 @@ def parallel_line(e, root):
         p.select()
         globals.objects.register(p)
 
-
     if state.selected_perpendicular_line and state.selected_perpendicular_point:
-        pb = Parallel_line(
-            root,
-            parent_line=state.selected_perpendicular_line
-        )
+        pb = Parallel_line(root, parent_line=state.selected_perpendicular_line)
         lower_label = get_lower_label(state)
         pb.lower_label = lower_label
         pb.parent_vector = state.selected_perpendicular_line.vector
@@ -564,6 +596,7 @@ def parallel_line(e, root):
         state.selected_perpendicular_line = None
         state.selected_perpendicular_point = None
 
+
 def perpendicular_bisector(e, root):
     state.start_pos["x"] = e.x
     state.start_pos["y"] = e.y
@@ -575,10 +608,7 @@ def perpendicular_bisector(e, root):
     state.points_for_obj.append(p)
 
     if len(state.points_for_obj) < 2:
-        pb = Perpendicular_bisector(
-            root,
-            perp_point_1=p
-        )
+        pb = Perpendicular_bisector(root, perp_point_1=p)
         lower_label = get_lower_label(state)
         pb.lower_label = lower_label
         state.points_for_obj.append(pb)
@@ -592,6 +622,7 @@ def perpendicular_bisector(e, root):
         globals.sidebar.update()
         state.points_for_obj = []
 
+
 def angle_bisector(e, root):
     state.start_pos["x"] = e.x
     state.start_pos["y"] = e.y
@@ -603,9 +634,7 @@ def angle_bisector(e, root):
     state.selected_angle_bisector_points.append(p)
 
     if len(state.selected_angle_bisector_points) == 3:
-        ag = Angle_bisector(
-            root
-        )
+        ag = Angle_bisector(root)
         lower_label = get_lower_label(state)
         ag.lower_label = lower_label
         ag.point_1 = state.selected_angle_bisector_points[1]
@@ -618,6 +647,7 @@ def angle_bisector(e, root):
             p.deselect()
 
         state.selected_angle_bisector_points.clear()
+
 
 def best_fit_line(e, root):
     state.start_pos["x"] = e.x
@@ -641,6 +671,7 @@ def best_fit_line(e, root):
         globals.objects.register(state.best_fit_line)
     if state.best_fit_line:
         state.best_fit_line.fit_points = state.points_for_obj[:]
+
 
 def c_polygon(e, root):
     state.start_pos["x"] = e.x
@@ -683,6 +714,7 @@ def c_polygon(e, root):
 
     p.select()
 
+
 def regular_polygon(e, root):
     state.start_pos["x"] = e.x
     state.start_pos["y"] = e.y
@@ -692,7 +724,6 @@ def regular_polygon(e, root):
         polygon = Regular_polygon(root, globals.axes.unit_size)
         state.current_polygon = polygon
         globals.objects.register(polygon)
-
 
     p = find_point_at_position(e)
     if not p:
@@ -712,21 +743,33 @@ def regular_polygon(e, root):
 
     if state.current_polygon and len(state.current_polygon.line_points) == 2:
         num_points = simpledialog.askinteger(
-        "pocet stran",
-        "pocet stran",
-        minvalue=3,
+            "pocet stran",
+            "pocet stran",
+            minvalue=3,
         )
         state.current_polygon.num_points = num_points
-        angle = (num_points*180 - 360) / num_points
+        angle = (num_points * 180 - 360) / num_points
         rad_angle = math.radians(angle)
-        angle_matrix = [[math.cos(rad_angle), -math.sin(rad_angle)],
-                        [math.sin(rad_angle), math.cos(rad_angle)]]
+        angle_matrix = [
+            [math.cos(rad_angle), -math.sin(rad_angle)],
+            [math.sin(rad_angle), math.cos(rad_angle)],
+        ]
         state.current_polygon.matrix = angle_matrix
-        for i in range(1, num_points-1):
-            dist_x = (state.current_polygon.line_points[i-1].pos_x - state.current_polygon.line_points[i].pos_x)
-            dist_y = (state.current_polygon.line_points[i-1].pos_y - state.current_polygon.line_points[i].pos_y)
-            pos_x = state.current_polygon.line_points[i].pos_x + (dist_x * angle_matrix[0][0] + dist_y * angle_matrix[1][0])
-            pos_y = state.current_polygon.line_points[i].pos_y + (dist_x * angle_matrix[0][1] + dist_y * angle_matrix[1][1])
+        for i in range(1, num_points - 1):
+            dist_x = (
+                state.current_polygon.line_points[i - 1].pos_x
+                - state.current_polygon.line_points[i].pos_x
+            )
+            dist_y = (
+                state.current_polygon.line_points[i - 1].pos_y
+                - state.current_polygon.line_points[i].pos_y
+            )
+            pos_x = state.current_polygon.line_points[i].pos_x + (
+                dist_x * angle_matrix[0][0] + dist_y * angle_matrix[1][0]
+            )
+            pos_y = state.current_polygon.line_points[i].pos_y + (
+                dist_x * angle_matrix[0][1] + dist_y * angle_matrix[1][1]
+            )
             label = get_label(state)
             p = Point(
                 root,
@@ -735,7 +778,7 @@ def regular_polygon(e, root):
                 unit_size=globals.axes.unit_size,
                 pos_x=pos_x,
                 pos_y=pos_y,
-                color="Gray"
+                color="Gray",
             )
             globals.objects.register(p)
             state.current_polygon.line_points.append(p)
@@ -750,6 +793,7 @@ def regular_polygon(e, root):
         globals.sidebar.update()
         state.current_polygon = None
         state.points_for_obj = []
+
 
 def circle_center_point(e, root):
     state.start_pos["x"] = e.x
@@ -780,6 +824,7 @@ def circle_center_point(e, root):
         globals.sidebar.update()
         state.points_for_obj = []
 
+
 def circle_center_radius(e, root):
     state.start_pos["x"] = e.x
     state.start_pos["y"] = e.y
@@ -788,9 +833,9 @@ def circle_center_radius(e, root):
     p = create_or_find_point_at_position(e, root)
 
     radius = simpledialog.askfloat(
-    "radius",
-    "radius",
-    minvalue=0,
+        "radius",
+        "radius",
+        minvalue=0,
     )
     c = Circle_center_radius(
         root,
@@ -805,6 +850,7 @@ def circle_center_radius(e, root):
     globals.sidebar.items.append(c)
     globals.sidebar.update()
 
+
 def compass(e, root):
     state.start_pos["x"] = e.x
     state.start_pos["y"] = e.y
@@ -818,9 +864,7 @@ def compass(e, root):
     state.points_for_obj.append(p)
 
     if len(state.points_for_obj) == 2:
-        c = Compass(
-            root
-        )
+        c = Compass(root)
         c.r_point_1 = state.points_for_obj[0]
         c.r_point_2 = state.points_for_obj[1]
         lower_label = get_lower_label(state)
@@ -828,7 +872,6 @@ def compass(e, root):
         globals.objects.register(c)
         c.update(e)
         state.points_for_obj.append(c)
-
 
     elif len(state.points_for_obj) == 4:
         state.points_for_obj[2].center = p
@@ -838,6 +881,7 @@ def compass(e, root):
         globals.sidebar.update()
 
         state.points_for_obj = []
+
 
 def circle_3_points(e, root):
     world_x, world_y = screen_to_world(e)
@@ -877,6 +921,7 @@ def circle_3_points(e, root):
 
         state.points_for_obj = []
 
+
 def semi_circle(e, root):
     world_x, world_y = screen_to_world(e)
 
@@ -884,7 +929,6 @@ def semi_circle(e, root):
     if len(state.points_for_obj) == 2:
         l = state.points_for_obj[1]
     p = create_or_find_point_at_position(e, root, exception=l)
-
 
     if len(state.points_for_obj) == 0:
         state.points_for_obj.append(p)
@@ -897,8 +941,6 @@ def semi_circle(e, root):
         globals.objects.register(c)
 
         state.points_for_obj.append(c)
-
-
 
     elif len(state.points_for_obj) == 2:
         state.points_for_obj.append(p)
@@ -942,6 +984,7 @@ def tangents(e, root):
         state.tangents_circle = None
         state.tangents_point = None
 
+
 def point_on_object(e, root):
     p = find_point_at_position(e)
     if p:
@@ -959,12 +1002,13 @@ def point_on_object(e, root):
     globals.objects.register(p)
     p.update()
 
+
 def circular_arc(e, root):
     p = create_or_find_point_at_position(e, root)
     state.points_for_obj.append(p)
     globals.objects.register(p)
 
-    if (len(state.points_for_obj) == 3):
+    if len(state.points_for_obj) == 3:
         arc = Circular_arc(root)
         arc.center = state.points_for_obj[0]
         arc.point_1 = state.points_for_obj[1]
@@ -990,16 +1034,25 @@ def roots(e, root):
     i = Create_Intersect(obj, globals.axes.x_axis, root)
 
 
+def circumcircular_arc(e, root):
+    p = create_or_find_point_at_position(e, root)
+    state.points_for_obj.append(p)
+    globals.objects.register(p)
+
+    if len(state.points_for_obj) == 3:
+        arc = Circumcircular_arc(root)
+        arc.point_1 = state.points_for_obj[0]
+        arc.point_2 = state.points_for_obj[1]
+        arc.point_3 = state.points_for_obj[2]
+        lower_label = get_lower_label(state)
+        arc.lower_label = lower_label
+        globals.objects.register(arc)
+
+        state.points_for_obj = []
 
 
-
-
-
-
-
-def pressing(root:Tk) -> None:
+def pressing(root: Tk) -> None:
     def left_click_pressed(e):
-
 
         if state.selected_tool == "arrow":
             arrow(e, root)
@@ -1007,7 +1060,6 @@ def pressing(root:Tk) -> None:
             freehand(e, root)
         elif state.selected_tool == "pen":
             pen(e, root)
-
 
         elif state.selected_tool == "point":
             point(e, root)
@@ -1026,7 +1078,6 @@ def pressing(root:Tk) -> None:
         elif state.selected_tool == "roots":
             roots(e, root)
 
-
         elif state.selected_tool == "line":
             line(e, root)
         elif state.selected_tool == "segment":
@@ -1041,7 +1092,6 @@ def pressing(root:Tk) -> None:
             vector(e, root)
         elif state.selected_tool == "vector_from_point":
             vector_from_point(e, root)
-
 
         elif state.selected_tool == "perpendicular_line":
             perpendicular_line(e, root)
@@ -1060,7 +1110,6 @@ def pressing(root:Tk) -> None:
         elif state.selected_tool == "locus":
             pass
 
-
         elif state.selected_tool == "polygon":
             c_polygon(e, root)
         elif state.selected_tool == "regular_polygon":
@@ -1069,7 +1118,6 @@ def pressing(root:Tk) -> None:
             pass
         elif state.selected_tool == "vector_polygon":
             pass
-
 
         elif state.selected_tool == "circle_center_point":
             circle_center_point(e, root)
@@ -1084,15 +1132,11 @@ def pressing(root:Tk) -> None:
         elif state.selected_tool == "circular_arc":
             circular_arc(e, root)
         elif state.selected_tool == "circumcircular_arc":
-            pass
+            circumcircular_arc(e, root)
         elif state.selected_tool == "circular_sector":
             pass
         elif state.selected_tool == "circumcircular_sector":
             pass
-
-
-
-
 
     def middle_click_pressed(e):
         state.start_pos["x"] = e.x
@@ -1118,7 +1162,9 @@ def pressing(root:Tk) -> None:
             state.start_pos["x"] = e.x
             set_cursor(globals.sidebar.canvas, "sb_h_double_arrow")
         else:
-            objs = globals.sidebar.canvas.find_overlapping(20, e.y - 3, globals.sidebar.canvas.winfo_width() - 20, e.y+3)
+            objs = globals.sidebar.canvas.find_overlapping(
+                20, e.y - 3, globals.sidebar.canvas.winfo_width() - 20, e.y + 3
+            )
             if objs:
                 deselect_all()
                 for obj in objs:
@@ -1127,8 +1173,6 @@ def pressing(root:Tk) -> None:
                         item.select()
                         state.selected_point = item
                         break
-
-
 
     def left_click_released_sidebar(e):
         state.sidebar_resizing = False
