@@ -5,6 +5,7 @@ from py_geogebra.ui.line import Line
 from py_geogebra.ui.point import Point
 from ..tools.utils import (
     screen_to_world,
+    screen_to_world_float,
     snap_to_circle,
     world_to_screen,
     snap_to_circle,
@@ -145,7 +146,7 @@ class Circular_arc:
 
 
         self.s_radius = distance(x_c, y_c, x1, y1)
-        self.radius = self.s_radius / self.unit_size
+        self.radius = screen_to_world_float(self.s_radius)
 
         sqaure_x = x_c + self.s_radius
         sqaure_y = y_c + self.s_radius
