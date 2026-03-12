@@ -5,6 +5,7 @@ from py_geogebra.ui.line import Line
 from py_geogebra.ui.point import Point
 from ..tools.utils import (
     screen_to_world,
+    screen_to_world_float,
     snap_to_circle,
     world_to_screen,
     snap_to_circle,
@@ -48,6 +49,7 @@ class Circular_arc:
         self.selected = False
         self.translation = None
 
+        self.s_radius = 0
         self.radius = 0
 
         self.vector = []
@@ -143,12 +145,13 @@ class Circular_arc:
             angle_between = 360 - angle_between
 
 
-        self.radius = distance(x_c, y_c, x1, y1)
+        self.s_radius = distance(x_c, y_c, x1, y1)
+        self.radius = screen_to_world_float(self.s_radius)
 
-        sqaure_x = x_c + self.radius
-        sqaure_y = y_c + self.radius
-        square_x2 = x_c - self.radius
-        square_y2 = y_c - self.radius
+        sqaure_x = x_c + self.s_radius
+        sqaure_y = y_c + self.s_radius
+        square_x2 = x_c - self.s_radius
+        square_y2 = y_c - self.s_radius
 
 
         for obj in self.points:
@@ -156,6 +159,7 @@ class Circular_arc:
 
                 find_translation_circle(obj, self)
                 snap_to_circle(obj, self)
+
                 obj.update()
 
         if self.is_drawable:
