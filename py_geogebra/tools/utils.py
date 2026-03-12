@@ -1,16 +1,9 @@
-from ast import Return
-import tkinter as tk
+import importlib
 import math
-
-
-
-
-
-
+import tkinter as tk
+from ast import Return
 
 from .. import state
-
-import importlib
 
 _globals = None
 
@@ -105,20 +98,20 @@ def reconfigure_lower_label_order(lower_label: str, state):
 
 
 def delete_object(object_to_delete, state):
-    from ..ui.point import Point
-    from ..ui.midpoint_or_center import Midpoint_or_center
-    from ..ui.line import Line
-    from ..ui.ray import Ray
-    from ..ui.segment import Segment
-    from ..ui.segment_with_lenght import Segment_with_length
-    from ..ui.polyline import Polyline
-    from ..ui.regular_polygon import Regular_polygon
-    from ..ui.polygon import Polygon
-    from ..ui.perpendicular_bisector import Perpendicular_bisector
     from ..ui.angle_bisector import Angle_bisector
+    from ..ui.circle_3_points import Circle_3_points
     from ..ui.circle_center_point import Circle_center_point
     from ..ui.circle_center_radius import Circle_center_radius
-    from ..ui.circle_3_points import Circle_3_points
+    from ..ui.line import Line
+    from ..ui.midpoint_or_center import Midpoint_or_center
+    from ..ui.perpendicular_bisector import Perpendicular_bisector
+    from ..ui.point import Point
+    from ..ui.polygon import Polygon
+    from ..ui.polyline import Polyline
+    from ..ui.ray import Ray
+    from ..ui.regular_polygon import Regular_polygon
+    from ..ui.segment import Segment
+    from ..ui.segment_with_lenght import Segment_with_length
     from ..ui.semicircle import Semicircle
 
     if state.points_for_obj:
@@ -150,7 +143,7 @@ def delete_object(object_to_delete, state):
                 or isinstance(obj, Ray)
                 or isinstance(obj, Segment_with_length)
                 or isinstance(obj, Midpoint_or_center)
-                or isinstance(obj,Perpendicular_bisector)
+                or isinstance(obj, Perpendicular_bisector)
                 or isinstance(obj, Semicircle)
             ) and (obj.point_1 is object_to_delete or obj.point_2 is object_to_delete):
                 if hasattr(obj, "lower_label"):
@@ -158,7 +151,11 @@ def delete_object(object_to_delete, state):
                     g().canvas.delete(obj.lower_label_obj.tag)
                 g().objects.unregister(obj)
                 g().canvas.delete(obj.tag)
-            if isinstance(obj, Circle_3_points) and (obj.point_1 is object_to_delete or obj.point_2 is object_to_delete or obj.point_3 is object_to_delete):
+            if isinstance(obj, Circle_3_points) and (
+                obj.point_1 is object_to_delete
+                or obj.point_2 is object_to_delete
+                or obj.point_3 is object_to_delete
+            ):
                 if hasattr(obj, "lower_label"):
                     g().objects.unregister(obj.lower_label_obj)
                     g().canvas.delete(obj.lower_label_obj.tag)
@@ -181,7 +178,10 @@ def delete_object(object_to_delete, state):
                 object_to_delete.deselect()
                 g().objects.unregister(object_to_delete)
                 g().canvas.delete(object_to_delete.tag)
-            if isinstance(obj, Angle_bisector) and (obj.angle_point_1 is object_to_delete or obj.angle_point_2 is object_to_delete):
+            if isinstance(obj, Angle_bisector) and (
+                obj.angle_point_1 is object_to_delete
+                or obj.angle_point_2 is object_to_delete
+            ):
                 if hasattr(obj, "lower_label"):
                     g().objects.unregister(obj.lower_label_obj)
                     g().canvas.delete(obj.lower_label_obj.tag)
@@ -196,9 +196,6 @@ def delete_object(object_to_delete, state):
                     g().canvas.delete(obj.lower_label_obj.tag)
                 g().objects.unregister(obj)
                 g().canvas.delete(obj.tag)
-
-
-
 
             if (
                 isinstance(obj, Line)
@@ -259,6 +256,14 @@ def world_to_screen(wx, wy) -> tuple[float, float]:
     return sx, sy
 
 
+def screen_to_world_float(num) -> float:
+    return num / (g().objects.unit_size * g().objects.scale)
+
+
+def world_to_screen_float(num) -> float:
+    return num * (g().objects.unit_size * g().objects.scale)
+
+
 def distance(x1, y1, x2, y2, r: int = 0):
     d = math.sqrt((x2 - x1) ** 2 + (y2 - y1) ** 2)
     if r != 0:
@@ -273,18 +278,29 @@ def deselect_all():
 
 
 def find_point_at_position(e, r=5):
-    from ..ui.point import Point
-    from ..ui.midpoint_or_center import Midpoint_or_center
     from ..ui.intersect import Intersect
+    from ..ui.midpoint_or_center import Midpoint_or_center
+    from ..ui.point import Point
     from ..ui.point_on_object import Point_on_object
+
     items = g().canvas.find_overlapping(e.x - r, e.y - r, e.x + r, e.y + r)
     p = None
     for obj in g().objects._objects:
-        if hasattr(obj, "tag") and any(obj.tag in g().canvas.gettags(i) for i in items) and (isinstance(obj, Point) or isinstance(obj, Intersect) or isinstance(obj, Midpoint_or_center) or isinstance(obj, Point_on_object)):
+        if (
+            hasattr(obj, "tag")
+            and any(obj.tag in g().canvas.gettags(i) for i in items)
+            and (
+                isinstance(obj, Point)
+                or isinstance(obj, Intersect)
+                or isinstance(obj, Midpoint_or_center)
+                or isinstance(obj, Point_on_object)
+            )
+        ):
             if "point" in obj.tag or "intersect" in obj.tag:
                 p = obj
                 break
     return p
+
 
 def find_blank_point_at_position(x, y, r=2):
     p = None
@@ -294,7 +310,8 @@ def find_blank_point_at_position(x, y, r=2):
             break
     return p
 
-def find_line_at_position(e, r=2, num_lines: int = 1, exception = None):
+
+def find_line_at_position(e, r=2, num_lines: int = 1, exception=None):
     items = g().canvas.find_overlapping(e.x - r, e.y - r, e.x + r, e.y + r)
     lines = []
     line_count = 0
@@ -325,54 +342,73 @@ def find_line_at_position(e, r=2, num_lines: int = 1, exception = None):
 
 
 def find_polyline_at_position(e, r=2):
-    from ..ui.polyline import Polyline
     from ..ui.polygon import Polygon
+    from ..ui.polyline import Polyline
     from ..ui.regular_polygon import Regular_polygon
+
     items = g().canvas.find_overlapping(e.x - r, e.y - r, e.x + r, e.y + r)
     line = None
     for obj in g().objects._objects:
-        if hasattr(obj, "tag") and any(obj.tag in g().canvas.gettags(i) for i in items) and (isinstance(obj, Polyline) or isinstance(obj, Polygon) or isinstance(obj, Regular_polygon)):
+        if (
+            hasattr(obj, "tag")
+            and any(obj.tag in g().canvas.gettags(i) for i in items)
+            and (
+                isinstance(obj, Polyline)
+                or isinstance(obj, Polygon)
+                or isinstance(obj, Regular_polygon)
+            )
+        ):
             if "polyline" in obj.tag or "polygon" in obj.tag:
                 line = obj
                 break
     return line
 
+
 def find_polygon_at_position(e, r=2):
-    from ..ui.polyline import Polyline
     from ..ui.polygon import Polygon
+    from ..ui.polyline import Polyline
     from ..ui.regular_polygon import Regular_polygon
+
     items = g().canvas.find_overlapping(e.x - r, e.y - r, e.x + r, e.y + r)
     line = None
     for obj in g().objects._objects:
-        if hasattr(obj, "tag") and any(obj.tag in g().canvas.gettags(i) for i in items) and (isinstance(obj, Polygon) or isinstance(obj, Regular_polygon)):
+        if (
+            hasattr(obj, "tag")
+            and any(obj.tag in g().canvas.gettags(i) for i in items)
+            and (isinstance(obj, Polygon) or isinstance(obj, Regular_polygon))
+        ):
             if "polygon" in obj.tag:
                 line = obj
                 break
     return line
 
 
-def find_circle_at_position(e, r=2, exception = None):
+def find_circle_at_position(e, r=2, exception=None):
+    from py_geogebra.ui.circle_3_points import Circle_3_points
+    from py_geogebra.ui.circular_arc import Circular_arc
+    from py_geogebra.ui.semicircle import Semicircle
+
     from ..ui.circle_center_point import Circle_center_point
     from ..ui.circle_center_radius import Circle_center_radius
     from ..ui.compass import Compass
-    from py_geogebra.ui.semicircle import Semicircle
-    from py_geogebra.ui.circle_3_points import Circle_3_points
-    from py_geogebra.ui.circular_arc import Circular_arc
-
 
     items = g().canvas.find_overlapping(e.x - r, e.y - r, e.x + r, e.y + r)
     line = None
     for obj in g().objects._objects:
         if obj is exception:
             continue
-        if (hasattr(obj, "tag") and any(obj.tag in g().canvas.gettags(i) for i in items)
-        and (isinstance(obj, Circle_center_radius)
-        or isinstance(obj, Circle_center_point)
-        or isinstance(obj, Compass)
-        or isinstance(obj, Semicircle)
-        or isinstance(obj, Circle_3_points)
-        or isinstance(obj, Circular_arc)
-        )):
+        if (
+            hasattr(obj, "tag")
+            and any(obj.tag in g().canvas.gettags(i) for i in items)
+            and (
+                isinstance(obj, Circle_center_radius)
+                or isinstance(obj, Circle_center_point)
+                or isinstance(obj, Compass)
+                or isinstance(obj, Semicircle)
+                or isinstance(obj, Circle_3_points)
+                or isinstance(obj, Circular_arc)
+            )
+        ):
             line = obj
             break
     return line
@@ -391,7 +427,6 @@ def snap_to_line(point, line):
 
     point.pos_x = proj_x
     point.pos_y = proj_y
-
 
 
 def snap_to_polyline(point, polyline):
@@ -482,7 +517,6 @@ def snap_point_on_obj(point, polygon):
     point.pos_y = proj_y
 
 
-
 def snap_to_circle(point, circle):
     dx = point.pos_x - circle.center.pos_x
     dy = point.pos_y - circle.center.pos_y
@@ -490,6 +524,7 @@ def snap_to_circle(point, circle):
     k = point.translation / dist
     point.pos_x = circle.center.pos_x + dx * k
     point.pos_y = circle.center.pos_y + dy * k
+
 
 def find_translation(point, line):
     x1, y1 = line.point_1.pos_x, line.point_1.pos_y
@@ -503,8 +538,10 @@ def find_translation(point, line):
 
     point.translation = (p_dist * math.cos(beta)) / dist
 
+
 def find_translation_circle(point, circle):
     point.translation = circle.radius
+
 
 def find_translation_between_points(point, point_1, point_2):
     x1, y1 = point_1.pos_x, point_1.pos_y
@@ -561,8 +598,6 @@ def find_translation_polyline(point, polyline):
     point.translation = (p_dist * math.cos(beta)) / dist
 
 
-
-
 def find_2lines_intersection(points):
     x1, y1 = (
         points[0].pos_x,
@@ -592,26 +627,39 @@ def find_2lines_intersection(points):
         # why the fuck by niekto robil intersect rovnobeziek?
         return None
 
-
     return (px, py)
 
+
 def find_circle_line_intersection(circle, p1, p2):
-    x1,y1 = p1.pos_x, p1.pos_y
-    x2,y2 = p2.pos_x, p2.pos_y
+    x1, y1 = p1.pos_x, p1.pos_y
+    x2, y2 = p2.pos_x, p2.pos_y
     c_pt = circle.center
-    vector = (x2-x1, y2 - y1)
-    a = vector[0]**2 + vector[1]**2
-    b = 2*x1*vector[0] - 2*c_pt.pos_x*vector[0] + 2*y1*vector[1] - 2*c_pt.pos_y*vector[1]
-    c = x1**2 - 2*c_pt.pos_x*x1 + c_pt.pos_x**2 + y1**2 - 2*c_pt.pos_y*y1 + c_pt.pos_y**2 - circle.radius**2
+    vector = (x2 - x1, y2 - y1)
+    a = vector[0] ** 2 + vector[1] ** 2
+    b = (
+        2 * x1 * vector[0]
+        - 2 * c_pt.pos_x * vector[0]
+        + 2 * y1 * vector[1]
+        - 2 * c_pt.pos_y * vector[1]
+    )
+    c = (
+        x1**2
+        - 2 * c_pt.pos_x * x1
+        + c_pt.pos_x**2
+        + y1**2
+        - 2 * c_pt.pos_y * y1
+        + c_pt.pos_y**2
+        - circle.radius**2
+    )
     k = []
-    k.extend(solve_quadratic(a,b,c))
+    k.extend(solve_quadratic(a, b, c))
     intersections = []
 
     for i in range(len(k)):
-        intersections.append((x1 + k[i]*vector[0], y1 + k[i]*vector[1]))
-
+        intersections.append((x1 + k[i] * vector[0], y1 + k[i] * vector[1]))
 
     return intersections
+
 
 def find_circle_circle_intersection(circle1, circle2):
     x1, y1 = circle1.center.pos_x, circle1.center.pos_y
@@ -636,21 +684,23 @@ def find_circle_circle_intersection(circle1, circle2):
     return [(xs1, ys1), (xs2, ys2)]
 
 
-
-
-
-
 def get_linear_fuction_prescription(x1, y1, x2, y2):
     a = y2 - y1
     b = x1 - x2
     c = x2 * y1 - x1 * y2
     return round(a, 2), round(b, 2), round(-c, 2)
 
+
 def detach_point(point, line):
-    from ..ui.polyline import Polyline
     from ..ui.circle_center_point import Circle_center_point
     from ..ui.circle_center_radius import Circle_center_radius
-    if not isinstance(line, Polyline) and not isinstance(line, Circle_center_point)and not isinstance(line, Circle_center_radius):
+    from ..ui.polyline import Polyline
+
+    if (
+        not isinstance(line, Polyline)
+        and not isinstance(line, Circle_center_point)
+        and not isinstance(line, Circle_center_radius)
+    ):
         dx = line.point_2.pos_x - line.point_1.pos_x
         dy = line.point_2.pos_y - line.point_1.pos_y
 
@@ -687,7 +737,9 @@ def detach_point(point, line):
 
         dx = x2 - x1
         dy = y2 - y1
-    elif isinstance(line, Circle_center_point) or isinstance(line, Circle_center_radius):
+    elif isinstance(line, Circle_center_point) or isinstance(
+        line, Circle_center_radius
+    ):
         x1, y1 = line.point_1.pos_x, line.point_1.pos_y
         dx = point.pos_x - x1
         dy = point.pos_y - y1
@@ -701,26 +753,31 @@ def detach_point(point, line):
     perp_x = -dy / length
     perp_y = dx / length
 
-
     point.pos_x += perp_x
     point.pos_y += perp_y
 
+
 def attach_point(point, line):
-    from ..ui.polyline import Polyline
     from ..ui.circle_center_point import Circle_center_point
     from ..ui.circle_center_radius import Circle_center_radius
+    from ..ui.polyline import Polyline
+
     if isinstance(line, Polyline):
         find_translation_polyline(point, line)
         snap_to_polyline(point, line)
-    elif isinstance(line, Circle_center_point) or isinstance(line, Circle_center_radius):
+    elif isinstance(line, Circle_center_point) or isinstance(
+        line, Circle_center_radius
+    ):
         find_translation_circle(point, line)
         snap_to_circle(point, line)
     else:
         find_translation(point, line)
         snap_to_line(point, line)
 
+
 def calculate_vector(point_1, point_2):
     return (point_1.pos_x - point_2.pos_x, point_1.pos_y - point_2.pos_y)
+
 
 def load_lines_from_labels(labels):
     lines = []
@@ -729,6 +786,7 @@ def load_lines_from_labels(labels):
             if getattr(obj, "lower_label", None) == label:
                 lines.append(obj)
     return lines
+
 
 def handle_auth() -> dict | None:
     auth = g().auth
@@ -743,6 +801,7 @@ def handle_auth() -> dict | None:
             return None
     return user_info
 
+
 def calculate_points_for_best_fit_line(points):
     # na toto som urcote dosiel sam
     xs = [p.pos_x for p in points]
@@ -751,7 +810,6 @@ def calculate_points_for_best_fit_line(points):
 
     mean_x = sum(xs) / n
     mean_y = sum(ys) / n
-
 
     numerator = sum((xs[i] - mean_x) * (ys[i] - mean_y) for i in range(n))
     denominator = sum((xs[i] - mean_x) ** 2 for i in range(n))
@@ -768,29 +826,33 @@ def calculate_points_for_best_fit_line(points):
 
     return x1, x2, y1, y2
 
+
 def solve_quadratic(a, b, c):
     if a == 0:
         if b == 0:
             return []
         return [-c / b]
 
-    discriminant = b**2 - 4*a*c
+    discriminant = b**2 - 4 * a * c
     if discriminant < 0:
         return []
     elif discriminant == 0:
-        x = -b / (2*a)
+        x = -b / (2 * a)
         return [x]
     else:
         sqrt_disc = math.sqrt(discriminant)
-        x1 = (-b + sqrt_disc) / (2*a)
-        x2 = (-b - sqrt_disc) / (2*a)
+        x1 = (-b + sqrt_disc) / (2 * a)
+        x2 = (-b - sqrt_disc) / (2 * a)
         return [x1, x2]
 
-def dot(v1, v2) -> float:
-    return sum(x*y for x, y in zip(v1, v2))
 
-def create_or_find_point_at_position(e, root, exception = None):
+def dot(v1, v2) -> float:
+    return sum(x * y for x, y in zip(v1, v2))
+
+
+def create_or_find_point_at_position(e, root, exception=None):
     from py_geogebra.ui.point import Point
+
     from .. import globals, state
 
     world_x, world_y = screen_to_world(e)
@@ -799,10 +861,9 @@ def create_or_find_point_at_position(e, root, exception = None):
     if p:
         return p
 
-    pb = find_line_at_position(e, r=2, exception = exception)
+    pb = find_line_at_position(e, r=2, exception=exception)
     polyline = find_polyline_at_position(e, r=2)
-    circle = find_circle_at_position(e, r=2, exception = exception)
-
+    circle = find_circle_at_position(e, r=2, exception=exception)
 
     label = get_label(state)
     p = Point(
@@ -835,7 +896,7 @@ def create_or_find_point_at_position(e, root, exception = None):
         p.is_detachable = True
         p.is_atachable = False
         p.parent_line = circle
-        find_translation_circle(p,circle)
+        find_translation_circle(p, circle)
         circle.points.append(p)
         snap_to_circle(p, circle)
         p.color = "#349AFF"
@@ -845,4 +906,4 @@ def create_or_find_point_at_position(e, root, exception = None):
 
     p.select()
 
-    return(p)
+    return p
