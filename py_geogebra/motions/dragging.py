@@ -9,6 +9,7 @@ from ..tools.utils import (
     find_translation_circle
 )
 from ..ui.line import Line
+from ..ui.length import Length
 from ..ui.ray import Ray
 from ..ui.segment_with_lenght import Segment_with_length
 from ..ui.midpoint_or_center import Midpoint_or_center
@@ -69,6 +70,7 @@ def dragging(root):
                         or isinstance(obj, Segment)
                         or isinstance(obj, Ray)
                         or isinstance(obj, Segment_with_length)
+                        or isinstance(obj, Length)
                         or isinstance(obj, Midpoint_or_center)
                         or isinstance(obj, Vector)
 

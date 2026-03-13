@@ -17,6 +17,7 @@ from ..ui.perpendicular_line import Perpendicular_line
 from ..ui.parallel_line import Parallel_line
 from ..ui.regular_polygon import Regular_polygon
 from ..ui.angle import Angle
+from ..ui.length import Length
 
 
 
@@ -122,6 +123,23 @@ class Sidebar:
                     text=(
                         f"{item.lower_label} = Segment({item.point_1.label}, {item.point_2.label})\n"
                         f"{' ' * (len(item.lower_label)-1)}= {item.length}"
+                    ),
+                    font=self.font,
+                    fill="black",
+                    tags=f"sidebar_text_{i}"
+                )
+                self.canvas_tags[text] = item
+                bbox = self.canvas.bbox(text)
+                height = bbox[3] - bbox[1]
+                y += height + 10
+
+            elif isinstance(item, Length):
+                text = self.canvas.create_text(
+                    10, y,
+                    anchor="nw",
+                    text=(
+                        f"{item.lower_label} = Distance({item.point_1.label}, {item.point_2.label})\n"
+                        f"{' ' * (len(item.lower_label)-1)}= {item.value}"
                     ),
                     font=self.font,
                     fill="black",
