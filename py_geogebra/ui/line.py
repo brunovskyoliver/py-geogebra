@@ -78,6 +78,8 @@ class Line:
     @classmethod
     def from_dict(cls, root, data: dict):
         def find_point(label):
+            if label in (None, ""):
+                return None
             for obj in globals.objects._objects:
                 if getattr(obj, "label", None) == label:
                     return obj
@@ -119,6 +121,8 @@ class Line:
 
 
     def resolve_coords(self, e=None) -> tuple[float, float, float, float]:
+        if self.point_1 is None or not hasattr(self.point_1, "pos_x"):
+            raise ValueError("Line point_1 is not a drawable point object.")
         w_x1, w_y1 = self.point_1.pos_x, self.point_1.pos_y
 
         if state.drag_target is self:
@@ -139,6 +143,8 @@ class Line:
             if self.point_2 is None:
                 w_x2, w_y2 = screen_to_world(e)
             else:
+                if not hasattr(self.point_2, "pos_x"):
+                    raise ValueError("Line point_2 is not a drawable point object.")
                 w_x2, w_y2 = self.point_2.pos_x, self.point_2.pos_y
 
 
@@ -203,13 +209,22 @@ class Line:
 
 
     def update(self, e=None):
-        if self.deleted or (self.point_2 is None and e is None):
+        if (
+            self.deleted
+            or self.point_1 is None
+            or not hasattr(self.point_1, "pos_x")
+            or (self.point_2 is not None and not hasattr(self.point_2, "pos_x"))
+            or (self.point_2 is None and e is None)
+        ):
             return
         self.canvas.delete(self.tag)
 
         self.visual_scale = min(max(1, self.scale**0.5), 1.9)
 
-        self.x1,self.y1,self.x2,self.y2 = self.resolve_coords(e=e)
+        try:
+            self.x1, self.y1, self.x2, self.y2 = self.resolve_coords(e=e)
+        except ValueError:
+            return
 
         self.snap_points()
 

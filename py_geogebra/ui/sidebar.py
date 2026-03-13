@@ -248,15 +248,26 @@ class Sidebar:
                 y += height + 10
 
             elif isinstance(item, Perpendicular_line):
-                assert len(item.prescription) == 3
-                a, b, c = item.prescription
+                if (
+                    not isinstance(item.prescription, (list, tuple))
+                    or len(item.prescription) != 3
+                ):
+                    a, b, c = 0, 0, 0
+                else:
+                    a, b, c = item.prescription
                 sign_a = "-" if a < 0 else ""
                 sign_b = "-" if b < 0 else "+"
+                parent_label = (
+                    item.parent_line.lower_label
+                    if hasattr(item.parent_line, "lower_label")
+                    else (getattr(item, "parent_line_label", None) or "?")
+                )
+                point_label = item.point_1.label if item.point_1 else "?"
                 text = self.canvas.create_text(
                     10, y,
                     anchor="nw",
                     text=(
-                        f"{item.lower_label}: PerpendicularLine({item.point_1.label}, {item.parent_line.lower_label})\n"
+                        f"{item.lower_label}: PerpendicularLine({point_label}, {parent_label})\n"
                         f"= {sign_a}{abs(a)}x {sign_b} {abs(b)}y = {c}"
                     ),
                     font=self.font,
@@ -269,15 +280,26 @@ class Sidebar:
                 y += height + 10
 
             elif isinstance(item, Parallel_line):
-                # assert len(item.prescription) == 3 tuto je item.prescription na zaciatku prazdny takze nebudeme assertovat
-                a, b, c = item.prescription
+                if (
+                    not isinstance(item.prescription, (list, tuple))
+                    or len(item.prescription) != 3
+                ):
+                    a, b, c = 0, 0, 0
+                else:
+                    a, b, c = item.prescription
                 sign_a = "-" if a < 0 else ""
                 sign_b = "-" if b < 0 else "+"
+                parent_label = (
+                    item.parent_line.lower_label
+                    if hasattr(item.parent_line, "lower_label")
+                    else (getattr(item, "parent_line_label", None) or "?")
+                )
+                point_label = item.point_1.label if item.point_1 else "?"
                 text = self.canvas.create_text(
                     10, y,
                     anchor="nw",
                     text=(
-                        f"{item.lower_label}: Line({item.point_1.label}, {item.parent_line.lower_label})\n"
+                        f"{item.lower_label}: Line({point_label}, {parent_label})\n"
                         f"= {sign_a}{abs(a)}x {sign_b} {abs(b)}y = {c}"
                     ),
                     font=self.font,

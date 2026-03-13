@@ -86,6 +86,8 @@ class Circumcircular_arc:
     @classmethod
     def from_dict(cls, root, data: dict):
         def find_point(label):
+            if label in (None, ""):
+                return None
             for obj in globals.objects._objects:
                 if getattr(obj, "label", None) == label:
                     return obj
