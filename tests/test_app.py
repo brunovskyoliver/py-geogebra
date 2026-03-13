@@ -32,7 +32,7 @@ class TestApp(unittest.TestCase):
         with patch("tkinter.Canvas", return_value=mock_canvas):
             with patch("tkinter.Frame") as mock_frame:
                 mock_root.mainloop = MagicMock()
-                run_app()
+                run_app("")
 
                 mock_set_language.assert_called_once_with("sk")
                 mock_root.geometry.assert_called_once_with("1280x720")

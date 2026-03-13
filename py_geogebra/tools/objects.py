@@ -22,6 +22,7 @@ from ..ui.segment_with_lenght import Segment_with_length
 from ..ui.polyline import Polyline
 from ..ui.lower_label import Lower_label
 from ..ui.angle_bisector import Angle_bisector
+from ..ui.area import Area
 from ..ui.best_fit_line import Best_fit_line
 from ..ui.polygon import Polygon
 from ..ui.regular_polygon import Regular_polygon
@@ -245,6 +246,11 @@ class Objects:
         for od in data.get("objects", []):
             if od["type"] == "Point_on_object":
                 ll = Point_on_object.from_dict(root, od)
+                self.register(ll)
+
+        for od in data.get("objects", []):
+            if od["type"] == "Area":
+                ll = Area.from_dict(root, od)
                 self.register(ll)
 
         if "sidebar" in data and "order" in data["sidebar"]:
