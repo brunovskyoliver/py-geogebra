@@ -112,6 +112,7 @@ def reconfigure_angle_label_order(angle_label: str, state):
 
 def delete_object(object_to_delete, state):
     from ..ui.angle_bisector import Angle_bisector
+    from ..ui.area import Area
     from ..ui.circle_3_points import Circle_3_points
     from ..ui.circle_center_point import Circle_center_point
     from ..ui.circle_center_radius import Circle_center_radius
@@ -128,6 +129,15 @@ def delete_object(object_to_delete, state):
     from ..ui.segment import Segment
     from ..ui.segment_with_lenght import Segment_with_length
     from ..ui.semicircle import Semicircle
+
+    def remove_area_for_target(target):
+        for dep in list(g().objects._objects):
+            if isinstance(dep, Area) and getattr(dep, "target", None) is target:
+                if dep in g().sidebar.items:
+                    g().sidebar.items.remove(dep)
+                    g().sidebar.update()
+                g().objects.unregister(dep)
+                g().canvas.delete(dep.tag)
 
     if state.points_for_obj:
         for obj in state.points_for_obj:
@@ -167,6 +177,7 @@ def delete_object(object_to_delete, state):
                     g().canvas.delete(obj.lower_label_obj.tag)
                 g().objects.unregister(obj)
                 g().canvas.delete(obj.tag)
+                remove_area_for_target(obj)
                 if isinstance(obj, Length) and getattr(obj, "owns_label", True):
                     reconfigure_lower_label_order(obj.lower_label, state)
                 if isinstance(obj, Length) and obj in g().sidebar.items:
@@ -189,6 +200,7 @@ def delete_object(object_to_delete, state):
 
                 g().objects.unregister(obj)
                 g().canvas.delete(obj.tag)
+                remove_area_for_target(obj)
 
             if isinstance(obj, Polygon) or isinstance(obj, Regular_polygon):
                 for segment in obj.segments:
@@ -196,6 +208,7 @@ def delete_object(object_to_delete, state):
                     g().canvas.delete(segment.tag)
                 g().objects.unregister(obj)
                 g().canvas.delete(obj.tag)
+                remove_area_for_target(obj)
                 object_to_delete.deselect()
                 g().objects.unregister(object_to_delete)
                 g().canvas.delete(object_to_delete.tag)
@@ -217,6 +230,7 @@ def delete_object(object_to_delete, state):
                     g().canvas.delete(obj.lower_label_obj.tag)
                 g().objects.unregister(obj)
                 g().canvas.delete(obj.tag)
+                remove_area_for_target(obj)
 
             if (
                 isinstance(obj, Line)
@@ -267,6 +281,7 @@ def delete_object(object_to_delete, state):
             g().objects.unregister(obj)
             g().canvas.delete(obj.tag)
             reconfigure_label_order(obj.label, state)
+    remove_area_for_target(object_to_delete)
 
     if isinstance(object_to_delete, Angle):
         reconfigure_angle_label_order(object_to_delete.label, state)

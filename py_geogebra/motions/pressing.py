@@ -35,6 +35,7 @@ from ..tools.utils import (
     snap_to_polyline,
 )
 from ..ui.angle_bisector import Angle_bisector
+from ..ui.area import Area
 from ..ui.best_fit_line import Best_fit_line
 from ..ui.circle_3_points import Circle_3_points
 from ..ui.circle_center_point import Circle_center_point
@@ -1025,6 +1026,98 @@ def angle(e, root):
         state.points_for_obj = []
 
 
+def angle_with_given_size(e, root):
+    p = create_or_find_point_at_position(e, root)
+    if p in state.points_for_obj:
+        return
+
+    p.select()
+    state.points_for_obj.append(p)
+
+    if len(state.points_for_obj) < 2:
+        return
+
+    point_1 = state.points_for_obj[0]
+    anchor = state.points_for_obj[1]
+    if point_1 is anchor:
+        deselect_all()
+        state.points_for_obj = []
+        return
+
+    angle_size = simpledialog.askfloat(
+        "Veľkosť uhla",
+        "Zadajte veľkosť uhla (v stupňoch):",
+        minvalue=0,
+        maxvalue=360,
+    )
+    if angle_size is None:
+        deselect_all()
+        state.points_for_obj = []
+        return
+
+    radians = math.radians(angle_size)
+    dx = point_1.pos_x - anchor.pos_x
+    dy = point_1.pos_y - anchor.pos_y
+    rotated_dx = dx * math.cos(radians) - dy * math.sin(radians)
+    rotated_dy = dx * math.sin(radians) + dy * math.cos(radians)
+
+    p2 = Point(
+        root,
+        e=None,
+        label=get_label(state),
+        unit_size=globals.axes.unit_size,
+        pos_x=anchor.pos_x + rotated_dx,
+        pos_y=anchor.pos_y + rotated_dy,
+    )
+    globals.objects.register(p2)
+
+    a = Angle(
+        root,
+        e,
+        point_1=point_1,
+        label=get_angle_label(state),
+        unit_size=globals.axes.unit_size,
+    )
+    a.anchor = anchor
+    a.point_2 = p2
+    globals.objects.register(a)
+    a.update()
+
+    globals.sidebar.items.append(a)
+    globals.sidebar.update()
+
+    deselect_all()
+    state.points_for_obj = []
+
+
+def area(e, root):
+    target = find_polygon_at_position(e)
+    if target and not isinstance(target, (Polygon, Regular_polygon)):
+        target = None
+
+    if target is None:
+        circle = find_circle_at_position(e)
+        if isinstance(
+            circle,
+            (Circle_center_point, Circle_center_radius, Circle_3_points, Compass),
+        ):
+            target = circle
+
+    if target is None:
+        return
+
+    for obj in globals.objects._objects:
+        if isinstance(obj, Area) and obj.target is target:
+            return
+
+    a = Area(
+        root,
+        target=target,
+        unit_size=globals.axes.unit_size,
+    )
+    globals.objects.register(a)
+
+
 def length(e, root):
     def resolve_label_and_ownership(point_1, point_2):
         for obj in globals.objects._objects:
@@ -1247,6 +1340,10 @@ def pressing(root: Tk) -> None:
             pass
         elif state.selected_tool == "angle":
             angle(e,root)
+        elif state.selected_tool == "angle_with_given_size":
+            angle_with_given_size(e, root)
+        elif state.selected_tool == "area":
+            area(e, root)
         elif state.selected_tool == "length":
             length(e, root)
 
