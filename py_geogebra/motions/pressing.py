@@ -46,6 +46,7 @@ from ..ui.parallel_line import Parallel_line
 from ..ui.pen import Pen
 from ..ui.perpendicular_bisector import Perpendicular_bisector
 from ..ui.perpendicular_line import Perpendicular_line
+from ..ui.length import Length
 from ..ui.point import Point
 from ..ui.polygon import Polygon
 from ..ui.polyline import Polyline
@@ -1021,6 +1022,75 @@ def angle(e, root):
         deselect_all()
         state.points_for_obj = []
 
+
+def length(e, root):
+    def resolve_label_and_ownership(point_1, point_2):
+        for obj in globals.objects._objects:
+            if (
+                hasattr(obj, "point_1")
+                and hasattr(obj, "point_2")
+                and hasattr(obj, "lower_label")
+                and obj.point_1 is not None
+                and obj.point_2 is not None
+                and (
+                    (obj.point_1 is point_1 and obj.point_2 is point_2)
+                    or (obj.point_1 is point_2 and obj.point_2 is point_1)
+                )
+            ):
+                return obj.lower_label, False
+        return get_lower_label(state), True
+
+    p = find_point_at_position(e)
+    if p is None:
+        line_obj = find_line_at_position(e)
+        if (
+            line_obj
+            and hasattr(line_obj, "point_1")
+            and hasattr(line_obj, "point_2")
+            and hasattr(line_obj, "lower_label")
+            and line_obj.point_1 is not None
+            and line_obj.point_2 is not None
+        ):
+            obj = Length(
+                root,
+                unit_size=globals.axes.unit_size,
+                point_1=line_obj.point_1,
+                point_2=line_obj.point_2,
+                lower_label=line_obj.lower_label,
+                owns_label=False,
+            )
+            globals.objects.register(obj)
+            globals.sidebar.items.append(obj)
+            globals.sidebar.update()
+            deselect_all()
+            state.points_for_obj = []
+        return
+
+    if p in state.points_for_obj:
+        return
+
+    p.select()
+    state.points_for_obj.append(p)
+
+    if len(state.points_for_obj) == 2:
+        lower_label, owns_label = resolve_label_and_ownership(
+            state.points_for_obj[0], state.points_for_obj[1]
+        )
+        obj = Length(
+            root,
+            unit_size=globals.axes.unit_size,
+            point_1=state.points_for_obj[0],
+            point_2=state.points_for_obj[1],
+            lower_label=lower_label,
+            owns_label=owns_label,
+        )
+        globals.objects.register(obj)
+        globals.sidebar.items.append(obj)
+        globals.sidebar.update()
+        deselect_all()
+        state.points_for_obj = []
+
+
 def point_on_object(e, root):
     p = find_point_at_position(e)
     if p:
@@ -1175,6 +1245,8 @@ def pressing(root: Tk) -> None:
             pass
         elif state.selected_tool == "angle":
             angle(e,root)
+        elif state.selected_tool == "length":
+            length(e, root)
 
     def middle_click_pressed(e):
         state.start_pos["x"] = e.x

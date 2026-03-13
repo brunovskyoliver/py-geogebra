@@ -103,6 +103,7 @@ def delete_object(object_to_delete, state):
     from ..ui.circle_center_point import Circle_center_point
     from ..ui.circle_center_radius import Circle_center_radius
     from ..ui.line import Line
+    from ..ui.length import Length
     from ..ui.midpoint_or_center import Midpoint_or_center
     from ..ui.perpendicular_bisector import Perpendicular_bisector
     from ..ui.point import Point
@@ -145,12 +146,18 @@ def delete_object(object_to_delete, state):
                 or isinstance(obj, Midpoint_or_center)
                 or isinstance(obj, Perpendicular_bisector)
                 or isinstance(obj, Semicircle)
+                or isinstance(obj, Length)
             ) and (obj.point_1 is object_to_delete or obj.point_2 is object_to_delete):
-                if hasattr(obj, "lower_label"):
+                if hasattr(obj, "lower_label_obj"):
                     g().objects.unregister(obj.lower_label_obj)
                     g().canvas.delete(obj.lower_label_obj.tag)
                 g().objects.unregister(obj)
                 g().canvas.delete(obj.tag)
+                if isinstance(obj, Length) and getattr(obj, "owns_label", True):
+                    reconfigure_lower_label_order(obj.lower_label, state)
+                if isinstance(obj, Length) and obj in g().sidebar.items:
+                    g().sidebar.items.remove(obj)
+                    g().sidebar.update()
             if isinstance(obj, Circle_3_points) and (
                 obj.point_1 is object_to_delete
                 or obj.point_2 is object_to_delete
@@ -241,6 +248,15 @@ def delete_object(object_to_delete, state):
             g().objects.unregister(obj)
             g().canvas.delete(obj.tag)
             reconfigure_label_order(obj.label, state)
+
+    if hasattr(object_to_delete, "lower_label") and (
+        not isinstance(object_to_delete, Length)
+        or getattr(object_to_delete, "owns_label", True)
+    ):
+        reconfigure_lower_label_order(object_to_delete.lower_label, state)
+    if object_to_delete in g().sidebar.items:
+        g().sidebar.items.remove(object_to_delete)
+        g().sidebar.update()
 
     g().objects.unregister(object_to_delete)
     g().canvas.delete(object_to_delete.tag)
