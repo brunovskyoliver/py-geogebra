@@ -26,6 +26,7 @@ from ..tools.utils import (
     find_translation_circle,
     find_translation_polyline,
     get_label,
+    get_angle_label,
     get_lower_label,
     screen_to_world,
     set_cursor,
@@ -1002,6 +1003,7 @@ def angle(e, root):
         a = Angle(
             root,
             e,
+            label=get_angle_label(state),
             unit_size=globals.axes.unit_size,
             point_1=p,
 
@@ -1012,7 +1014,7 @@ def angle(e, root):
 
     elif len(state.points_for_obj) == 2:
         state.points_for_obj[1].anchor = p
-        state.points_for_obj[1].update()
+        state.points_for_obj[1].update(e)
         state.points_for_obj.append(p)
     else:
         state.points_for_obj[1].point_2 = p

@@ -82,6 +82,15 @@ def get_lower_label(state):
     return label.lower()
 
 
+def get_angle_label(state):
+    if state.angle_label_unused:
+        label = state.angle_label_unused.pop(0)
+    else:
+        label = number_to_ascii(state.angle_label_counter)
+        state.angle_label_counter += 1
+    return label.lower()
+
+
 def set_cursor(canvas: tk.Canvas, cursor: str):
     canvas.configure(cursor=cursor)
     canvas.update()
@@ -97,12 +106,17 @@ def reconfigure_lower_label_order(lower_label: str, state):
     state.lower_label_unused.append(lower_label)
 
 
+def reconfigure_angle_label_order(angle_label: str, state):
+    state.angle_label_unused.append(angle_label)
+
+
 def delete_object(object_to_delete, state):
     from ..ui.angle_bisector import Angle_bisector
     from ..ui.circle_3_points import Circle_3_points
     from ..ui.circle_center_point import Circle_center_point
     from ..ui.circle_center_radius import Circle_center_radius
     from ..ui.line import Line
+    from ..ui.angle import Angle
     from ..ui.length import Length
     from ..ui.midpoint_or_center import Midpoint_or_center
     from ..ui.perpendicular_bisector import Perpendicular_bisector
@@ -217,6 +231,11 @@ def delete_object(object_to_delete, state):
                 if obj in g().sidebar.items:
                     g().sidebar.items.remove(obj)
                     g().sidebar.update()
+            if isinstance(obj, Angle):
+                reconfigure_angle_label_order(obj.label, state)
+                if obj in g().sidebar.items:
+                    g().sidebar.items.remove(obj)
+                    g().sidebar.update()
 
             if isinstance(obj, Midpoint_or_center):
                 if obj in g().sidebar.items:
@@ -249,7 +268,9 @@ def delete_object(object_to_delete, state):
             g().canvas.delete(obj.tag)
             reconfigure_label_order(obj.label, state)
 
-    if hasattr(object_to_delete, "lower_label") and (
+    if isinstance(object_to_delete, Angle):
+        reconfigure_angle_label_order(object_to_delete.label, state)
+    elif hasattr(object_to_delete, "lower_label") and (
         not isinstance(object_to_delete, Length)
         or getattr(object_to_delete, "owns_label", True)
     ):
