@@ -389,12 +389,13 @@ class Sidebar:
 
             elif isinstance(item, Angle):
                 ctx = [item.point_1.label,item.anchor.label,item.point_2.label]
+                lbl = item.label if item.label else "a"
                 text = self.canvas.create_text(
                     10, y,
                     anchor="nw",
                     text=(
-                        f"a = Angle({', '.join(ctx)})\n"
-                        f" = {round(item.angle, 2)}"
+                        f"{lbl} = Angle({', '.join(ctx)})\n"
+                        f"{' ' * (len(lbl)-1)}= {round(item.angle, 2)}"
                     ),
                     font=self.font,
                     fill="black",

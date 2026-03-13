@@ -1,6 +1,6 @@
 import tkinter as tk
 import math
-from ..tools.utils import snap, world_to_screen
+from ..tools.utils import world_to_screen
 from .. import state
 from .. import globals
 
@@ -89,30 +89,121 @@ class Angle:
             self.y + r_h,
             outline=self.color,
             width=2,
-            fill="",  # no fill so it looks like a ring
-            tags=(self.highlight_tag,),  # must be a tuple
+            fill="",
+            tags=(self.highlight_tag,),
         )
 
     def draw_angle(self):
-        pass
-
-
-    def update(self):
         if self.anchor is None or self.point_1 is None:
             return
+
+        ax, ay = world_to_screen(self.anchor.pos_x, self.anchor.pos_y)
+        p1x, p1y = world_to_screen(self.point_1.pos_x, self.point_1.pos_y)
+
+        if self.point_2 is not None:
+            p2x, p2y = world_to_screen(self.point_2.pos_x, self.point_2.pos_y)
+        elif self.preview_cursor is not None:
+            p2x, p2y = self.preview_cursor
+        else:
+            return
+
+        v1x, v1y = p1x - ax, p1y - ay
+        v2x, v2y = p2x - ax, p2y - ay
+        d1 = math.hypot(v1x, v1y)
+        d2 = math.hypot(v2x, v2y)
+        if d1 == 0 or d2 == 0:
+            return
+
+        a1 = math.atan2(v1y, v1x)
+        a2 = math.atan2(v2y, v2x)
+        diff = (a2 - a1 + math.pi) % (2 * math.pi) - math.pi
+        self.angle = abs(math.degrees(diff))
+
+        r = max(18 * self.visual_scale, min(52 * self.visual_scale, min(d1, d2) * 0.42))
+        steps = 28
+        points = [ax, ay]
+        for i in range(steps + 1):
+            t = a1 + diff * (i / steps)
+            points.extend([ax + r * math.cos(t), ay + r * math.sin(t)])
+        points.extend([ax, ay])
+
+        self.canvas.create_polygon(
+            points,
+            fill="#A8D5BA",
+            outline="",
+            tags=(self.tag, "angle_arc"),
+        )
+
+        arc_pts = []
+        for i in range(steps + 1):
+            t = a1 + diff * (i / steps)
+            arc_pts.extend([ax + r * math.cos(t), ay + r * math.sin(t)])
+        self.canvas.create_line(
+            arc_pts,
+            fill="#228B22",
+            width=2,
+            smooth=True,
+            tags=(self.tag, "angle_arc"),
+        )
+
+        mid_t = a1 + diff / 2
+        tx = ax + (r * 0.67) * math.cos(mid_t)
+        ty = ay + (r * 0.67) * math.sin(mid_t)
+        greek = {
+            "a": "α",
+            "b": "β",
+            "c": "γ",
+            "d": "δ",
+            "e": "ε",
+            "f": "ζ",
+            "g": "η",
+            "h": "θ",
+            "i": "ι",
+            "j": "κ",
+            "k": "λ",
+            "l": "μ",
+            "m": "ν",
+            "n": "ξ",
+            "o": "ο",
+            "p": "π",
+            "q": "ρ",
+            "r": "σ",
+            "s": "τ",
+            "t": "υ",
+            "u": "φ",
+            "v": "χ",
+            "w": "ψ",
+            "x": "ω",
+        }
+        greek_label = "".join(greek.get(ch, ch) for ch in (self.label or "a"))
+        self.canvas.create_text(
+            tx,
+            ty,
+            text=f"{greek_label} = {round(self.angle, 2)}°",
+            font=("Arial", int(11 * self.visual_scale)),
+            fill="#006400",
+            tags=(self.tag, "angle_text"),
+        )
+
+        self.canvas.tag_lower("angle_arc")
+
+
+    def update(self, e=None):
         self.canvas.delete(self.tag)
         self.canvas.delete(self.highlight_tag)
+        self.preview_cursor = None
 
-        if self.point_1 and self.point_2 and self.anchor:
-            self.angle = math.degrees(math.atan2(self.point_2.pos_y - self.anchor.pos_y, self.point_2.pos_x - self.anchor.pos_x) - math.atan2(self.point_1.pos_y - self.anchor.pos_y, self.point_1.pos_x - self.anchor.pos_x))
+        if self.anchor is None or self.point_1 is None:
+            return
 
-            self.x, self.y = world_to_screen(self.anchor.pos_x, self.anchor.pos_y)
+        if e is not None:
+            self.preview_cursor = (e.x, e.y)
 
-            self.visual_scale = min(max(1, self.scale**0.5), 1.9)
+        self.x, self.y = world_to_screen(self.anchor.pos_x, self.anchor.pos_y)
+        self.visual_scale = min(max(1, self.scale**0.5), 1.9)
+        self.r = 6.0 * self.visual_scale
 
-            self.r = 6.0 * self.visual_scale
-
-            if self.is_drawable:
-                if self.selected:
-                    self.draw_outline()
-                self.draw_angle()
+        if self.is_drawable:
+            if self.selected:
+                self.draw_outline()
+            self.draw_angle()

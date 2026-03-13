@@ -45,6 +45,9 @@ def motion(root):
         elif state.selected_tool == "semi_circle" and len(state.points_for_obj) == 2:
             state.points_for_obj[1].update(e)
 
+        elif state.selected_tool == "angle" and len(state.points_for_obj) == 3:
+            state.points_for_obj[1].update(e)
+
 
 
     globals.canvas.bind("<Motion>", handle_mouse)
