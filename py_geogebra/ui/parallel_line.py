@@ -47,6 +47,11 @@ class Parallel_line:
         self.child_lines = []
         self.child_lines_labels = []
         self.parent_line = parent_line
+        self.parent_line_label = (
+            parent_line.lower_label
+            if hasattr(parent_line, "lower_label")
+            else (parent_line if isinstance(parent_line, str) else None)
+        )
         self.points = []
         self.prescription = ()
         self.angle = 0
@@ -59,6 +64,11 @@ class Parallel_line:
         self.canvas.bind("<Configure>", lambda e: self.update())
 
     def to_dict(self) -> dict:
+        parent_line_label = (
+            self.parent_line.lower_label
+            if hasattr(self.parent_line, "lower_label")
+            else self.parent_line_label
+        )
         return {
             "type": "Parallel_line",
             "lower_label": self.lower_label,
@@ -74,19 +84,35 @@ class Parallel_line:
             "point_1": self.point_1.label if self.point_1 else None,
             "prescription": [p for p in self.prescription],
             "parent_vector": self.parent_vector,
+            "parent_line": parent_line_label,
             "child_lines_labels": [l.lower_label for l in self.child_lines]
         }
 
     @classmethod
     def from_dict(cls, root, data: dict):
         def find_point(label):
+            if label in (None, ""):
+                return None
             for obj in globals.objects._objects:
                 if getattr(obj, "label", None) == label:
                     return obj
             return None
 
+        def find_line(label):
+            if not label:
+                return None
+            for obj in globals.objects._objects:
+                if getattr(obj, "lower_label", None) == label:
+                    return obj
+            return None
+
         p1 = find_point(data.get("point_1"))
-        line = cls(root=root, unit_size=data.get("unit_size", 40))
+        parent_line_label = data.get("parent_line")
+        line = cls(
+            root=root,
+            unit_size=data.get("unit_size", 40),
+            parent_line=find_line(parent_line_label),
+        )
 
         line.point_1 = p1
         line.scale = data.get("scale", 1.0)
@@ -101,11 +127,29 @@ class Parallel_line:
         cx, cy = state.center
         line.cx = cx
         line.cy = cy
-        line.prescription = data.get("prescription", {})
-        line.parent_vector = data.get("parent_vector")
+        prescription = data.get("prescription", ())
+        if not isinstance(prescription, (list, tuple)):
+            prescription = ()
+        line.prescription = tuple(prescription)
+
+        parent_vector = data.get("parent_vector", (0, 0))
+        if (not isinstance(parent_vector, (list, tuple))) or len(parent_vector) != 2:
+            parent_vector = (0, 0)
+        line.parent_vector = tuple(parent_vector)
+        line.parent_line_label = parent_line_label
         line.child_lines_labels = [lbl for lbl in data.get("child_lines_labels", [])]
         line.update()
         return line
+
+    def _resolve_parent_line(self):
+        if hasattr(self.parent_line, "lower_label"):
+            return self.parent_line
+        if self.parent_line_label:
+            for obj in globals.objects._objects:
+                if getattr(obj, "lower_label", None) == self.parent_line_label:
+                    self.parent_line = obj
+                    return obj
+        return None
 
     def select(self):
         self.selected = True
@@ -117,6 +161,18 @@ class Parallel_line:
 
     def update(self, e=None):
         self.canvas.delete(self.tag)
+        if self.point_1 is None:
+            return
+
+        parent_line = self._resolve_parent_line()
+        if (
+            (not isinstance(self.parent_vector, (list, tuple)))
+            or len(self.parent_vector) != 2
+        ) and parent_line is not None:
+            self.parent_vector = getattr(parent_line, "vector", (0, 0))
+        if (not isinstance(self.parent_vector, (list, tuple))) or len(self.parent_vector) != 2:
+            return
+
         self.vector  = self.parent_vector
         self.point_2.pos_x = self.point_1.pos_x + self.vector[0]
         self.point_2.pos_y = self.point_1.pos_y + self.vector[1]
@@ -142,9 +198,6 @@ class Parallel_line:
 
         else:
             x1, y1 = self.point_1.pos_x, self.point_1.pos_y
-
-            if self.point_1 is None:
-                return
 
             if self.point_2 is None:
                 cx, cy = state.center

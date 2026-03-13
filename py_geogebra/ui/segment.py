@@ -59,6 +59,7 @@ class Segment:
         return {
             "type": "Segment",
             "lower_label": self.lower_label,
+            "color": self.color,
             "pos_x": self.pos_x,
             "pos_y": self.pos_y,
             "unit_size": self.unit_size,
@@ -77,6 +78,8 @@ class Segment:
     @classmethod
     def from_dict(cls, root, data: dict):
         def find_point(label):
+            if label in (None, ""):
+                return None
             for obj in globals.objects._objects:
                 if getattr(obj, "label", None) == label:
                     return obj
@@ -91,6 +94,13 @@ class Segment:
         segment.offset_x = data.get("offset_x", 0)
         segment.offset_y = data.get("offset_y", 0)
         segment.lower_label = data.get("lower_label", "")
+        # Backward compatibility: old scenes did not store segment color.
+        if "color" in data:
+            segment.color = data.get("color", "black")
+        elif segment.lower_label == "":
+            segment.color = "#FF0000"
+        else:
+            segment.color = "black"
         segment.tag = data.get("tag", "")
         segment.lower_label_obj = Lower_label(root, obj=segment)
         globals.objects.register(segment.lower_label_obj)

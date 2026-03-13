@@ -45,11 +45,9 @@ class Drawable(Protocol):
 
 class Objects:
     def __init__(self):
-        # List of all drawable objects
         self._objects: List[Drawable] = []
         self.canvas = globals.canvas
 
-        # Global offsets and scale
         self.offset_x = 0
         self.offset_y = 0
         self.scale = 1.0
@@ -109,6 +107,23 @@ class Objects:
         globals.sidebar.update()
 
     def to_dict(self):
+        def should_serialize(obj):
+            if not hasattr(obj, "to_dict"):
+                return False
+            if isinstance(obj, Lower_label):
+                return False
+            if isinstance(obj, Line):
+                p1_label = getattr(getattr(obj, "point_1", None), "label", None)
+                p2_label = getattr(getattr(obj, "point_2", None), "label", None)
+                lower_label = getattr(obj, "lower_label", None)
+                if (
+                    p1_label in (None, "")
+                    and p2_label in (None, "")
+                    and lower_label in (None, "")
+                ):
+                    return False
+            return True
+
         return {
             "version": 1,
             "view": {
@@ -123,7 +138,7 @@ class Objects:
                     self._objects,
                     key=lambda o: 0 if getattr(o, "type", None) == "Point" else 1,
                 )
-                if hasattr(obj, "to_dict")
+                if should_serialize(obj)
             ],
             "state": state.to_dict(),
             "sidebar": globals.sidebar.to_dict(),
@@ -155,8 +170,9 @@ class Objects:
         state.load_from_dict(data.get("state", {}))
         state.selected_tool = "arrow"
         state.shift_pressed = False
-        state.center = center()
         globals.sidebar.load_from_dict(data.get("sidebar", {}))
+        globals.canvas.update_idletasks()
+        state.center = center()
         state.current_polygon = None
         state.drag_target = None
         # naskor musime loadnut POINTS, lebo inak sa nam neincializuju ostatne objecty ktore na POINTS zalezia...
@@ -167,8 +183,15 @@ class Objects:
             elif od["type"] == "Axes":
                 axes = Axes.from_dict(root, od)
                 self.register(axes)
+                globals.axes = axes
         for od in data.get("objects", []):
             if od["type"] == "Line":
+                if (
+                    od.get("point_1") in (None, "")
+                    and od.get("point_2") in (None, "")
+                    and od.get("lower_label") in (None, "")
+                ):
+                    continue
                 line = Line.from_dict(root, od)
                 self.register(line)
             elif od["type"] == "Ray":
@@ -260,7 +283,14 @@ class Objects:
         for obj in self._objects:
             if isinstance(obj, Lower_label) and obj.obj:
                 obj.obj.lower_label_obj = obj
-                obj.obj.update()
+                try:
+                    obj.obj.update()
+                except Exception as ex:
+                    globals.logger.warning(
+                        f"Skipping lower-label relink update for {obj.obj}: {ex}"
+                    )
+        globals.canvas.update_idletasks()
+        state.center = center()
         self.refresh()
 
         return self

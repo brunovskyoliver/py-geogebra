@@ -83,7 +83,12 @@ class Lower_label:
             or isinstance(self.obj, Perpendicular_line)
             or isinstance(self.obj, Best_fit_line)
             ):
-            if self.obj.point_2 is None:
+            if (
+                self.obj.point_1 is None
+                or self.obj.point_2 is None
+                or not hasattr(self.obj.point_1, "pos_x")
+                or not hasattr(self.obj.point_2, "pos_x")
+            ):
                 return
             x2, y2 = self.obj.point_2.pos_x, self.obj.point_2.pos_y
             angle = self.obj.angle
