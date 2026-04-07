@@ -4,6 +4,7 @@ import math
 from py_geogebra.tools.utils import (
     number_to_ascii,
     ascii_to_number,
+    find_measurement_at_position,
     screen_to_world,
     world_to_screen,
     distance,
@@ -145,6 +146,37 @@ class TestUtils(unittest.TestCase):
         label = get_lower_label(mock_state)
         self.assertEqual(label, "a")
         self.assertEqual(mock_state.lower_label_counter, 1)
+
+    @patch("py_geogebra.tools.utils.g")
+    def test_find_measurement_at_position_prefers_measurement_tags(self, mock_g):
+        class FakeLength:
+            def __init__(self, tag):
+                self.tag = tag
+
+        class FakeLine:
+            def __init__(self, tag):
+                self.tag = tag
+
+        event = MagicMock()
+        event.x = 10
+        event.y = 20
+
+        measurement = FakeLength("length_123")
+        non_measurement = FakeLine("line_123")
+
+        mock_canvas = MagicMock()
+        mock_canvas.find_overlapping.return_value = [1]
+        mock_canvas.gettags.return_value = ("length_123",)
+
+        mock_g.return_value.canvas = mock_canvas
+        mock_g.return_value.objects._objects = [non_measurement, measurement]
+
+        with patch("py_geogebra.ui.length.Length", FakeLength):
+            with patch("py_geogebra.ui.area.Area", type("FakeArea", (), {})):
+                with patch("py_geogebra.ui.slope.Slope", type("FakeSlope", (), {})):
+                    result = find_measurement_at_position(event)
+
+        self.assertIs(result, measurement)
 
 
 if __name__ == "__main__":

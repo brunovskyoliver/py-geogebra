@@ -26,6 +26,8 @@ class Length:
         self.scale = 1.0
         self.offset_x = 0.0
         self.offset_y = 0.0
+        self.label_offset_x = 0.0
+        self.label_offset_y = 0.0
         self.is_drawable = True
         self.selected = False
 
@@ -45,6 +47,8 @@ class Length:
             "scale": self.scale,
             "is_drawable": self.is_drawable,
             "owns_label": self.owns_label,
+            "label_offset_x": self.label_offset_x,
+            "label_offset_y": self.label_offset_y,
         }
 
     @classmethod
@@ -71,6 +75,8 @@ class Length:
         length.tag = data.get("tag", f"length_{id(length)}")
         length.scale = data.get("scale", 1.0)
         length.is_drawable = data.get("is_drawable", True)
+        length.label_offset_x = data.get("label_offset_x", 0.0)
+        length.label_offset_y = data.get("label_offset_y", 0.0)
         length.update()
         return length
 
@@ -104,6 +110,8 @@ class Length:
         middle_x = (self.point_1.pos_x + self.point_2.pos_x) / 2
         middle_y = (self.point_1.pos_y + self.point_2.pos_y) / 2
         x, y = world_to_screen(middle_x, middle_y)
+        x += self.label_offset_x
+        y += self.label_offset_y
         x1, y1 = world_to_screen(self.point_1.pos_x, self.point_1.pos_y)
         x2, y2 = world_to_screen(self.point_2.pos_x, self.point_2.pos_y)
 

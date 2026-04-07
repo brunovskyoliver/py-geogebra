@@ -22,6 +22,7 @@ class Point_on_object:
         if not state.shift_pressed or e == None:
             self.pos_x = pos_x
             self.pos_y = pos_y
+
         else:
             self.pos_x, self.pos_y = snap(e=e)
 
@@ -132,7 +133,7 @@ class Point_on_object:
         self.canvas.delete(self.highlight_tag)
 
         self.x, self.y = world_to_screen(self.pos_x, self.pos_y)
-
+        print(10)
 
         # prichadza najdebilnejsi kod co som vymyslel je mi to luto
         if state.drag_target is self:

@@ -20,6 +20,8 @@ class Area:
         self.scale = 1.0
         self.offset_x = 0.0
         self.offset_y = 0.0
+        self.label_offset_x = 0.0
+        self.label_offset_y = 0.0
         self.is_drawable = True
 
         self.value = 0.0
@@ -36,6 +38,8 @@ class Area:
             "unit_size": self.unit_size,
             "scale": self.scale,
             "is_drawable": self.is_drawable,
+            "label_offset_x": self.label_offset_x,
+            "label_offset_y": self.label_offset_y,
         }
 
     @classmethod
@@ -56,6 +60,8 @@ class Area:
         area.target_tag = target_tag
         area.scale = data.get("scale", 1.0)
         area.is_drawable = data.get("is_drawable", True)
+        area.label_offset_x = data.get("label_offset_x", 0.0)
+        area.label_offset_y = data.get("label_offset_y", 0.0)
         area.update()
         return area
 
@@ -113,6 +119,8 @@ class Area:
 
         self.value = round(area, 2)
         sx, sy = world_to_screen(x, y)
+        sx += self.label_offset_x
+        sy += self.label_offset_y
         visual_scale = min(max(1, self.scale**0.5), 1.9)
 
         label = getattr(self.target, "lower_label", None) or getattr(self.target, "label", "area")

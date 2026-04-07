@@ -19,6 +19,7 @@ from ..tools.utils import (
     detach_point,
     find_circle_at_position,
     find_line_at_position,
+    find_measurement_at_position,
     find_point_at_position,
     find_polygon_at_position,
     find_polyline_at_position,
@@ -56,6 +57,7 @@ from ..ui.ray import Ray
 from ..ui.regular_polygon import Regular_polygon
 from ..ui.segment import Segment
 from ..ui.segment_with_lenght import Segment_with_length
+from ..ui.slope import Slope
 from ..ui.vector import Vector
 from ..ui.vector_from_point import Vector_from_point
 from ..ui.circle_3_points import Circle_3_points
@@ -81,6 +83,17 @@ def arrow(e, root):
         deselect_all()
 
     if not point_obj:
+        measurement_obj = find_measurement_at_position(e)
+        if measurement_obj:
+            if hasattr(measurement_obj, "select"):
+                measurement_obj.select()
+                state.selected_point = measurement_obj
+            else:
+                state.selected_point = None
+            state.drag_target = measurement_obj
+            globals.logger.info(f"Selected measurement {measurement_obj.tag}")
+            return
+
         line_obj = find_line_at_position(e)
         polyline_obj = find_polyline_at_position(e)
         circle_obj = find_circle_at_position(e, r=2)
@@ -1186,6 +1199,32 @@ def length(e, root):
         state.points_for_obj = []
 
 
+def slope(e, root):
+    target = find_line_at_position(e)
+    if (
+        target is None
+        or not hasattr(target, "point_1")
+        or not hasattr(target, "point_2")
+        or target.point_1 is None
+        or target.point_2 is None
+    ):
+        return
+
+    for obj in globals.objects._objects:
+        if isinstance(obj, Slope) and obj.target is target:
+            return
+
+    obj = Slope(
+        root,
+        target=target,
+        unit_size=globals.axes.unit_size,
+        lower_label=get_lower_label(state),
+    )
+    globals.objects.register(obj)
+    globals.sidebar.items.append(obj)
+    globals.sidebar.update()
+
+
 def point_on_object(e, root):
     p = find_point_at_position(e)
     if p:
@@ -1346,6 +1385,8 @@ def pressing(root: Tk) -> None:
             area(e, root)
         elif state.selected_tool == "length":
             length(e, root)
+        elif state.selected_tool == "slope":
+            slope(e, root)
 
     def middle_click_pressed(e):
         state.start_pos["x"] = e.x

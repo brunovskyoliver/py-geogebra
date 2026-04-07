@@ -8,12 +8,14 @@ from ..tools.utils import (
     find_translation_polyline,
     find_translation_circle
 )
+from ..ui.area import Area
 from ..ui.line import Line
 from ..ui.length import Length
 from ..ui.ray import Ray
 from ..ui.segment_with_lenght import Segment_with_length
 from ..ui.midpoint_or_center import Midpoint_or_center
 from ..ui.segment import Segment
+from ..ui.slope import Slope
 from ..ui.vector import Vector
 from ..ui.polyline import Polyline
 from ..ui.regular_polygon import Regular_polygon
@@ -45,6 +47,15 @@ def dragging(root):
                 )
 
                 globals.objects.refresh()
+                state.start_pos["x"] = e.x
+                state.start_pos["y"] = e.y
+
+            elif isinstance(state.drag_target, (Length, Area, Slope)):
+                dx = e.x - state.start_pos["x"]
+                dy = e.y - state.start_pos["y"]
+                state.drag_target.label_offset_x += dx
+                state.drag_target.label_offset_y += dy
+                state.drag_target.update()
                 state.start_pos["x"] = e.x
                 state.start_pos["y"] = e.y
 
