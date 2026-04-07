@@ -593,6 +593,8 @@ def snap_to_circle(point, circle):
     dx = point.pos_x - circle.center.pos_x
     dy = point.pos_y - circle.center.pos_y
     dist = math.hypot(dx, dy)
+    if dist <= 1e-12:
+        return
     k = point.translation / dist
     point.pos_x = circle.center.pos_x + dx * k
     point.pos_y = circle.center.pos_y + dy * k

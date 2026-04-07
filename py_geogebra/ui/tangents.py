@@ -124,11 +124,18 @@ class Tangents:
             self.line_2 = Line(root=self.root, point_1=self.point_1)
             self.line_2.point_2 = self.point_2_2
 
-
-        try:
-            angle = math.asin(self.circle.radius / distance(self.circle.center.pos_x, self.circle.center.pos_y, self.point_1.pos_x, self.point_1.pos_y))
-        except ValueError:
+        denominator = distance(
+            self.circle.center.pos_x,
+            self.circle.center.pos_y,
+            self.point_1.pos_x,
+            self.point_1.pos_y,
+        )
+        if denominator <= 1e-12:
             angle = 0
+        else:
+            ratio = self.circle.radius / denominator
+            ratio = max(-1.0, min(1.0, ratio))
+            angle = math.asin(ratio)
 
 
         if angle == 0:

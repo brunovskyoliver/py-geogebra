@@ -33,6 +33,9 @@ from ..ui.length import Length
 from ..ui.slope import Slope
 from ..ui.point_on_object import Point_on_object
 from py_geogebra.ui.circular_arc import Circular_arc
+from py_geogebra.ui.circumcircular_arc import Circumcircular_arc
+from py_geogebra.ui.circular_sector import Circular_sector
+from py_geogebra.ui.circumcircular_sector import Circumcircular_sector
 from .. import globals
 import requests
 import subprocess
@@ -252,11 +255,20 @@ class Objects:
             elif od["type"] == "Semicircle":
                 c = Semicircle.from_dict(root, od)
                 self.register(c)
-            elif od["type"] == "Tangnets":
+            elif od["type"] in ("Tangnets", "Tangents"):
                 c = Tangents.from_dict(root, od)
                 self.register(c)
             elif od["type"] == "Circular_arc":
                 c = Circular_arc.from_dict(root, od)
+                self.register(c)
+            elif od["type"] == "Circumcircular_arc":
+                c = Circumcircular_arc.from_dict(root, od)
+                self.register(c)
+            elif od["type"] == "Circular_sector":
+                c = Circular_sector.from_dict(root, od)
+                self.register(c)
+            elif od["type"] == "Circumcircular_sector":
+                c = Circumcircular_sector.from_dict(root, od)
                 self.register(c)
             elif od["type"] == "Length":
                 c = Length.from_dict(root, od)
@@ -266,7 +278,7 @@ class Objects:
                 self.register(c)
 
         for od in data.get("objects", []):
-            if od["type"] == "Lower_label":
+            if od["type"] in ("Lower_label", "Lower Label"):
                 ll = Lower_label.from_dict(root, od)
                 self.register(ll)
 

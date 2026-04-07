@@ -35,7 +35,7 @@ class Sidebar:
         self.base_font_size = 16
         self.num_of_regular_polygons = 0
         self.font_family = "Calibri, mathsans, sans-serif"
-        self.font = tkfont.Font(family=self.font_family, size=self.base_font_size)
+        self.font = tkfont.Font(root=root, family=self.font_family, size=self.base_font_size)
 
         self.canvas.bind("<Configure>", self._on_resize)
 
@@ -97,8 +97,13 @@ class Sidebar:
                 y += height + 10
 
             elif isinstance(item, Line):
-                assert len(item.prescription) == 3
-                a, b, c = item.prescription
+                if (
+                    not isinstance(item.prescription, (list, tuple))
+                    or len(item.prescription) != 3
+                ):
+                    a, b, c = 0, 0, 0
+                else:
+                    a, b, c = item.prescription
                 sign_a = "-" if a < 0 else ""
                 sign_b = "-" if b < 0 else "+"
                 text = self.canvas.create_text(
@@ -179,8 +184,13 @@ class Sidebar:
                 y += height + 10
 
             elif isinstance(item, Ray):
-                assert len(item.prescription) == 3
-                a, b, c = item.prescription
+                if (
+                    not isinstance(item.prescription, (list, tuple))
+                    or len(item.prescription) != 3
+                ):
+                    a, b, c = 0, 0, 0
+                else:
+                    a, b, c = item.prescription
                 sign_a = "-" if a < 0 else ""
                 sign_b = "-" if b < 0 else "+"
                 text = self.canvas.create_text(
@@ -255,8 +265,13 @@ class Sidebar:
 
 
             elif isinstance(item, Perpendicular_bisector):
-                assert len(item.prescription) == 3
-                a, b, c = item.prescription
+                if (
+                    not isinstance(item.prescription, (list, tuple))
+                    or len(item.prescription) != 3
+                ):
+                    a, b, c = 0, 0, 0
+                else:
+                    a, b, c = item.prescription
                 sign_a = "-" if a < 0 else ""
                 sign_b = "-" if b < 0 else "+"
                 text = self.canvas.create_text(
@@ -340,8 +355,13 @@ class Sidebar:
                 y += height + 10
 
             elif isinstance(item, Angle_bisector):
-                assert len(item.prescription) == 3
-                a, b, c = item.prescription
+                if (
+                    not isinstance(item.prescription, (list, tuple))
+                    or len(item.prescription) != 3
+                ):
+                    a, b, c = 0, 0, 0
+                else:
+                    a, b, c = item.prescription
                 sign_a = "-" if a < 0 else ""
                 sign_b = "-" if b < 0 else "+"
                 text = self.canvas.create_text(

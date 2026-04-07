@@ -80,6 +80,7 @@ class Circumcircular_arc:
             "points": [p.label for p in self.points],
             "point_1": self.point_1.label if self.point_1 else None,
             "point_2": self.point_2.label if self.point_2 else None,
+            "point_3": self.point_3.label if self.point_3 else None,
             "center": self.center.label if self.center else None,
         }
 
@@ -95,10 +96,12 @@ class Circumcircular_arc:
 
         p1 = find_point(data.get("point_1"))
         p2 = find_point(data.get("point_2"))
+        p3 = find_point(data.get("point_3"))
         pc = find_point(data.get("center"))
         c = cls(root=root, unit_size=data.get("unit_size", 40))
         c.point_1 = p1
         c.point_2 = p2
+        c.point_3 = p3
         c.center = pc
         c.scale = data.get("scale", 1.0)
         c.is_drawable = data.get("is_drawable", True)
@@ -124,6 +127,9 @@ class Circumcircular_arc:
         self.canvas.delete(self.tag)
 
         visual_scale = min(max(1, self.scale**0.5), 1.9)
+
+        if self.point_1 is None or self.point_2 is None or self.point_3 is None:
+            return
 
         x1, y1 = self.point_1.pos_x, self.point_1.pos_y
 
@@ -200,6 +206,7 @@ class Circumcircular_arc:
                         (obj is not self.point_1)
                         and (obj is not self.point_2)
                         and (obj is not self.point_3)
+                        and (obj is not self.center)
                     ):
                         find_translation_circle(obj, self)
                         snap_to_circle(obj, self)
@@ -207,6 +214,15 @@ class Circumcircular_arc:
 
                 center_x_screen, center_y_screen = world_to_screen(
                     self.center.pos_x, self.center.pos_y
+                )
+                point_1_x, point_1_y = world_to_screen(
+                    self.point_1.pos_x, self.point_1.pos_y
+                )
+                point_2_x, point_2_y = world_to_screen(
+                    self.point_2.pos_x, self.point_2.pos_y
+                )
+                point_3_x, point_3_y = world_to_screen(
+                    self.point_3.pos_x, self.point_3.pos_y
                 )
 
                 radius_screen = world_to_screen_float(self.radius)
@@ -218,13 +234,39 @@ class Circumcircular_arc:
 
                 self.lower_label_obj.is_drawable = self.is_drawable
 
-                start_angle = math.degrees(
-                    math.asin(self.radius /  (self.center.pos_y - self.point_1.pos_y))
+                start_angle = (
+                    math.degrees(
+                        -math.atan2(
+                            point_1_y - center_y_screen,
+                            point_1_x - center_x_screen,
+                        )
+                    )
+                    % 360
                 )
-                extent_angle = (
-                    math.degrees(math.atan2(y2 - center_y_screen, x2 - center_x_screen))
-                    - start_angle
+                mid_angle = (
+                    math.degrees(
+                        -math.atan2(
+                            point_2_y - center_y_screen,
+                            point_2_x - center_x_screen,
+                        )
+                    )
+                    % 360
                 )
+                end_angle = (
+                    math.degrees(
+                        -math.atan2(
+                            point_3_y - center_y_screen,
+                            point_3_x - center_x_screen,
+                        )
+                    )
+                    % 360
+                )
+                ccw_extent = (end_angle - start_angle) % 360
+                mid_offset = (mid_angle - start_angle) % 360
+                if mid_offset <= ccw_extent:
+                    extent_angle = ccw_extent
+                else:
+                    extent_angle = ccw_extent - 360
 
                 if self.is_drawable:
                     if self.selected:

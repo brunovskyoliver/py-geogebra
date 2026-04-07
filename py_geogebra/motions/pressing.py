@@ -3,7 +3,9 @@ from tkinter import Tk, simpledialog
 
 from py_geogebra.ui import point_on_object
 from py_geogebra.ui.circular_arc import Circular_arc
+from py_geogebra.ui.circular_sector import Circular_sector
 from py_geogebra.ui.circumcircular_arc import Circumcircular_arc
+from py_geogebra.ui.circumcircular_sector import Circumcircular_sector
 from py_geogebra.ui.compass import Compass
 from py_geogebra.ui.point_on_object import Point_on_object
 from py_geogebra.ui.semicircle import Semicircle
@@ -398,8 +400,8 @@ def polyline(e, root):
 
 def segmnet_with_lenght(e, root):
     world_x, world_y = screen_to_world(e)
-
-    p = create_or_find_point_at_position(e, root)
+    existing_point = find_point_at_position(e, r=2)
+    p = existing_point or create_or_find_point_at_position(e, root)
 
     length = simpledialog.askfloat(
         "Dĺžka úsečky",
@@ -407,9 +409,10 @@ def segmnet_with_lenght(e, root):
         minvalue=0,
     )
     if length is None:
-        delete_object(p, state)
-        globals.sidebar.items.remove(p)
-        globals.sidebar.update()
+        if existing_point is None:
+            delete_object(p, state)
+        else:
+            p.deselect()
         return
 
     length *= globals.objects.unit_size
@@ -765,6 +768,13 @@ def regular_polygon(e, root):
             "pocet stran",
             minvalue=3,
         )
+        if num_points is None:
+            state.current_polygon.line_points.pop()
+            if state.points_for_obj:
+                state.points_for_obj.pop()
+            p.deselect()
+            state.current_polygon.update(e)
+            return
         state.current_polygon.num_points = num_points
         angle = (num_points * 180 - 360) / num_points
         rad_angle = math.radians(angle)
@@ -848,13 +858,20 @@ def circle_center_radius(e, root):
     state.start_pos["y"] = e.y
     world_x, world_y = screen_to_world(e)
 
-    p = create_or_find_point_at_position(e, root)
+    existing_point = find_point_at_position(e, r=2)
+    p = existing_point or create_or_find_point_at_position(e, root)
 
     radius = simpledialog.askfloat(
         "radius",
         "radius",
         minvalue=0,
     )
+    if radius is None:
+        if existing_point is None:
+            delete_object(p, state)
+        else:
+            p.deselect()
+        return
     c = Circle_center_radius(
         root,
         unit_size=globals.axes.unit_size,
@@ -1291,6 +1308,38 @@ def circumcircular_arc(e, root):
         state.points_for_obj = []
 
 
+def circular_sector(e, root):
+    p = create_or_find_point_at_position(e, root)
+    state.points_for_obj.append(p)
+    globals.objects.register(p)
+
+    if len(state.points_for_obj) == 3:
+        sector = Circular_sector(root)
+        sector.center = state.points_for_obj[0]
+        sector.point_1 = state.points_for_obj[1]
+        sector.point_2 = state.points_for_obj[2]
+        sector.lower_label = get_lower_label(state)
+        globals.objects.register(sector)
+
+        state.points_for_obj = []
+
+
+def circumcircular_sector(e, root):
+    p = create_or_find_point_at_position(e, root)
+    state.points_for_obj.append(p)
+    globals.objects.register(p)
+
+    if len(state.points_for_obj) == 3:
+        sector = Circumcircular_sector(root)
+        sector.point_1 = state.points_for_obj[0]
+        sector.point_2 = state.points_for_obj[1]
+        sector.point_3 = state.points_for_obj[2]
+        sector.lower_label = get_lower_label(state)
+        globals.objects.register(sector)
+
+        state.points_for_obj = []
+
+
 def pressing(root: Tk) -> None:
     def left_click_pressed(e):
 
@@ -1374,9 +1423,9 @@ def pressing(root: Tk) -> None:
         elif state.selected_tool == "circumcircular_arc":
             circumcircular_arc(e, root)
         elif state.selected_tool == "circular_sector":
-            pass
+            circular_sector(e, root)
         elif state.selected_tool == "circumcircular_sector":
-            pass
+            circumcircular_sector(e, root)
         elif state.selected_tool == "angle":
             angle(e,root)
         elif state.selected_tool == "angle_with_given_size":

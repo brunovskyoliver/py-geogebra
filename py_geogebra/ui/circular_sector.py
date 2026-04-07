@@ -1,26 +1,21 @@
+import math
 import tkinter as tk
 
-
-from py_geogebra.ui.line import Line
 from py_geogebra.ui.point import Point
+
+from .. import globals, state
 from ..tools.utils import (
-    screen_to_world,
+    distance,
+    dot,
+    find_translation_circle,
     screen_to_world_float,
     snap_to_circle,
     world_to_screen,
-    snap_to_circle,
-    find_translation_circle,
-    dot,
-    distance,
 )
-from .. import state
 from .lower_label import Lower_label
-from .blank_point import Blank_point
-import math
-from .. import globals
 
 
-class Circular_arc:
+class Circular_sector:
     def __init__(
         self,
         root: tk.Tk,
@@ -37,12 +32,12 @@ class Circular_arc:
 
         self.offset_x = 0.0
         self.offset_y = 0.0
-        self.scale = 1.0  # zoom factor
+        self.scale = 1.0
         self.unit_size = unit_size
 
         self.is_drawable = True
 
-        self.tag = f"circular_arc{id(self)}"
+        self.tag = f"circular_sector{id(self)}"
         self.center = None
         self.point_1 = None
         self.point_2 = None
@@ -52,18 +47,14 @@ class Circular_arc:
         self.s_radius = 0
         self.radius = 0
 
-        self.vector = []
-        self.n_vector = []
-
-        self.points : list[Point] = []
+        self.points: list[Point] = []
         self.lower_label = ""
         self.lower_label_obj = Lower_label(self.root, obj=self)
         self.objects.register(self.lower_label_obj)
 
-
     def to_dict(self) -> dict:
         return {
-            "type": "Circular_arc",
+            "type": "Circular_sector",
             "lower_label": self.lower_label,
             "pos_x": self.pos_x,
             "pos_y": self.pos_y,
@@ -89,24 +80,21 @@ class Circular_arc:
                     return obj
             return None
 
-        p1 = find_point(data.get("point_1"))
-        p2 = find_point(data.get("point_2"))
-        pc = find_point(data.get("center"))
-        c = cls(root=root, unit_size=data.get("unit_size", 40))
-        c.point_1 = p1
-        c.point_2 = p2
-        c.center = pc
-        c.scale = data.get("scale", 1.0)
-        c.is_drawable = data.get("is_drawable", True)
-        c.offset_x = data.get("offset_x", 0)
-        c.offset_y = data.get("offset_y", 0)
-        c.lower_label = data.get("lower_label", "")
-        c.tag = data.get("tag", "")
-        c.pos_x = data.get("pos_x", 0)
-        c.pos_y = data.get("pos_y", 0)
-        c.points = [find_point(lbl) for lbl in data.get("points", []) if lbl]
-        c.update()
-        return c
+        sector = cls(root=root, unit_size=data.get("unit_size", 40))
+        sector.point_1 = find_point(data.get("point_1"))
+        sector.point_2 = find_point(data.get("point_2"))
+        sector.center = find_point(data.get("center"))
+        sector.scale = data.get("scale", 1.0)
+        sector.is_drawable = data.get("is_drawable", True)
+        sector.offset_x = data.get("offset_x", 0)
+        sector.offset_y = data.get("offset_y", 0)
+        sector.lower_label = data.get("lower_label", "")
+        sector.tag = data.get("tag", "")
+        sector.pos_x = data.get("pos_x", 0)
+        sector.pos_y = data.get("pos_y", 0)
+        sector.points = [find_point(lbl) for lbl in data.get("points", []) if lbl]
+        sector.update()
+        return sector
 
     def select(self):
         self.selected = True
@@ -119,19 +107,17 @@ class Circular_arc:
     def update(self, e=None):
         self.canvas.delete(self.tag)
 
+        if self.center is None or self.point_1 is None or self.point_2 is None:
+            return
+
         visual_scale = min(max(1, self.scale**0.5), 1.9)
-
-
-
 
         if state.drag_target is self:
             x_dif, y_dif = self.prev_x - self.pos_x, self.prev_y - self.pos_y
-
             for obj in self.points:
-                if (obj is self.point_1) or (obj is self.point_2) or (obj is self.center):
+                if obj in (self.point_1, self.point_2, self.center):
                     obj.pos_x -= x_dif
                     obj.pos_y -= y_dif
-                    continue
 
         x2, y2 = world_to_screen(self.point_2.pos_x, self.point_2.pos_y)
         x1, y1 = world_to_screen(self.point_1.pos_x, self.point_1.pos_y)
@@ -148,53 +134,49 @@ class Circular_arc:
         ratio = max(-1.0, min(1.0, ratio))
         angle_between = math.acos(ratio)
         angle_between = (angle_between / 6.28) * 360
-        if (dot(vec1, (vec2[1], -vec2[0]))) > 0:
+        if dot(vec1, (vec2[1], -vec2[0])) > 0:
             angle_between = 360 - angle_between
-
 
         self.s_radius = distance(x_c, y_c, x1, y1)
         self.radius = screen_to_world_float(self.s_radius)
 
-        sqaure_x = x_c + self.s_radius
-        sqaure_y = y_c + self.s_radius
+        square_x1 = x_c + self.s_radius
+        square_y1 = y_c + self.s_radius
         square_x2 = x_c - self.s_radius
         square_y2 = y_c - self.s_radius
 
-
         for obj in self.points:
-            if (obj is not self.point_1) and (obj is not self.point_2) and (obj is not self.center):
-
+            if obj not in (self.point_1, self.point_2, self.center):
                 find_translation_circle(obj, self)
                 snap_to_circle(obj, self)
-
                 obj.update()
 
         if self.is_drawable:
-
             if self.selected:
                 self.canvas.create_arc(
-                    sqaure_x,
-                    sqaure_y,
+                    square_x1,
+                    square_y1,
                     square_x2,
                     square_y2,
                     start=angle,
                     extent=angle_between,
-                    style=tk.ARC,
+                    style=tk.PIESLICE,
                     outline="lightgrey",
+                    fill="#E9D5CC",
                     width=2 * 3 * visual_scale,
                     tags=self.tag,
                 )
 
-
             self.canvas.create_arc(
-                sqaure_x,
-                sqaure_y,
+                square_x1,
+                square_y1,
                 square_x2,
                 square_y2,
                 start=angle,
                 extent=angle_between,
-                style=tk.ARC,
+                style=tk.PIESLICE,
                 outline="black",
+                fill="#D9AEA0",
                 width=2 * visual_scale,
                 tags=self.tag,
             )
@@ -206,10 +188,8 @@ class Circular_arc:
         if self.point_2 and self.point_2 not in self.points:
             self.points.append(self.point_2)
 
-
         for p in self.points:
             self.canvas.tag_raise(p.tag)
-
 
         self.prev_x = self.pos_x
         self.prev_y = self.pos_y

@@ -27,7 +27,7 @@ class Lower_label:
 
     def to_dict(self) -> dict:
         return {
-            "type": "Lower Label",
+            "type": "Lower_label",
             "unit_size": self.unit_size,
             "scale": self.scale,
             "tag": self.tag,

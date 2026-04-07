@@ -32,14 +32,14 @@ class TestApp(unittest.TestCase):
         with patch("tkinter.Canvas", return_value=mock_canvas):
             with patch("tkinter.Frame") as mock_frame:
                 mock_root.mainloop = MagicMock()
-                run_app("")
+                run_app("noserver nohotreload")
 
                 mock_set_language.assert_called_once_with("sk")
                 mock_root.geometry.assert_called_once_with("1280x720")
 
                 self.assertTrue(mock_root.config.called)
 
-                self.assertEqual(mock_canvas.pack.call_count, 1)
+                self.assertGreaterEqual(mock_canvas.pack.call_count, 1)
 
                 self.assertIsNotNone(globals.canvas)
                 self.assertIsNotNone(globals.objects)

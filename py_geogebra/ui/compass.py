@@ -48,6 +48,7 @@ class Compass:
         self.r_point_2 = None
         self.selected = False
         self.translation = None
+        self.vector = (0, 0)
 
         self.points = [self.center]
         self.child_lines_labels = []
