@@ -1,5 +1,5 @@
 import tkinter as tk
-from ..tools.utils import distance, snap_to_polyline
+from ..tools.utils import distance, get_fill_color, get_highlight_color, get_object_color, snap_to_polyline
 from .. import state
 from .. import globals
 from .lower_label import Lower_label
@@ -40,6 +40,7 @@ class Polygon:
         self.lower_label = ""
         self.lower_label_obj = Lower_label(self.root, obj=self)
         self.objects.register(self.lower_label_obj)
+        self.color = "#000000"
         self.canvas.bind("<Configure>", self._on_canvas_configure)
 
     def to_dict(self) -> dict:
@@ -137,7 +138,7 @@ class Polygon:
                 segment = Segment(self.root, point_1=p1)
                 segment.point_2 = p2
                 segment.parent = self
-                segment.color = "#FF0000"
+                segment.color = get_object_color(self)
                 segment.update()
                 self.objects.register(segment)
                 self.segments.append(segment)
@@ -201,7 +202,7 @@ class Polygon:
             if self.selected:
                 self.canvas.create_line(
                     *coords,
-                    fill="lightgrey",
+                    fill=get_highlight_color(self),
                     width=2 * 3 * visual_scale,
                     tags=(self.tag, "under_line"),
                 )
@@ -211,7 +212,7 @@ class Polygon:
 
             polygon_fill = self.canvas.create_polygon(
                 *coords,
-                fill="#D9AEA0",
+                fill=get_fill_color(self),
                 outline="",
                 tags=(self.tag, "polygon_fill"),
             )
@@ -237,7 +238,6 @@ class Polygon:
                         line_points[0].pos_y,
                         line_points[1].pos_x,
                         line_points[1].pos_y,
-                        2,
                     )
             self.lower_label_obj.update()
         self.length = length

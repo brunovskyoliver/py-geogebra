@@ -48,8 +48,12 @@ def change_icon(img, btn, tool_name):
 
     deselect_all()
     state.selected_tool = tool_name
+    state.transform_source = None
+    state.transform_reference = None
     globals.logger.info(f"Switched to {tool_name}")
     state.points_for_obj = []
+    state.selected_point = None
+    state.drag_target = None
 
     if tool_name in ("pen", "freehand"):
         cursor = "crosshair"  # pencil nefunguje spravne na macu z nejakeho dovodu
@@ -86,11 +90,12 @@ def tool_menu_init(root, bar, def_icon, buttons):
     items = []
     for b in buttons:
         icon = icons[b["icon"]]
+        tool_name = b.get("tool", b["icon"])
         menu.add_command(
             label=_(b["name"]),
             image=icon,
             compound="left",
-            command=lambda img=icon, tool_name=b["icon"]: change_icon(
+            command=lambda img=icon, tool_name=tool_name: change_icon(
                 img, button, tool_name
             ),
         )
@@ -121,6 +126,19 @@ def toolbar(root):
             {"name": _("Pohyb"), "icon": "arrow"},
             {"name": _("Voľný tvar"), "icon": "freehand"},
             {"name": _("Nástroj pero"), "icon": "pen"},
+        ],
+    )
+    tool_menu_init(
+        root,
+        bar,
+        def_icon="reflect_about_line",
+        buttons=[
+            {"name": _("Osová súmernosť podľa priamky"), "icon": "reflect_about_line", "tool": "reflect_about_line"},
+            {"name": _("Stredová súmernosť podľa bodu"), "icon": "reflect_about_point", "tool": "reflect_about_point"},
+            {"name": _("Inverzia podľa kružnice"), "icon": "reflect_about_circle", "tool": "reflect_about_circle"},
+            {"name": _("Otočenie okolo bodu"), "icon": "rotate_around_point", "tool": "rotate_around_point"},
+            {"name": _("Posunutie o vektor"), "icon": "translate_by_vector", "tool": "translate_by_vector"},
+            {"name": _("Dilácia z bodu"), "icon": "dilate_from_point", "tool": "dilate_from_point"},
         ],
     )
     tool_menu_init(

@@ -4,6 +4,7 @@ from ..tools.utils import (
     find_2lines_intersection,
     find_translation,
     get_label,
+    get_object_color,
     find_translation_between_points,
     find_circle_line_intersection,
     find_circle_circle_intersection,
@@ -325,6 +326,6 @@ class Intersect:
                 self.y - 15 * visual_scale,
                 text=self.label,
                 font=("Arial", int(12 * visual_scale)),
-                fill="blue",
+                fill=get_object_color(self),
                 tags=self.tag,
             )

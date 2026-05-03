@@ -1,5 +1,6 @@
 import importlib
 import math
+import re
 import tkinter as tk
 from ast import Return
 
@@ -46,6 +47,247 @@ def center_screen():
     width = g().canvas.winfo_width()
     height = g().canvas.winfo_height()
     return width // 2, height // 2
+
+
+def format_number(value, decimals: int = 2) -> str:
+    if value is None:
+        return ""
+
+    decimals = max(0, int(decimals))
+    if isinstance(value, (float, int)):
+        if math.isinf(value):
+            return "undefined"
+        if math.isnan(value):
+            return "nan"
+    return f"{float(value):.{decimals}f}"
+
+
+def format_length_value(value) -> str:
+    return format_number(value, getattr(state, "length_decimal_places", 2))
+
+
+def format_angle_value(value) -> str:
+    return format_number(value, getattr(state, "angle_decimal_places", 2))
+
+
+def _normalize_color(color: str, fallback: str = "#000000") -> str:
+    if not isinstance(color, str) or not color:
+        return fallback
+
+    color = color.strip()
+    if not color.startswith("#") or len(color) != 7:
+        return color
+
+    try:
+        int(color[1:], 16)
+    except ValueError:
+        return fallback
+    return color.lower()
+
+
+def _blend_color(color: str, target: str = "#ffffff", ratio: float = 0.5) -> str:
+    color = _normalize_color(color)
+    target = _normalize_color(target)
+    if not color.startswith("#") or not target.startswith("#"):
+        return color
+
+    ratio = max(0.0, min(1.0, ratio))
+    src_rgb = tuple(int(color[i : i + 2], 16) for i in (1, 3, 5))
+    dst_rgb = tuple(int(target[i : i + 2], 16) for i in (1, 3, 5))
+    rgb = tuple(int(round(src + (dst - src) * ratio)) for src, dst in zip(src_rgb, dst_rgb))
+    return "#{:02x}{:02x}{:02x}".format(*rgb)
+
+
+def get_default_object_color(obj) -> str:
+    default_colors = {
+        "Point": "#349aff",
+        "Point_on_object": "#349aff",
+        "Intersect": "#7a7a7a",
+        "Midpoint_or_center": "#7a7a7a",
+        "Angle": "#228b22",
+    }
+    return default_colors.get(obj.__class__.__name__, "#000000")
+
+
+def get_object_color(obj, default: str | None = None) -> str:
+    fallback = default or get_default_object_color(obj)
+    return _normalize_color(getattr(obj, "color", fallback), fallback)
+
+
+def get_fill_color(obj, default: str | None = None) -> str:
+    return _blend_color(get_object_color(obj, default), "#ffffff", 0.68)
+
+
+def get_highlight_color(obj, default: str | None = None) -> str:
+    return _blend_color(get_object_color(obj, default), "#ffffff", 0.42)
+
+
+def ensure_object_color(obj) -> str:
+    color = get_object_color(obj)
+    setattr(obj, "color", color)
+    return color
+
+
+def apply_object_color(obj, color: str):
+    color = _normalize_color(color, get_default_object_color(obj))
+    setattr(obj, "color", color)
+
+    for segment in getattr(obj, "segments", []):
+        if segment is not None:
+            setattr(segment, "color", color)
+
+    if hasattr(obj, "lower_label_obj") and getattr(obj, "lower_label_obj", None) is not None:
+        obj.lower_label_obj.update()
+
+    if hasattr(obj, "update"):
+        obj.update()
+
+
+def _label_sort_key(label: str):
+    if not isinstance(label, str):
+        return (2, "")
+    if not label:
+        return (1, "")
+
+    upper = label.upper()
+    if upper.isalpha():
+        return (0, ascii_to_number(upper))
+    return (1, upper)
+
+
+def _reclaim_label(pool, label: str):
+    if label and label not in pool:
+        pool.append(label)
+        pool.sort(key=_label_sort_key)
+
+
+def _reserve_label(pool, label: str):
+    if not label:
+        return
+    while label in pool:
+        pool.remove(label)
+
+
+def _editable_name_spec(obj):
+    from ..ui.angle import Angle
+    from ..ui.intersect import Intersect
+    from ..ui.midpoint_or_center import Midpoint_or_center
+    from ..ui.point import Point
+    from ..ui.point_on_object import Point_on_object
+
+    if isinstance(obj, (Point, Intersect, Point_on_object, Midpoint_or_center)):
+        return {"attr": "label", "family": "label", "case": "upper"}
+
+    if isinstance(obj, Angle):
+        return {"attr": "label", "family": "angle", "case": "lower"}
+
+    if hasattr(obj, "lower_label") and getattr(obj, "lower_label", "") and getattr(obj, "owns_label", True):
+        return {"attr": "lower_label", "family": "lower", "case": "lower"}
+
+    return None
+
+
+def get_editable_name_value(obj) -> str | None:
+    spec = _editable_name_spec(obj)
+    if spec is None:
+        return None
+    return getattr(obj, spec["attr"], "")
+
+
+def can_edit_object_name(obj) -> bool:
+    return _editable_name_spec(obj) is not None
+
+
+def _iter_named_objects_for_family(family: str):
+    from ..ui.angle import Angle
+    from ..ui.intersect import Intersect
+    from ..ui.midpoint_or_center import Midpoint_or_center
+    from ..ui.point import Point
+    from ..ui.point_on_object import Point_on_object
+
+    for obj in g().objects._objects:
+        if family == "label" and isinstance(obj, (Point, Intersect, Point_on_object, Midpoint_or_center)):
+            yield obj
+        elif family == "angle" and isinstance(obj, Angle):
+            yield obj
+        elif family == "lower" and hasattr(obj, "lower_label") and getattr(obj, "lower_label", "") and getattr(obj, "owns_label", True):
+            yield obj
+
+
+def normalize_object_name(obj, raw_name: str) -> tuple[str | None, str | None]:
+    spec = _editable_name_spec(obj)
+    if spec is None:
+        return None, "This object name cannot be edited."
+
+    normalized = (raw_name or "").strip()
+    if not normalized:
+        return None, "Name cannot be empty."
+    if not re.fullmatch(r"[A-Za-z]+", normalized):
+        return None, "Use letters only."
+
+    normalized = normalized.upper() if spec["case"] == "upper" else normalized.lower()
+
+    for other in _iter_named_objects_for_family(spec["family"]):
+        if other is obj:
+            continue
+        other_value = getattr(other, spec["attr"], "")
+        if other_value == normalized:
+            return None, f'"{normalized}" is already in use.'
+
+    return normalized, None
+
+
+def rename_object(obj, raw_name: str, current_state):
+    from ..ui.length import Length
+
+    spec = _editable_name_spec(obj)
+    if spec is None:
+        return False, "This object name cannot be edited."
+
+    normalized, error = normalize_object_name(obj, raw_name)
+    if error:
+        return False, error
+
+    attr = spec["attr"]
+    old_name = getattr(obj, attr, "")
+    if normalized == old_name:
+        return True, ""
+
+    reclaimers = {
+        "label": reconfigure_label_order,
+        "lower": reconfigure_lower_label_order,
+        "angle": reconfigure_angle_label_order,
+    }
+    reservers = {
+        "label": lambda label: _reserve_label(current_state.label_unused, label),
+        "lower": lambda label: _reserve_label(current_state.lower_label_unused, label),
+        "angle": lambda label: _reserve_label(current_state.angle_label_unused, label),
+    }
+
+    reclaimers[spec["family"]](old_name, current_state)
+    reservers[spec["family"]](normalized)
+    setattr(obj, attr, normalized)
+
+    if spec["family"] == "lower":
+        for dependent in g().objects._objects:
+            if isinstance(dependent, Length) and not getattr(dependent, "owns_label", True):
+                same_points = (
+                    getattr(dependent, "point_1", None) is getattr(obj, "point_1", None)
+                    and getattr(dependent, "point_2", None) is getattr(obj, "point_2", None)
+                ) or (
+                    getattr(dependent, "point_1", None) is getattr(obj, "point_2", None)
+                    and getattr(dependent, "point_2", None) is getattr(obj, "point_1", None)
+                )
+                if same_points:
+                    dependent.lower_label = normalized
+                    dependent.update()
+
+    if hasattr(obj, "lower_label_obj") and getattr(obj, "lower_label_obj", None) is not None:
+        obj.lower_label_obj.update()
+    if hasattr(obj, "update"):
+        obj.update()
+    g().sidebar.update()
+    return True, ""
 
 
 def screen_to_world(e):
@@ -98,210 +340,181 @@ def set_cursor(canvas: tk.Canvas, cursor: str):
 
 
 def reconfigure_label_order(label: str, state):
-    state.label_unused.append(label)
-    # print(f"unused: {state.label_unused}")
+    _reclaim_label(state.label_unused, label)
 
 
 def reconfigure_lower_label_order(lower_label: str, state):
-    state.lower_label_unused.append(lower_label)
+    _reclaim_label(state.lower_label_unused, lower_label)
 
 
 def reconfigure_angle_label_order(angle_label: str, state):
-    state.angle_label_unused.append(angle_label)
+    _reclaim_label(state.angle_label_unused, angle_label)
+
+
+def _object_canvas_tags(obj) -> tuple[str, ...]:
+    tags = []
+    tag = getattr(obj, "tag", None)
+    if tag:
+        tags.append(tag)
+
+    lower_label_obj = getattr(obj, "lower_label_obj", None)
+    lower_label_tag = getattr(lower_label_obj, "tag", None)
+    if lower_label_tag:
+        tags.append(lower_label_tag)
+
+    return tuple(tags)
+
+
+def _object_overlaps_items(obj, items) -> bool:
+    if not items:
+        return False
+
+    candidate_tags = _object_canvas_tags(obj)
+    if not candidate_tags:
+        return False
+
+    overlapping_tags = set()
+    for item in items:
+        overlapping_tags.update(g().canvas.gettags(item))
+
+    return any(tag in overlapping_tags for tag in candidate_tags)
 
 
 def delete_object(object_to_delete, state):
-    from ..ui.angle_bisector import Angle_bisector
-    from ..ui.area import Area
-    from ..ui.circle_3_points import Circle_3_points
-    from ..ui.circle_center_point import Circle_center_point
-    from ..ui.circle_center_radius import Circle_center_radius
-    from ..ui.line import Line
     from ..ui.angle import Angle
     from ..ui.length import Length
-    from ..ui.midpoint_or_center import Midpoint_or_center
-    from ..ui.perpendicular_bisector import Perpendicular_bisector
     from ..ui.point import Point
-    from ..ui.polygon import Polygon
-    from ..ui.polyline import Polyline
-    from ..ui.ray import Ray
-    from ..ui.regular_polygon import Regular_polygon
-    from ..ui.segment import Segment
-    from ..ui.segment_with_lenght import Segment_with_length
-    from ..ui.semicircle import Semicircle
     from ..ui.slope import Slope
 
-    def remove_measurements_for_target(target):
+    deleting = set()
+
+    def remove_from_sidebar(obj):
+        sidebar = getattr(g(), "sidebar", None)
+        if sidebar and obj in sidebar.items:
+            sidebar.items.remove(obj)
+            if getattr(sidebar, "selected_item", None) is obj:
+                sidebar.show_item(None)
+            sidebar.update()
+
+    def unregister_and_delete(obj):
+        if obj is None:
+            return
+
+        if hasattr(obj, "deleted"):
+            obj.deleted = True
+
+        g().objects.unregister(obj)
+
+        tag = getattr(obj, "tag", None)
+        if tag:
+            g().canvas.delete(tag)
+
+        highlight_tag = getattr(obj, "highlight_tag", None)
+        if highlight_tag:
+            g().canvas.delete(highlight_tag)
+
+    def reclaim_object_label(obj):
+        if isinstance(obj, Point):
+            label = getattr(obj, "label", "")
+            if label:
+                reconfigure_label_order(label, state)
+            return
+
+        if isinstance(obj, Angle):
+            label = getattr(obj, "label", "")
+            if label:
+                reconfigure_angle_label_order(label, state)
+            return
+
+        lower_label = getattr(obj, "lower_label", "")
+        if not lower_label:
+            return
+
+        if isinstance(obj, Length) and not getattr(obj, "owns_label", True):
+            return
+        if isinstance(obj, Slope) and not getattr(obj, "owns_label", True):
+            return
+
+        reconfigure_lower_label_order(lower_label, state)
+
+    def object_depends_on_point(obj, point):
+        point_attrs = (
+            "point_1",
+            "point_2",
+            "point_3",
+            "center",
+            "anchor",
+            "perp_point_1",
+            "perp_point_2",
+            "angle_point_1",
+            "angle_point_2",
+            "r_point_1",
+            "r_point_2",
+        )
+        if any(getattr(obj, attr, None) is point for attr in point_attrs):
+            return True
+
+        line_points = getattr(obj, "line_points", None)
+        return bool(line_points) and point in line_points
+
+    def object_depends_on_object(obj, target):
+        if getattr(obj, "target", None) is target:
+            return True
+        if getattr(obj, "parent_obj", None) is target:
+            return True
+        if getattr(obj, "parent_line", None) is target:
+            return True
+        if getattr(obj, "parent", None) is target:
+            return True
+        if getattr(obj, "circle", None) is target:
+            return True
+        if getattr(obj, "line_1", None) is target or getattr(obj, "line_2", None) is target:
+            return True
+        if getattr(obj, "obj", None) is target:
+            return True
+        return False
+
+    def delete_registered_object(obj):
+        if obj is None:
+            return
+
+        obj_id = id(obj)
+        if obj_id in deleting:
+            return
+        deleting.add(obj_id)
+
         for dep in list(g().objects._objects):
-            if isinstance(dep, (Area, Slope)) and getattr(dep, "target", None) is target:
-                if isinstance(dep, Slope) and getattr(dep, "lower_label", ""):
-                    reconfigure_lower_label_order(dep.lower_label, state)
-                if dep in g().sidebar.items:
-                    g().sidebar.items.remove(dep)
-                    g().sidebar.update()
-                g().objects.unregister(dep)
-                g().canvas.delete(dep.tag)
+            if dep is obj:
+                continue
+            if object_depends_on_object(dep, obj) or (
+                isinstance(obj, Point) and object_depends_on_point(dep, obj)
+            ):
+                delete_registered_object(dep)
+
+        for attr in ("lower_label_obj", "bisector_1", "bisector_2", "line_1", "line_2"):
+            helper = getattr(obj, attr, None)
+            if helper is not None and helper is not obj:
+                delete_registered_object(helper)
+
+        if getattr(state, "selected_point", None) is obj:
+            state.selected_point = None
+        if getattr(state, "drag_target", None) is obj:
+            state.drag_target = None
+        if getattr(state, "selected_intersect_line_1", None) is obj:
+            state.selected_intersect_line_1 = None
+
+        remove_from_sidebar(obj)
+        reclaim_object_label(obj)
+        unregister_and_delete(obj)
 
     if state.points_for_obj:
-        for obj in state.points_for_obj:
-            g().objects.unregister(obj)
-            g().canvas.delete(obj.tag)
-            if hasattr(obj, "highlight_tag"):
-                g().canvas.delete(obj.highlight_tag)
+        for obj in list(state.points_for_obj):
+            if obj is object_to_delete:
+                continue
+            delete_registered_object(obj)
         state.points_for_obj.clear()
 
-    if isinstance(object_to_delete, Line):
-        if object_to_delete in g().sidebar.items:
-            g().sidebar.items.remove(object_to_delete)
-            g().sidebar.update()
-        if hasattr(object_to_delete, "lower_label"):
-            g().objects.unregister(object_to_delete.lower_label_obj)
-            g().canvas.delete(object_to_delete.lower_label_obj.tag)
-        if hasattr(object_to_delete, "deleted"):
-            object_to_delete.deleted = True
-
-    if isinstance(object_to_delete, Point):
-        if state.selected_point in g().sidebar.items:
-            g().sidebar.items.remove(state.selected_point)
-            g().sidebar.update()
-        for obj in list(g().objects._objects):
-            if (
-                isinstance(obj, Line)
-                or isinstance(obj, Segment)
-                or isinstance(obj, Ray)
-                or isinstance(obj, Segment_with_length)
-                or isinstance(obj, Midpoint_or_center)
-                or isinstance(obj, Perpendicular_bisector)
-                or isinstance(obj, Semicircle)
-                or isinstance(obj, Length)
-            ) and (obj.point_1 is object_to_delete or obj.point_2 is object_to_delete):
-                if hasattr(obj, "lower_label_obj"):
-                    g().objects.unregister(obj.lower_label_obj)
-                    g().canvas.delete(obj.lower_label_obj.tag)
-                g().objects.unregister(obj)
-                g().canvas.delete(obj.tag)
-                remove_measurements_for_target(obj)
-                if isinstance(obj, Length) and getattr(obj, "owns_label", True):
-                    reconfigure_lower_label_order(obj.lower_label, state)
-                if isinstance(obj, Length) and obj in g().sidebar.items:
-                    g().sidebar.items.remove(obj)
-                    g().sidebar.update()
-            if isinstance(obj, Circle_3_points) and (
-                obj.point_1 is object_to_delete
-                or obj.point_2 is object_to_delete
-                or obj.point_3 is object_to_delete
-            ):
-                if hasattr(obj, "lower_label"):
-                    g().objects.unregister(obj.lower_label_obj)
-                    g().canvas.delete(obj.lower_label_obj.tag)
-                if hasattr(obj, "bisector_1"):
-                    g().objects.unregister(obj.bisector_1)
-                    g().canvas.delete(obj.bisector_1.tag)
-                if hasattr(obj, "bisector_2"):
-                    g().objects.unregister(obj.bisector_2)
-                    g().canvas.delete(obj.bisector_2.tag)
-
-                g().objects.unregister(obj)
-                g().canvas.delete(obj.tag)
-                remove_measurements_for_target(obj)
-
-            if isinstance(obj, Polygon) or isinstance(obj, Regular_polygon):
-                for segment in obj.segments:
-                    g().objects.unregister(segment)
-                    g().canvas.delete(segment.tag)
-                g().objects.unregister(obj)
-                g().canvas.delete(obj.tag)
-                remove_measurements_for_target(obj)
-                object_to_delete.deselect()
-                g().objects.unregister(object_to_delete)
-                g().canvas.delete(object_to_delete.tag)
-            if isinstance(obj, Angle_bisector) and (
-                obj.angle_point_1 is object_to_delete
-                or obj.angle_point_2 is object_to_delete
-            ):
-                if hasattr(obj, "lower_label"):
-                    g().objects.unregister(obj.lower_label_obj)
-                    g().canvas.delete(obj.lower_label_obj.tag)
-                g().objects.unregister(obj)
-                g().canvas.delete(obj.tag)
-            if (
-                isinstance(obj, Circle_center_point)
-                or isinstance(obj, Circle_center_radius)
-            ) and (obj.center is object_to_delete or obj.point_2 is object_to_delete):
-                if hasattr(obj, "lower_label"):
-                    g().objects.unregister(obj.lower_label_obj)
-                    g().canvas.delete(obj.lower_label_obj.tag)
-                g().objects.unregister(obj)
-                g().canvas.delete(obj.tag)
-                remove_measurements_for_target(obj)
-
-            if (
-                isinstance(obj, Line)
-                or isinstance(obj, Ray)
-                or isinstance(obj, Segment)
-                or isinstance(obj, Polyline)
-                or isinstance(obj, Polygon)
-                or isinstance(obj, Regular_polygon)
-                or isinstance(obj, Angle_bisector)
-            ):
-                reconfigure_lower_label_order(obj.lower_label, state)
-                if obj in g().sidebar.items:
-                    g().sidebar.items.remove(obj)
-                    g().sidebar.update()
-            if isinstance(obj, Angle):
-                reconfigure_angle_label_order(obj.label, state)
-                if obj in g().sidebar.items:
-                    g().sidebar.items.remove(obj)
-                    g().sidebar.update()
-
-            if isinstance(obj, Midpoint_or_center):
-                if obj in g().sidebar.items:
-                    g().sidebar.items.remove(obj)
-                    g().sidebar.update()
-            if isinstance(obj, Polyline) and object_to_delete in obj.points:
-                if obj in g().sidebar.items:
-                    g().objects.unregister(obj)
-                    g().canvas.delete(obj.tag)
-            if isinstance(obj, Polygon) and object_to_delete in obj.points:
-                if obj in g().sidebar.items:
-                    g().objects.unregister(obj)
-                    g().canvas.delete(obj.tag)
-            if isinstance(obj, Regular_polygon) and object_to_delete in obj.points:
-                if obj in g().sidebar.items:
-                    g().objects.unregister(obj)
-                    g().canvas.delete(obj.tag)
-
-        state.selected_point = None
-        if isinstance(object_to_delete, Point):
-            reconfigure_label_order(object_to_delete.label, state)
-    if isinstance(object_to_delete, Polyline):
-        for obj in object_to_delete.points:
-            g().objects.unregister(obj)
-            g().canvas.delete(obj.tag)
-            reconfigure_label_order(obj.label, state)
-    if isinstance(object_to_delete, Polygon):
-        for obj in object_to_delete.points:
-            g().objects.unregister(obj)
-            g().canvas.delete(obj.tag)
-            reconfigure_label_order(obj.label, state)
-    remove_measurements_for_target(object_to_delete)
-
-    if isinstance(object_to_delete, Angle):
-        reconfigure_angle_label_order(object_to_delete.label, state)
-    elif hasattr(object_to_delete, "lower_label") and (
-        not isinstance(object_to_delete, Length)
-        and not isinstance(object_to_delete, Slope)
-        or getattr(object_to_delete, "owns_label", True)
-    ):
-        reconfigure_lower_label_order(object_to_delete.lower_label, state)
-    if object_to_delete in g().sidebar.items:
-        g().sidebar.items.remove(object_to_delete)
-        g().sidebar.update()
-
-    g().objects.unregister(object_to_delete)
-    g().canvas.delete(object_to_delete.tag)
-    if hasattr(object_to_delete, "highlight_tag"):
-        g().canvas.delete(object_to_delete.highlight_tag)
+    delete_registered_object(object_to_delete)
     g().objects.refresh()
 
 
@@ -320,6 +533,16 @@ def world_to_screen_float(num) -> float:
     return num * (g().objects.unit_size * g().objects.scale)
 
 
+def world_vector_to_screen(dx, dy) -> tuple[float, float]:
+    scale = g().objects.unit_size * g().objects.scale
+    return dx * scale, -dy * scale
+
+
+def screen_vector_to_world(dx, dy) -> tuple[float, float]:
+    scale = g().objects.unit_size * g().objects.scale
+    return dx / scale, -dy / scale
+
+
 def distance(x1, y1, x2, y2, r: int = 0):
     d = math.sqrt((x2 - x1) ** 2 + (y2 - y1) ** 2)
     if r != 0:
@@ -331,6 +554,33 @@ def deselect_all():
     for obj in g().objects._objects:
         if hasattr(obj, "deselect"):
             obj.deselect()
+    sidebar = getattr(g(), "sidebar", None)
+    if sidebar:
+        sidebar.show_item(None)
+
+
+def select_item(item, *, drag_target=None, open_properties=False):
+    if item is None:
+        deselect_all()
+        state.selected_point = None
+        state.drag_target = None
+        return False
+
+    deselect_all()
+    if hasattr(item, "select"):
+        item.select()
+
+    state.selected_point = item
+    state.drag_target = drag_target
+
+    sidebar = getattr(g(), "sidebar", None)
+    if sidebar:
+        if open_properties:
+            sidebar.show_item(item)
+        else:
+            sidebar.set_selected_item(item, close_dialog=True)
+
+    return True
 
 
 def find_point_at_position(e, r=5):
@@ -340,11 +590,9 @@ def find_point_at_position(e, r=5):
     from ..ui.point_on_object import Point_on_object
 
     items = g().canvas.find_overlapping(e.x - r, e.y - r, e.x + r, e.y + r)
-    p = None
-    for obj in g().objects._objects:
+    for obj in reversed(g().objects._objects):
         if (
-            hasattr(obj, "tag")
-            and any(obj.tag in g().canvas.gettags(i) for i in items)
+            _object_overlaps_items(obj, items)
             and (
                 isinstance(obj, Point)
                 or isinstance(obj, Intersect)
@@ -353,9 +601,8 @@ def find_point_at_position(e, r=5):
             )
         ):
             if "point" in obj.tag or "intersect" in obj.tag:
-                p = obj
-                break
-    return p
+                return obj
+    return None
 
 
 def find_measurement_at_position(e, r=5):
@@ -367,9 +614,29 @@ def find_measurement_at_position(e, r=5):
     for obj in reversed(g().objects._objects):
         if (
             isinstance(obj, (Area, Length, Slope))
-            and hasattr(obj, "tag")
-            and any(obj.tag in g().canvas.gettags(i) for i in items)
+            and _object_overlaps_items(obj, items)
         ):
+            return obj
+    return None
+
+
+def find_selectable_shape_at_position(e, r=4, exception=None):
+    excluded_prefixes = (
+        "point_",
+        "point_on_object_",
+        "intersect_",
+        "area_",
+        "length_",
+        "slope_",
+    )
+    items = g().canvas.find_overlapping(e.x - r, e.y - r, e.x + r, e.y + r)
+    for obj in reversed(g().objects._objects):
+        if obj is exception:
+            continue
+        tag = getattr(obj, "tag", "")
+        if any(tag.startswith(prefix) for prefix in excluded_prefixes):
+            continue
+        if hasattr(obj, "select") and _object_overlaps_items(obj, items):
             return obj
     return None
 
@@ -387,10 +654,10 @@ def find_line_at_position(e, r=2, num_lines: int = 1, exception=None):
     items = g().canvas.find_overlapping(e.x - r, e.y - r, e.x + r, e.y + r)
     lines = []
     line_count = 0
-    for obj in g().objects._objects:
+    for obj in reversed(g().objects._objects):
         if obj is exception:
             continue
-        if hasattr(obj, "tag") and any(obj.tag in g().canvas.gettags(i) for i in items):
+        if _object_overlaps_items(obj, items):
             if (
                 ("line" in obj.tag and "polyline" not in obj.tag)
                 or "ray" in obj.tag
@@ -419,11 +686,9 @@ def find_polyline_at_position(e, r=2):
     from ..ui.regular_polygon import Regular_polygon
 
     items = g().canvas.find_overlapping(e.x - r, e.y - r, e.x + r, e.y + r)
-    line = None
-    for obj in g().objects._objects:
+    for obj in reversed(g().objects._objects):
         if (
-            hasattr(obj, "tag")
-            and any(obj.tag in g().canvas.gettags(i) for i in items)
+            _object_overlaps_items(obj, items)
             and (
                 isinstance(obj, Polyline)
                 or isinstance(obj, Polygon)
@@ -431,59 +696,49 @@ def find_polyline_at_position(e, r=2):
             )
         ):
             if "polyline" in obj.tag or "polygon" in obj.tag:
-                line = obj
-                break
-    return line
+                return obj
+    return None
 
 
 def find_polygon_at_position(e, r=2):
     from ..ui.polygon import Polygon
-    from ..ui.polyline import Polyline
     from ..ui.regular_polygon import Regular_polygon
 
     items = g().canvas.find_overlapping(e.x - r, e.y - r, e.x + r, e.y + r)
-    line = None
-    for obj in g().objects._objects:
+    for obj in reversed(g().objects._objects):
         if (
-            hasattr(obj, "tag")
-            and any(obj.tag in g().canvas.gettags(i) for i in items)
+            _object_overlaps_items(obj, items)
             and (isinstance(obj, Polygon) or isinstance(obj, Regular_polygon))
         ):
             if "polygon" in obj.tag:
-                line = obj
-                break
-    return line
+                return obj
+    return None
 
 
 def find_circle_at_position(e, r=2, exception=None):
-    from py_geogebra.ui.circle_3_points import Circle_3_points
-    from py_geogebra.ui.circular_arc import Circular_arc
-    from py_geogebra.ui.semicircle import Semicircle
-
-    from ..ui.circle_center_point import Circle_center_point
-    from ..ui.circle_center_radius import Circle_center_radius
-    from ..ui.compass import Compass
+    circle_like_prefixes = (
+        "circle_center_radius_",
+        "circle_center_point_",
+        "circle_compass_",
+        "circle_3_points_",
+        "circular_arc",
+        "circumcircular_arc",
+        "circular_sector",
+        "circumcircular_sector",
+        "semicircle_",
+    )
 
     items = g().canvas.find_overlapping(e.x - r, e.y - r, e.x + r, e.y + r)
-    line = None
-    for obj in g().objects._objects:
+    for obj in reversed(g().objects._objects):
         if obj is exception:
             continue
+        tag = getattr(obj, "tag", "")
         if (
-            hasattr(obj, "tag")
-            and any(obj.tag in g().canvas.gettags(i) for i in items)
-            and (
-                isinstance(obj, Circle_center_radius)
-                or isinstance(obj, Circle_center_point)
-                or isinstance(obj, Compass)
-                or isinstance(obj, Semicircle)
-                or isinstance(obj, Circle_3_points)
-                or isinstance(obj, Circular_arc)
-            )
+            _object_overlaps_items(obj, items)
+            and any(tag.startswith(prefix) for prefix in circle_like_prefixes)
         ):
-            line = obj
-            break
-    return line
+            return obj
+    return None
 
 
 def snap_to_line(point, line):

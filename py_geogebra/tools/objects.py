@@ -4,7 +4,7 @@ from py_geogebra.ui.compass import Compass
 from py_geogebra.ui.lower_label import Lower_label
 from py_geogebra.ui.semicircle import Semicircle
 from py_geogebra.ui.tangents import Tangents
-from .utils import center
+from .utils import center, ensure_object_color, get_default_object_color
 from .. import state
 import json
 from ..ui.point import Point
@@ -61,6 +61,8 @@ class Objects:
         cx, cy = state.center
         if obj not in self._objects:
             self._objects.append(obj)
+            if not isinstance(obj, (Axes, Lower_label)):
+                ensure_object_color(obj)
             obj.offset_x = self.offset_x
             obj.offset_y = self.offset_y
             if hasattr(obj, "scale"):
@@ -128,6 +130,19 @@ class Objects:
                     return False
             return True
 
+        serialized_objects = []
+        for obj in sorted(
+            self._objects,
+            key=lambda o: 0 if getattr(o, "type", None) == "Point" else 1,
+        ):
+            if not should_serialize(obj):
+                continue
+
+            payload = obj.to_dict()
+            if not isinstance(obj, (Axes, Lower_label)):
+                payload.setdefault("color", getattr(obj, "color", get_default_object_color(obj)))
+            serialized_objects.append(payload)
+
         return {
             "version": 1,
             "view": {
@@ -136,14 +151,7 @@ class Objects:
                 "scale": self.scale,
                 "unit_size": self.unit_size,
             },
-            "objects": [
-                obj.to_dict()
-                for obj in sorted(
-                    self._objects,
-                    key=lambda o: 0 if getattr(o, "type", None) == "Point" else 1,
-                )
-                if should_serialize(obj)
-            ],
+            "objects": serialized_objects,
             "state": state.to_dict(),
             "sidebar": globals.sidebar.to_dict(),
         }
@@ -197,84 +205,109 @@ class Objects:
                 ):
                     continue
                 line = Line.from_dict(root, od)
+                line.color = od.get("color", getattr(line, "color", get_default_object_color(line)))
                 self.register(line)
             elif od["type"] == "Ray":
                 ray = Ray.from_dict(root, od)
+                ray.color = od.get("color", getattr(ray, "color", get_default_object_color(ray)))
                 self.register(ray)
             elif od["type"] == "Segment":
                 segment = Segment.from_dict(root, od)
                 self.register(segment)
             elif od["type"] == "Segment With Length":
                 swl = Segment_with_length.from_dict(root, od)
+                swl.color = od.get("color", getattr(swl, "color", get_default_object_color(swl)))
                 self.register(swl)
             elif od["type"] == "Polyline":
                 polyline = Polyline.from_dict(root, od)
+                polyline.color = od.get("color", getattr(polyline, "color", get_default_object_color(polyline)))
                 self.register(polyline)
             elif od["type"] == "Polygon":
                 polygon = Polygon.from_dict(root, od)
+                polygon.color = od.get("color", getattr(polygon, "color", get_default_object_color(polygon)))
                 self.register(polygon)
             elif od["type"] == "Regular_polygon":
                 polygon = Regular_polygon.from_dict(root, od)
+                polygon.color = od.get("color", getattr(polygon, "color", get_default_object_color(polygon)))
                 self.register(polygon)
             elif od["type"] == "Vector":
                 vector = Vector.from_dict(root, od)
+                vector.color = od.get("color", getattr(vector, "color", get_default_object_color(vector)))
                 self.register(vector)
             elif od["type"] == "Vector_from_point":
                 vector = Vector_from_point.from_dict(root, od)
+                vector.color = od.get("color", getattr(vector, "color", get_default_object_color(vector)))
                 self.register(vector)
             elif od["type"] == "Perpendicular_line":
                 vector = Perpendicular_line.from_dict(root, od)
+                vector.color = od.get("color", getattr(vector, "color", get_default_object_color(vector)))
                 self.register(vector)
             elif od["type"] == "Parallel_line":
                 vector = Parallel_line.from_dict(root, od)
+                vector.color = od.get("color", getattr(vector, "color", get_default_object_color(vector)))
                 self.register(vector)
             elif od["type"] == "Perpendicular_bisector":
                 vector = Perpendicular_bisector.from_dict(root, od)
+                vector.color = od.get("color", getattr(vector, "color", get_default_object_color(vector)))
                 self.register(vector)
             elif od["type"] == "Angle_bisector":
                 vector = Angle_bisector.from_dict(root, od)
+                vector.color = od.get("color", getattr(vector, "color", get_default_object_color(vector)))
                 self.register(vector)
             elif od["type"] == "Best_fit_line":
                 vector = Best_fit_line.from_dict(root, od)
+                vector.color = od.get("color", getattr(vector, "color", get_default_object_color(vector)))
                 self.register(vector)
             elif od["type"] == "Circle_center_point":
                 c = Circle_center_point.from_dict(root, od)
+                c.color = od.get("color", getattr(c, "color", get_default_object_color(c)))
                 self.register(c)
             elif od["type"] == "Circle_3_points":
                 c = Circle_3_points.from_dict(root, od)
+                c.color = od.get("color", getattr(c, "color", get_default_object_color(c)))
                 self.register(c)
             elif od["type"] == "Circle_center_radius":
                 c = Circle_center_radius.from_dict(root, od)
+                c.color = od.get("color", getattr(c, "color", get_default_object_color(c)))
                 self.register(c)
             elif od["type"] == "Compass":
                 c = Compass.from_dict(root, od)
+                c.color = od.get("color", getattr(c, "color", get_default_object_color(c)))
                 self.register(c)
             elif od["type"] == "Intersect":
                 i = Intersect.from_dict(root, od)
+                i.color = od.get("color", getattr(i, "color", get_default_object_color(i)))
                 self.register(i)
             elif od["type"] == "Semicircle":
                 c = Semicircle.from_dict(root, od)
+                c.color = od.get("color", getattr(c, "color", get_default_object_color(c)))
                 self.register(c)
             elif od["type"] in ("Tangnets", "Tangents"):
                 c = Tangents.from_dict(root, od)
                 self.register(c)
             elif od["type"] == "Circular_arc":
                 c = Circular_arc.from_dict(root, od)
+                c.color = od.get("color", getattr(c, "color", get_default_object_color(c)))
                 self.register(c)
             elif od["type"] == "Circumcircular_arc":
                 c = Circumcircular_arc.from_dict(root, od)
+                c.color = od.get("color", getattr(c, "color", get_default_object_color(c)))
                 self.register(c)
             elif od["type"] == "Circular_sector":
                 c = Circular_sector.from_dict(root, od)
+                c.color = od.get("color", getattr(c, "color", get_default_object_color(c)))
                 self.register(c)
             elif od["type"] == "Circumcircular_sector":
                 c = Circumcircular_sector.from_dict(root, od)
+                c.color = od.get("color", getattr(c, "color", get_default_object_color(c)))
                 self.register(c)
             elif od["type"] == "Length":
                 c = Length.from_dict(root, od)
+                c.color = od.get("color", getattr(c, "color", get_default_object_color(c)))
                 self.register(c)
             elif od["type"] == "Slope":
                 c = Slope.from_dict(root, od)
+                c.color = od.get("color", getattr(c, "color", get_default_object_color(c)))
                 self.register(c)
 
         for od in data.get("objects", []):
@@ -285,11 +318,13 @@ class Objects:
         for od in data.get("objects", []):
             if od["type"] == "Point_on_object":
                 ll = Point_on_object.from_dict(root, od)
+                ll.color = od.get("color", getattr(ll, "color", get_default_object_color(ll)))
                 self.register(ll)
 
         for od in data.get("objects", []):
             if od["type"] == "Area":
                 ll = Area.from_dict(root, od)
+                ll.color = od.get("color", getattr(ll, "color", get_default_object_color(ll)))
                 self.register(ll)
 
         if "sidebar" in data and "order" in data["sidebar"]:

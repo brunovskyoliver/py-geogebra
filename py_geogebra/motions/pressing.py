@@ -1,5 +1,5 @@
 import math
-from tkinter import Tk, simpledialog
+from tkinter import Tk, messagebox, simpledialog
 
 from py_geogebra.ui import point_on_object
 from py_geogebra.ui.circular_arc import Circular_arc
@@ -25,6 +25,7 @@ from ..tools.utils import (
     find_point_at_position,
     find_polygon_at_position,
     find_polyline_at_position,
+    find_selectable_shape_at_position,
     find_translation,
     find_translation_circle,
     find_translation_polyline,
@@ -32,10 +33,21 @@ from ..tools.utils import (
     get_angle_label,
     get_lower_label,
     screen_to_world,
+    select_item,
     set_cursor,
     snap_to_circle,
     snap_to_line,
     snap_to_polyline,
+)
+from ..tools.transformations import (
+    clear_transform_state,
+    create_transformed_copy,
+    get_transform_reference_kind,
+    is_transform_tool,
+    is_transformable_source,
+    is_valid_transform_reference,
+    transform_reference_prompt,
+    transform_value_prompt,
 )
 from ..ui.angle_bisector import Angle_bisector
 from ..ui.area import Area
@@ -65,34 +77,132 @@ from ..ui.vector_from_point import Vector_from_point
 from ..ui.circle_3_points import Circle_3_points
 from ..ui.angle import Angle
 
+
+def find_transformable_object_at_position(e):
+    candidates = [
+        find_point_at_position(e),
+        find_line_at_position(e),
+        find_polyline_at_position(e),
+        find_circle_at_position(e, r=2),
+        find_selectable_shape_at_position(e, r=4),
+    ]
+    for candidate in candidates:
+        if candidate is not None and is_transformable_source(candidate):
+            return candidate
+    return None
+
+
+def find_transform_reference_at_position(e, tool_name):
+    kind = get_transform_reference_kind(tool_name)
+    if kind == "point":
+        return find_point_at_position(e)
+    if kind == "line":
+        return find_line_at_position(e)
+    if kind == "vector":
+        candidate = find_line_at_position(e)
+        if is_valid_transform_reference(candidate, tool_name):
+            return candidate
+        return None
+    if kind == "circle":
+        return find_circle_at_position(e, r=2)
+    return None
+
+
+def transform_tool_click(e, root):
+    tool_name = state.selected_tool
+    source = state.transform_source
+
+    if source is None:
+        source = find_transformable_object_at_position(e)
+        if source is None:
+            return
+        state.transform_source = source
+        select_item(source)
+        globals.logger.info(f"Selected transform source {getattr(source, 'tag', source)}")
+        return
+
+    reference = find_transform_reference_at_position(e, tool_name)
+    if reference is None or not is_valid_transform_reference(reference, tool_name):
+        messagebox.showinfo(_("Transformation"), _(transform_reference_prompt(tool_name)))
+        return
+
+    if tool_name == "reflect_about_circle":
+        messagebox.showinfo(
+            _("Transformation"),
+            _("Reflect about Circle is a placeholder for now and is not implemented yet."),
+        )
+        clear_transform_state()
+        deselect_all()
+        return
+
+    numeric_value = None
+    prompt = transform_value_prompt(tool_name)
+    if prompt is not None:
+        title, text = prompt
+        numeric_value = simpledialog.askfloat(_(title), _(text), parent=root)
+        if numeric_value is None:
+            clear_transform_state()
+            deselect_all()
+            return
+
+    created = create_transformed_copy(source, tool_name, reference, numeric_value)
+    clear_transform_state()
+
+    if created is not None:
+        select_item(created)
+        globals.objects.refresh()
+        globals.logger.info(
+            f"Created transformed copy {getattr(created, 'tag', created)} using {tool_name}"
+        )
+    else:
+        deselect_all()
+        messagebox.showinfo(
+            _("Transformation"),
+            _("This object type is not supported by the selected transformation yet."),
+        )
+
+
 def arrow(e, root):
+    def select_target(target, *, draggable=True, description="object"):
+        if target is None:
+            return False
+
+        if hasattr(target, "pos_x") and hasattr(target, "pos_y"):
+            target.pos_x, target.pos_y = screen_to_world(e)
+            target.update()
+
+        select_item(
+            target,
+            drag_target=target if draggable and (hasattr(target, "pos_x") or hasattr(target, "move_label_by_screen_delta")) else None,
+        )
+
+        if hasattr(target, "tag"):
+            globals.logger.info(f"Selected {description} {target.tag}")
+        else:
+            globals.logger.info(f"Selected {description}")
+
+        return True
+
     state.start_pos["x"] = e.x
     state.start_pos["y"] = e.y
     state.drag_target = None
 
     point_obj = find_point_at_position(e)
     if point_obj:
-        if state.selected_point and state.selected_point != point_obj:
-            state.selected_point.deselect()
-        else:
-            point_obj.select()
-        state.selected_point = point_obj
-        state.drag_target = point_obj
+        select_item(point_obj, drag_target=point_obj)
         globals.logger.info(
             f"Selected {point_obj.tag} at x:{point_obj.pos_x} y:{point_obj.pos_y}"
         )
     else:
-        deselect_all()
+        select_item(None)
 
     if not point_obj:
         measurement_obj = find_measurement_at_position(e)
         if measurement_obj:
-            if hasattr(measurement_obj, "select"):
-                measurement_obj.select()
-                state.selected_point = measurement_obj
-            else:
-                state.selected_point = None
-            state.drag_target = measurement_obj
+            select_item(
+                measurement_obj,
+                drag_target=measurement_obj if hasattr(measurement_obj, "pos_x") else measurement_obj,
+            )
             globals.logger.info(f"Selected measurement {measurement_obj.tag}")
             return
 
@@ -100,32 +210,47 @@ def arrow(e, root):
         polyline_obj = find_polyline_at_position(e)
         circle_obj = find_circle_at_position(e, r=2)
         if line_obj:
-            line_obj.pos_x, line_obj.pos_y = screen_to_world(e)
-            line_obj.update()
-            if hasattr(line_obj, "select"):
-                line_obj.select()
-                state.selected_point = line_obj
-                globals.logger.info(
-                    f"Selected {line_obj.tag} at x:{line_obj.pos_x} y:{line_obj.pos_y}"
-                )
-            state.drag_target = line_obj
+            select_target(line_obj, description="line")
         elif polyline_obj:
-            polyline_obj.pos_x, polyline_obj.pos_y = screen_to_world(e)
-            polyline_obj.update()
-            state.selected_point = polyline_obj
-            polyline_obj.select()
-            globals.logger.info(
-                f"Selected {polyline_obj.tag} at x:{polyline_obj.pos_x} y:{polyline_obj.pos_y}"
-            )
-            state.drag_target = polyline_obj
+            select_target(polyline_obj, description="polyline")
         elif circle_obj:
-            circle_obj.pos_x, circle_obj.pos_y = screen_to_world(e)
-            circle_obj.update()
-            state.drag_target = circle_obj
-            circle_obj.select()
-            globals.logger.info(
-                f"Selected {circle_obj.tag} at x:{circle_obj.pos_x} y:{circle_obj.pos_y}"
-            )
+            select_target(circle_obj, description="shape")
+        else:
+            selectable_obj = find_selectable_shape_at_position(e, r=4)
+            if selectable_obj:
+                select_target(
+                    selectable_obj,
+                    draggable=hasattr(selectable_obj, "pos_x"),
+                    description="shape",
+                )
+
+
+def open_properties_for_selection(e):
+    point_obj = find_point_at_position(e)
+    if point_obj:
+        return select_item(point_obj, drag_target=None, open_properties=True)
+
+    measurement_obj = find_measurement_at_position(e)
+    if measurement_obj:
+        return select_item(measurement_obj, drag_target=None, open_properties=True)
+
+    line_obj = find_line_at_position(e)
+    if line_obj:
+        return select_item(line_obj, drag_target=None, open_properties=True)
+
+    polyline_obj = find_polyline_at_position(e)
+    if polyline_obj:
+        return select_item(polyline_obj, drag_target=None, open_properties=True)
+
+    circle_obj = find_circle_at_position(e, r=2)
+    if circle_obj:
+        return select_item(circle_obj, drag_target=None, open_properties=True)
+
+    selectable_obj = find_selectable_shape_at_position(e, r=4)
+    if selectable_obj:
+        return select_item(selectable_obj, drag_target=None, open_properties=True)
+
+    return False
 
 
 def point(e, root):
@@ -1436,6 +1561,8 @@ def pressing(root: Tk) -> None:
             length(e, root)
         elif state.selected_tool == "slope":
             slope(e, root)
+        elif is_transform_tool(state.selected_tool):
+            transform_tool_click(e, root)
 
     def middle_click_pressed(e):
         state.start_pos["x"] = e.x
@@ -1455,6 +1582,11 @@ def pressing(root: Tk) -> None:
 
         globals.objects.refresh()
 
+    def properties_click_pressed(e):
+        if state.selected_tool != "arrow":
+            return
+        open_properties_for_selection(e)
+
     def left_click_pressed_sidebar(e):
         if abs(e.x - globals.sidebar.canvas.winfo_width()) <= 20:
             state.sidebar_resizing = True
@@ -1465,21 +1597,36 @@ def pressing(root: Tk) -> None:
                 20, e.y - 3, globals.sidebar.canvas.winfo_width() - 20, e.y + 3
             )
             if objs:
-                deselect_all()
                 for obj in objs:
                     item = globals.sidebar.canvas_tags.get(obj)
-                    if item and hasattr(item, "select"):
-                        item.select()
-                        state.selected_point = item
+                    if item:
+                        select_item(item)
                         break
+
+    def properties_click_pressed_sidebar(e):
+        if state.selected_tool != "arrow":
+            return
+        objs = globals.sidebar.canvas.find_overlapping(
+            20, e.y - 3, globals.sidebar.canvas.winfo_width() - 20, e.y + 3
+        )
+        if objs:
+            for obj in objs:
+                item = globals.sidebar.canvas_tags.get(obj)
+                if item:
+                    select_item(item, drag_target=None, open_properties=True)
+                    break
 
     def left_click_released_sidebar(e):
         state.sidebar_resizing = False
         set_cursor(globals.sidebar.canvas, "")
 
     globals.canvas.bind("<Button-1>", left_click_pressed)
+    globals.canvas.bind("<Button-2>", properties_click_pressed)
+    globals.canvas.bind("<Control-Button-1>", properties_click_pressed)
     globals.canvas.bind("<Button-3>", middle_click_pressed)
     globals.canvas.bind("<ButtonRelease-2>", right_click_released)
     globals.canvas.bind("<ButtonRelease-1>", left_click_released)
     globals.sidebar.canvas.bind("<Button-1>", left_click_pressed_sidebar)
+    globals.sidebar.canvas.bind("<Button-2>", properties_click_pressed_sidebar)
+    globals.sidebar.canvas.bind("<Control-Button-1>", properties_click_pressed_sidebar)
     globals.sidebar.canvas.bind("<ButtonRelease-1>", left_click_released_sidebar)

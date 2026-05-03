@@ -8,6 +8,9 @@ from ..tools.utils import (
     distance,
     dot,
     find_translation_circle,
+    get_fill_color,
+    get_highlight_color,
+    get_object_color,
     screen_to_world_float,
     snap_to_circle,
     world_to_screen,
@@ -36,6 +39,7 @@ class Circular_sector:
         self.unit_size = unit_size
 
         self.is_drawable = True
+        self.color = "#000000"
 
         self.tag = f"circular_sector{id(self)}"
         self.center = None
@@ -161,8 +165,8 @@ class Circular_sector:
                     start=angle,
                     extent=angle_between,
                     style=tk.PIESLICE,
-                    outline="lightgrey",
-                    fill="#E9D5CC",
+                    outline=get_highlight_color(self),
+                    fill=get_fill_color(self),
                     width=2 * 3 * visual_scale,
                     tags=self.tag,
                 )
@@ -175,8 +179,8 @@ class Circular_sector:
                 start=angle,
                 extent=angle_between,
                 style=tk.PIESLICE,
-                outline="black",
-                fill="#D9AEA0",
+                outline=get_object_color(self),
+                fill=get_fill_color(self),
                 width=2 * visual_scale,
                 tags=self.tag,
             )

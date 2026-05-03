@@ -1,7 +1,7 @@
 import tkinter as tk
 
 from .. import globals
-from ..tools.utils import world_to_screen
+from ..tools.utils import format_number, get_object_color, world_to_screen
 
 
 class Slope:
@@ -24,6 +24,7 @@ class Slope:
         self.label_offset_y = 0.0
         self.is_drawable = True
         self.selected = False
+        self.color = "#000000"
 
         self.value = 0.0
         self.display_value = "0"
@@ -109,8 +110,8 @@ class Slope:
             self.value = float("inf")
             self.display_value = "undefined"
         else:
-            self.value = round(dy / dx, 2)
-            self.display_value = str(self.value)
+            self.value = dy / dx
+            self.display_value = format_number(self.value)
 
         x, y = self._resolve_position()
         if x is None or y is None:
@@ -127,7 +128,7 @@ class Slope:
             sy,
             text=f"{label} = {self.display_value}",
             font=("Arial", int(12 * visual_scale)),
-            fill="black",
+            fill=get_object_color(self),
             tags=(self.tag, "slope", "slope_text"),
         )
         bbox = self.canvas.bbox(text_id)
@@ -139,7 +140,7 @@ class Slope:
                 bbox[2] + pad,
                 bbox[3] + pad,
                 fill="white",
-                outline="black",
+                outline=get_object_color(self),
                 tags=(self.tag, "slope", "slope_bg"),
             )
             self.canvas.tag_lower(bg_id, text_id)

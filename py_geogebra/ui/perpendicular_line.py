@@ -3,6 +3,8 @@ from ..tools.utils import (
     world_to_screen,
     snap_to_line,
     get_linear_fuction_prescription,
+    get_highlight_color,
+    get_object_color,
     load_lines_from_labels,
     get_label,
 )
@@ -38,6 +40,7 @@ class Perpendicular_line:
         self.cy = 0
 
         self.is_drawable = True
+        self.color = "#000000"
 
         self.tag = f"perpendicular_line_{id(self)}"
         self.point_1 = None
@@ -247,7 +250,7 @@ class Perpendicular_line:
                     y1,
                     x2,
                     y2,
-                    fill="lightgrey",
+                    fill=get_highlight_color(self),
                     width=2 * 3 * visual_scale,
                     tags=self.tag,
                 )
@@ -257,7 +260,7 @@ class Perpendicular_line:
                 y1,
                 x2,
                 y2,
-                fill="black",
+                fill=get_object_color(self),
                 width=2 * visual_scale,
                 tags=self.tag,
             )

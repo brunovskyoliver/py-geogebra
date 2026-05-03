@@ -5,6 +5,8 @@ from ..tools.utils import (
     world_to_screen,
     snap_to_line,
     get_linear_fuction_prescription,
+    get_highlight_color,
+    get_object_color,
     calculate_vector,
     load_lines_from_labels,
 )
@@ -54,6 +56,7 @@ class Line:
         self.prescription = ()
         self.angle = 0
         self.vector = (0, 0)
+        self.color = "#000000"
 
         self.canvas.bind("<Configure>", lambda e: self.update())
 
@@ -191,7 +194,7 @@ class Line:
             self.y1,
             self.x2,
             self.y2,
-            fill="lightgrey",
+            fill=get_highlight_color(self),
             width=2 * 3 * self.visual_scale,
             tags=self.tag,
         )
@@ -202,7 +205,7 @@ class Line:
             self.y1,
             self.x2,
             self.y2,
-            fill="black",
+            fill=get_object_color(self),
             width=2 * self.visual_scale,
             tags=self.tag,
         )

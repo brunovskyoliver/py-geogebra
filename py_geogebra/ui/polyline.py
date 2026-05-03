@@ -1,5 +1,5 @@
 import tkinter as tk
-from ..tools.utils import distance, snap_to_polyline
+from ..tools.utils import distance, get_highlight_color, get_object_color, snap_to_polyline
 from .. import state
 from .. import globals
 from .lower_label import Lower_label
@@ -39,6 +39,7 @@ class Polyline:
         self.lower_label = ""
         self.lower_label_obj = Lower_label(self.root, obj=self)
         self.objects.register(self.lower_label_obj)
+        self.color = "#000000"
         self.canvas.bind("<Configure>", lambda e: self.update())
 
     def to_dict(self) -> dict:
@@ -138,14 +139,14 @@ class Polyline:
         if self.selected:
             self.canvas.create_line(
                 *coords,
-                fill="lightgrey",
+                fill=get_highlight_color(self),
                 width=2 * 3 * visual_scale,
                 tags=self.tag,
             )
 
         self.canvas.create_line(
             *coords,
-            fill="black",
+            fill=get_object_color(self),
             width=2 * visual_scale,
             tags=self.tag,
         )
@@ -159,7 +160,6 @@ class Polyline:
                         line_points[0].pos_y,
                         line_points[1].pos_x,
                         line_points[1].pos_y,
-                        2,
                     )
             self.lower_label_obj.update()
         self.length = length

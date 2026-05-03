@@ -11,6 +11,8 @@ from ..tools.utils import (
     dot,
     find_2lines_intersection,
     find_translation_circle,
+    get_highlight_color,
+    get_object_color,
     screen_to_world,
     screen_to_world_float,
     snap_to_circle,
@@ -38,6 +40,7 @@ class Circumcircular_arc:
 
         self.offset_x = 0.0
         self.offset_y = 0.0
+        self.color = "#000000"
         self.scale = 1.0  # zoom factor
         self.unit_size = unit_size
 
@@ -278,7 +281,7 @@ class Circumcircular_arc:
                             start=start_angle,
                             extent=extent_angle,
                             style=tk.ARC,
-                            outline="lightgrey",
+                            outline=get_highlight_color(self),
                             width=2 * 3 * visual_scale,
                             tags=self.tag,
                         )
@@ -291,7 +294,7 @@ class Circumcircular_arc:
                         start=start_angle,
                         extent=extent_angle,
                         style=tk.ARC,
-                        outline="black",
+                        outline=get_object_color(self),
                         width=2 * visual_scale,
                         tags=self.tag,
                     )

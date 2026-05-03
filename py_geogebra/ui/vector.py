@@ -2,6 +2,8 @@ import tkinter as tk
 from ..tools.utils import (
     world_to_screen,
     distance,
+    get_highlight_color,
+    get_object_color,
     snap_to_line,
     load_lines_from_labels,
     calculate_vector,
@@ -51,6 +53,7 @@ class Vector:
         self.vector = (0,0)
         self.child_lines = []
         self.child_lines_labels = []
+        self.color = "#000000"
 
         self.points = [self.point_1]
         self.child_vectors = []
@@ -196,7 +199,7 @@ class Vector:
                 y2 = (cy - e.y) / (self.unit_size * self.scale)
             else:
                 x2, y2 = self.point_2.pos_x, self.point_2.pos_y
-                self.length = distance(x1, y1, x2, y2, 2)
+                self.length = distance(x1, y1, x2, y2)
                 self.lower_label_obj.update()
 
             x1, y1 = world_to_screen(x1, y1)
@@ -208,7 +211,7 @@ class Vector:
                     y1,
                     x2,
                     y2,
-                    fill="lightgrey",
+                    fill=get_highlight_color(self),
                     width=2 * 3 * visual_scale,
                     tags=self.tag,
                 )
@@ -218,7 +221,7 @@ class Vector:
                 y1,
                 x2,
                 y2,
-                fill="black",
+                fill=get_object_color(self),
                 arrow=tk.LAST,
                 arrowshape=(12, 15, 4),
                 width=2 * visual_scale,

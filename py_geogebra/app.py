@@ -204,7 +204,7 @@ def run_app(args):
     tool_bar = toolbar(root)
     tool_bar.pack(side="top", fill="x")
     main_area.pack(side="top", fill="both", expand=True)
-    sidebar.canvas.pack(side="left", fill="y")
+    sidebar.container.pack(side="left", fill="y")
     canvas.pack(side="right", fill="both", expand=True)
     root.update_idletasks()
     state.center = (

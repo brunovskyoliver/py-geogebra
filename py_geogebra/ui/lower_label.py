@@ -1,9 +1,7 @@
 import tkinter as tk
 from types import NoneType
 
-from py_geogebra.ui import compass
-
-from ..tools.utils import world_to_screen
+from ..tools.utils import get_object_color, world_to_screen
 from .. import globals
 import math
 
@@ -133,7 +131,7 @@ class Lower_label:
                 y,
                 text=self.obj.lower_label,
                 font=("Arial", int(12 * visual_scale)),
-                fill="blue",
+                fill=get_object_color(self.obj),
                 tags=(self.obj.tag, self.tag),
             )
         elif isinstance(self.obj, Segment) or isinstance(self.obj, Segment_with_length) or isinstance(self.obj, Vector) or isinstance(self.obj, Vector_from_point):
@@ -157,7 +155,7 @@ class Lower_label:
                 middle_y + perp_y * visual_scale * 15,
                 text=self.obj.lower_label,
                 font=("Arial", int(12 * visual_scale)),
-                fill="blue",
+                fill=get_object_color(self.obj),
                 tags=(self.obj.tag, self.tag),
             )
         elif isinstance(self.obj, Polyline):
@@ -169,7 +167,7 @@ class Lower_label:
                 mid.y + 25 * visual_scale,
                 text=self.obj.lower_label,
                 font=("Arial", int(12 * visual_scale)),
-                fill="blue",
+                fill=get_object_color(self.obj),
                 tags=self.tag,
             )
 
@@ -195,6 +193,6 @@ class Lower_label:
                 world_to_screen(pos[0] + self.obj.center.pos_x - 0.1, pos[1] + self.obj.center.pos_y - 0.1),
                 text=self.obj.lower_label,
                 font=("Arial", int(12 * visual_scale)),
-                fill="blue",
+                fill=get_object_color(self.obj),
                 tags=self.tag,
             )

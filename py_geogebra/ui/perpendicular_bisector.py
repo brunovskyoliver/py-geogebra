@@ -4,6 +4,8 @@ from ..tools.utils import (
     world_to_screen,
     snap_to_line,
     get_linear_fuction_prescription,
+    get_highlight_color,
+    get_object_color,
     calculate_vector,
     load_lines_from_labels,
 )
@@ -38,6 +40,7 @@ class Perpendicular_bisector:
 
         self.cx = 0
         self.cy = 0
+        self.color = "#000000"
 
         self.is_drawable = True
 
@@ -208,7 +211,7 @@ class Perpendicular_bisector:
                     y1,
                     x2,
                     y2,
-                    fill="lightgrey",
+                    fill=get_highlight_color(self),
                     width=2 * 3 * visual_scale,
                     tags=self.tag,
                 )
@@ -218,7 +221,7 @@ class Perpendicular_bisector:
                 y1,
                 x2,
                 y2,
-                fill="black",
+                fill=get_object_color(self),
                 width=2 * visual_scale,
                 tags=self.tag,
             )
@@ -239,4 +242,3 @@ class Perpendicular_bisector:
                 l.update()
         self.prev_x, self.prev_y = self.pos_x, self.pos_y
         self.canvas.tag_raise(self.lower_label_obj.tag)
-

@@ -12,6 +12,8 @@ from ..tools.utils import (
     find_translation_circle,
     dot,
     distance,
+    get_highlight_color,
+    get_object_color,
 )
 from .. import state
 from .lower_label import Lower_label
@@ -38,6 +40,7 @@ class Circular_arc:
         self.offset_x = 0.0
         self.offset_y = 0.0
         self.scale = 1.0  # zoom factor
+        self.color = "#000000"
         self.unit_size = unit_size
 
         self.is_drawable = True
@@ -180,7 +183,7 @@ class Circular_arc:
                     start=angle,
                     extent=angle_between,
                     style=tk.ARC,
-                    outline="lightgrey",
+                    outline=get_highlight_color(self),
                     width=2 * 3 * visual_scale,
                     tags=self.tag,
                 )
@@ -194,7 +197,7 @@ class Circular_arc:
                 start=angle,
                 extent=angle_between,
                 style=tk.ARC,
-                outline="black",
+                outline=get_object_color(self),
                 width=2 * visual_scale,
                 tags=self.tag,
             )

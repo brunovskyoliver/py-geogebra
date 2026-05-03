@@ -22,6 +22,7 @@ from ..ui.regular_polygon import Regular_polygon
 from ..ui.polygon import Polygon
 from ..ui.intersect import Intersect
 from ..ui.angle_bisector import Angle_bisector
+from ..ui.angle import Angle
 from ..ui.perpendicular_bisector import Perpendicular_bisector
 from ..ui.perpendicular_line import Perpendicular_line
 from ..ui.parallel_line import Parallel_line
@@ -50,11 +51,14 @@ def dragging(root):
                 state.start_pos["x"] = e.x
                 state.start_pos["y"] = e.y
 
-            elif isinstance(state.drag_target, (Length, Area, Slope)):
+            elif isinstance(state.drag_target, (Length, Area, Slope, Angle)):
                 dx = e.x - state.start_pos["x"]
                 dy = e.y - state.start_pos["y"]
-                state.drag_target.label_offset_x += dx
-                state.drag_target.label_offset_y += dy
+                if hasattr(state.drag_target, "move_label_by_screen_delta"):
+                    state.drag_target.move_label_by_screen_delta(dx, dy)
+                else:
+                    state.drag_target.label_offset_x += dx
+                    state.drag_target.label_offset_y += dy
                 state.drag_target.update()
                 state.start_pos["x"] = e.x
                 state.start_pos["y"] = e.y

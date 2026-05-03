@@ -4,6 +4,8 @@ from ..tools.utils import (
     world_to_screen,
     snap_to_circle,
     find_translation_circle,
+    get_highlight_color,
+    get_object_color,
     calculate_vector,
     load_lines_from_labels,
 )
@@ -38,6 +40,7 @@ class Circle_center_radius:
         self.cx = 0
         self.cy = 0
         self.radius = 0
+        self.color = "#000000"
 
         self.is_drawable = True
 
@@ -164,7 +167,7 @@ class Circle_center_radius:
                     y1,
                     x2,
                     y2,
-                    outline="lightgrey",
+                    outline=get_highlight_color(self),
                     width=2 * 3 * visual_scale,
                     tags=self.tag,
                 )
@@ -174,7 +177,7 @@ class Circle_center_radius:
                 y1,
                 x2,
                 y2,
-                outline="black",
+                outline=get_object_color(self),
                 width=2 * visual_scale,
                 tags=self.tag,
             )

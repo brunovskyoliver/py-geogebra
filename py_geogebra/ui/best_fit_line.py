@@ -3,6 +3,8 @@ from ..tools.utils import (
     world_to_screen,
     snap_to_line,
     get_linear_fuction_prescription,
+    get_highlight_color,
+    get_object_color,
     calculate_vector,
     load_lines_from_labels,
     calculate_points_for_best_fit_line,
@@ -38,6 +40,7 @@ class Best_fit_line:
         self.cy = 0
 
         self.tag = f"best_fit_line_{id(self)}"
+        self.color = "#000000"
         self.point_1 = Blank_point(root)
         self.point_2 = Blank_point(root)
         self.selected = False
@@ -158,7 +161,7 @@ class Best_fit_line:
                 y1,
                 x2,
                 y2,
-                fill="lightgrey",
+                fill=get_highlight_color(self),
                 width=2 * 3 * visual_scale,
                 tags=self.tag,
             )
@@ -168,7 +171,7 @@ class Best_fit_line:
             y1,
             x2,
             y2,
-            fill="black",
+            fill=get_object_color(self),
             width=2 * visual_scale,
             tags=self.tag,
         )

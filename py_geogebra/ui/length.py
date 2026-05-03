@@ -1,7 +1,14 @@
 import tkinter as tk
 
 from .. import globals
-from ..tools.utils import distance, world_to_screen
+from ..tools.utils import (
+    distance,
+    format_length_value,
+    get_object_color,
+    screen_vector_to_world,
+    world_to_screen,
+    world_vector_to_screen,
+)
 
 
 class Length:
@@ -75,8 +82,8 @@ class Length:
         length.tag = data.get("tag", f"length_{id(length)}")
         length.scale = data.get("scale", 1.0)
         length.is_drawable = data.get("is_drawable", True)
-        length.label_offset_x = data.get("label_offset_x", 0.0)
-        length.label_offset_y = data.get("label_offset_y", 0.0)
+        length.label_offset_x = screen_vector_to_world(data.get("label_offset_x", 0.0), 0)[0]
+        length.label_offset_y = screen_vector_to_world(0, data.get("label_offset_y", 0.0))[1]
         length.update()
         return length
 
@@ -104,14 +111,14 @@ class Length:
             self.point_1.pos_y,
             self.point_2.pos_x,
             self.point_2.pos_y,
-            2,
         )
 
         middle_x = (self.point_1.pos_x + self.point_2.pos_x) / 2
         middle_y = (self.point_1.pos_y + self.point_2.pos_y) / 2
         x, y = world_to_screen(middle_x, middle_y)
-        x += self.label_offset_x
-        y += self.label_offset_y
+        offset_x, offset_y = world_vector_to_screen(self.label_offset_x, self.label_offset_y)
+        x += offset_x
+        y += offset_y
         x1, y1 = world_to_screen(self.point_1.pos_x, self.point_1.pos_y)
         x2, y2 = world_to_screen(self.point_2.pos_x, self.point_2.pos_y)
 
@@ -119,9 +126,9 @@ class Length:
         text_id = self.canvas.create_text(
             x,
             y,
-            text=f"{self.point_1.label}{self.point_2.label} = {self.value}",
+            text=f"{self.point_1.label}{self.point_2.label} = {format_length_value(self.value)}",
             font=("Arial", int(14 * visual_scale)),
-            fill="black",
+            fill=get_object_color(self),
             tags=(self.tag, "length", "length_text"),
         )
         bbox = self.canvas.bbox(text_id)
@@ -133,9 +140,14 @@ class Length:
                 bbox[2] + pad,
                 bbox[3] + pad,
                 fill="white",
-                outline="black",
+                outline=get_object_color(self),
                 tags=(self.tag, "length", "length_bg"),
             )
             self.canvas.tag_lower(bg_id, text_id)
 
         self.canvas.tag_raise(self.tag)
+
+    def move_label_by_screen_delta(self, dx, dy):
+        world_dx, world_dy = screen_vector_to_world(dx, dy)
+        self.label_offset_x += world_dx
+        self.label_offset_y += world_dy

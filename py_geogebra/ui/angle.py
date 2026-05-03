@@ -1,6 +1,13 @@
 import tkinter as tk
 import math
-from ..tools.utils import world_to_screen
+from ..tools.utils import (
+    format_angle_value,
+    get_fill_color,
+    get_object_color,
+    screen_vector_to_world,
+    world_to_screen,
+    world_vector_to_screen,
+)
 from .. import state
 from .. import globals
 
@@ -31,6 +38,8 @@ class Angle:
         self.point_2 = None
         self.anchor = None
         self.angle = 0
+        self.label_offset_x = 0.0
+        self.label_offset_y = 0.0
 
         self.translation = 0
 
@@ -53,6 +62,8 @@ class Angle:
             "scale": self.scale,
             "is_drawable": self.is_drawable,
             "translation": self.translation,
+            "label_offset_x": self.label_offset_x,
+            "label_offset_y": self.label_offset_y,
             "tag": self.tag,
         }
 
@@ -69,6 +80,8 @@ class Angle:
         p.is_drawable = data.get("is_drawable", True)
         p.tag = data.get("tag", "")
         p.translation = data.get("translation", 0)
+        p.label_offset_x = screen_vector_to_world(data.get("label_offset_x", 0.0), 0)[0]
+        p.label_offset_y = screen_vector_to_world(0, data.get("label_offset_y", 0.0))[1]
         p.update()
         return p
 
@@ -127,9 +140,10 @@ class Angle:
             points.extend([ax + r * math.cos(t), ay + r * math.sin(t)])
         points.extend([ax, ay])
 
+        base_color = get_object_color(self)
         self.canvas.create_polygon(
             points,
-            fill="#A8D5BA",
+            fill=get_fill_color(self, base_color),
             outline="",
             tags=(self.tag, "angle_arc"),
         )
@@ -140,7 +154,7 @@ class Angle:
             arc_pts.extend([ax + r * math.cos(t), ay + r * math.sin(t)])
         self.canvas.create_line(
             arc_pts,
-            fill="#228B22",
+            fill=base_color,
             width=2,
             smooth=True,
             tags=(self.tag, "angle_arc"),
@@ -149,6 +163,9 @@ class Angle:
         mid_t = a1 + diff / 2
         tx = ax + (r * 0.67) * math.cos(mid_t)
         ty = ay + (r * 0.67) * math.sin(mid_t)
+        offset_x, offset_y = world_vector_to_screen(self.label_offset_x, self.label_offset_y)
+        tx += offset_x
+        ty += offset_y
         greek = {
             "a": "α",
             "b": "β",
@@ -179,9 +196,9 @@ class Angle:
         self.canvas.create_text(
             tx,
             ty,
-            text=f"{greek_label} = {round(self.angle, 2)}°",
+            text=f"{greek_label} = {format_angle_value(self.angle)}°",
             font=("Arial", int(11 * self.visual_scale)),
-            fill="#006400",
+            fill=base_color,
             tags=(self.tag, "angle_text"),
         )
 
@@ -207,3 +224,8 @@ class Angle:
             if self.selected:
                 self.draw_outline()
             self.draw_angle()
+
+    def move_label_by_screen_delta(self, dx, dy):
+        world_dx, world_dy = screen_vector_to_world(dx, dy)
+        self.label_offset_x += world_dx
+        self.label_offset_y += world_dy

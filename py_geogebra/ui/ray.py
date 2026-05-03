@@ -3,6 +3,8 @@ from ..tools.utils import (
     world_to_screen,
     snap_to_line,
     get_linear_fuction_prescription,
+    get_highlight_color,
+    get_object_color,
     calculate_vector,
     load_lines_from_labels,
 )
@@ -53,6 +55,7 @@ class Ray:
         self.vector = (0,0)
         self.child_lines = []
         self.child_lines_labels = []
+        self.color = "#000000"
         
 
         self.canvas.bind("<Configure>", lambda e: self.update())
@@ -201,7 +204,7 @@ class Ray:
                     y1,
                     x2,
                     y2,
-                    fill="lightgrey",
+                    fill=get_highlight_color(self),
                     width=2 * 3 * visual_scale,
                     tags=self.tag,
                 )
@@ -211,7 +214,7 @@ class Ray:
                 y1,
                 x2,
                 y2,
-                fill="black",
+                fill=get_object_color(self),
                 width=2 * visual_scale,
                 tags=self.tag,
             )

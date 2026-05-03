@@ -1,6 +1,7 @@
 import tkinter as tk
 from .. import state
 from .. import globals
+from ..tools.utils import get_object_color
 
 
 class Midpoint_or_center:
@@ -103,6 +104,6 @@ class Midpoint_or_center:
                     self.y - 15 * visual_scale,
                     text=self.label,
                     font=("Arial", int(12 * visual_scale)),
-                    fill="blue",
+                    fill=get_object_color(self),
                     tags=self.tag,
                 )

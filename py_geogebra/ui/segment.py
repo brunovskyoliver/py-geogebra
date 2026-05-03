@@ -2,6 +2,8 @@ import tkinter as tk
 from ..tools.utils import (
     world_to_screen,
     distance,
+    get_highlight_color,
+    get_object_color,
     snap_to_line,
     calculate_vector,
     load_lines_from_labels,
@@ -38,7 +40,7 @@ class Segment:
         self.cy = 0
 
         self.selected = False
-        self.color = "black"
+        self.color = "#000000"
 
         self.is_drawable = True
 
@@ -100,7 +102,7 @@ class Segment:
         elif segment.lower_label == "":
             segment.color = "#FF0000"
         else:
-            segment.color = "black"
+            segment.color = "#000000"
         segment.tag = data.get("tag", "")
         segment.lower_label_obj = Lower_label(root, obj=segment)
         globals.objects.register(segment.lower_label_obj)
@@ -182,7 +184,7 @@ class Segment:
                 y2 = (cy - e.y) / (self.unit_size * self.scale)
             else:
                 x2, y2 = self.point_2.pos_x, self.point_2.pos_y
-                self.length = distance(x1, y1, x2, y2, 2)
+                self.length = distance(x1, y1, x2, y2)
 
 
             x1, y1 = world_to_screen(x1, y1)
@@ -195,7 +197,7 @@ class Segment:
                     y1,
                     x2,
                     y2,
-                    fill="lightgrey",
+                    fill=get_highlight_color(self),
                     width=2 * 3 * visual_scale,
                     tags=self.tag,
                 )
@@ -205,7 +207,7 @@ class Segment:
                 y1,
                 x2,
                 y2,
-                fill=self.color,
+                fill=get_object_color(self),
                 width=2 * visual_scale,
                 tags=self.tag,
             )

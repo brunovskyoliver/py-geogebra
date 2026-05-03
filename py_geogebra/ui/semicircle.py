@@ -8,6 +8,8 @@ from ..tools.utils import (
     snap_to_circle,
     find_translation_circle,
     dot,
+    get_highlight_color,
+    get_object_color,
 )
 from .. import state
 from .lower_label import Lower_label
@@ -49,6 +51,7 @@ class Semicircle:
         self.translation = None
 
         self.radius = 0
+        self.color = "#000000"
 
         self.vector = []
         self.n_vector = []
@@ -202,7 +205,7 @@ class Semicircle:
                     start=angle,
                     extent=180,
                     style=tk.ARC,
-                    outline="lightgrey",
+                    outline=get_highlight_color(self),
                     width=2*3 * visual_scale,
                     tags=self.tag,
                 )
@@ -215,7 +218,7 @@ class Semicircle:
                 start=angle,
                 extent=180,
                 style=tk.ARC,
-                outline="black",
+                outline=get_object_color(self),
                 width=2 * visual_scale,
                 tags=self.tag,
             )

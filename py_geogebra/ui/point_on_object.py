@@ -1,5 +1,5 @@
 import tkinter as tk
-from ..tools.utils import find_translation_polyline, snap, snap_to_polyline, world_to_screen
+from ..tools.utils import find_translation_polyline, get_object_color, snap, snap_to_polyline, world_to_screen
 from .. import state
 from .. import globals
 
@@ -123,7 +123,7 @@ class Point_on_object:
                 self.y - 15 * self.visual_scale,
                 text=self.label,
                 font=("Arial", int(12 * self.visual_scale)),
-                fill="blue",
+                fill=get_object_color(self),
                 tags=(self.tag, "point_label"),
             )
 

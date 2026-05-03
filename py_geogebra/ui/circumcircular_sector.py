@@ -8,6 +8,9 @@ from .. import globals, state
 from ..tools.utils import (
     find_2lines_intersection,
     find_translation_circle,
+    get_fill_color,
+    get_highlight_color,
+    get_object_color,
     snap_to_circle,
     world_to_screen,
     world_to_screen_float,
@@ -37,6 +40,7 @@ class Circumcircular_sector:
         self.unit_size = unit_size
 
         self.is_drawable = True
+        self.color = "#000000"
 
         self.tag = f"circumcircular_sector{id(self)}"
         self.center = Blank_point(self.root)
@@ -213,8 +217,8 @@ class Circumcircular_sector:
                     start=start_angle,
                     extent=extent_angle,
                     style=tk.PIESLICE,
-                    outline="lightgrey",
-                    fill="#E9D5CC",
+                    outline=get_highlight_color(self),
+                    fill=get_fill_color(self),
                     width=2 * 3 * visual_scale,
                     tags=self.tag,
                 )
@@ -227,8 +231,8 @@ class Circumcircular_sector:
                 start=start_angle,
                 extent=extent_angle,
                 style=tk.PIESLICE,
-                outline="black",
-                fill="#D9AEA0",
+                outline=get_object_color(self),
+                fill=get_fill_color(self),
                 width=2 * visual_scale,
                 tags=self.tag,
             )

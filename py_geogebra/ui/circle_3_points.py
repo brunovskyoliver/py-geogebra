@@ -6,6 +6,8 @@ from ..tools.utils import (
     world_to_screen,
     snap_to_circle,
     find_translation_circle,
+    get_highlight_color,
+    get_object_color,
     load_lines_from_labels,
 )
 from .. import state
@@ -38,6 +40,7 @@ class Circle_3_points:
         self.unit_size = unit_size
 
         self.cx = 0
+        self.color = "#000000"
         self.cy = 0
         self.radius = 0
 
@@ -259,7 +262,7 @@ class Circle_3_points:
                             y1,
                             x2,
                             y2,
-                            outline="lightgrey",
+                            outline=get_highlight_color(self),
                             width=2 * 3 * visual_scale,
                             tags=self.tag,
                         )
@@ -269,7 +272,7 @@ class Circle_3_points:
                         y1,
                         x2,
                         y2,
-                        outline="black",
+                        outline=get_object_color(self),
                         width=2 * visual_scale,
                         tags=self.tag,
                     )

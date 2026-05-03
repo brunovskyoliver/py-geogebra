@@ -2,7 +2,7 @@ import math
 import tkinter as tk
 
 from .. import globals
-from ..tools.utils import world_to_screen
+from ..tools.utils import format_number, get_object_color, world_to_screen
 
 
 class Area:
@@ -23,6 +23,7 @@ class Area:
         self.label_offset_x = 0.0
         self.label_offset_y = 0.0
         self.is_drawable = True
+        self.color = "#000000"
 
         self.value = 0.0
         self.tag = f"area_{id(self)}"
@@ -117,7 +118,7 @@ class Area:
         if area is None or x is None or y is None:
             return
 
-        self.value = round(area, 2)
+        self.value = area
         sx, sy = world_to_screen(x, y)
         sx += self.label_offset_x
         sy += self.label_offset_y
@@ -127,9 +128,9 @@ class Area:
         text_id = self.canvas.create_text(
             sx,
             sy,
-            text=f"{label} = {self.value}",
+            text=f"{label} = {format_number(self.value)}",
             font=("Arial", int(12 * visual_scale)),
-            fill="black",
+            fill=get_object_color(self),
             tags=(self.tag, "area", "area_text"),
         )
         bbox = self.canvas.bbox(text_id)
@@ -141,7 +142,7 @@ class Area:
                 bbox[2] + pad,
                 bbox[3] + pad,
                 fill="white",
-                outline="black",
+                outline=get_object_color(self),
                 tags=(self.tag, "area", "area_bg"),
             )
             self.canvas.tag_lower(bg_id, text_id)

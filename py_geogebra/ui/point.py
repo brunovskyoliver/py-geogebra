@@ -1,5 +1,5 @@
 import tkinter as tk
-from ..tools.utils import snap, world_to_screen
+from ..tools.utils import get_object_color, snap, world_to_screen
 from .. import state
 from .. import globals
 
@@ -120,7 +120,7 @@ class Point:
                 self.y - 15 * self.visual_scale,
                 text=self.label,
                 font=("Arial", int(12 * self.visual_scale)),
-                fill="blue",
+                fill=get_object_color(self),
                 tags=(self.tag, "point_label"),
             )
 
