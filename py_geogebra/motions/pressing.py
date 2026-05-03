@@ -665,6 +665,8 @@ def vector_from_point(e, root):
         vector.point_2 = p
         globals.objects.register(vector)
         globals.objects.register(p)
+        globals.sidebar.items.append(vector)
+        globals.sidebar.update()
         state.selected_vector.child_vectors_labels.append(lower_label)
         state.selected_vector.loaded_children = False
         state.selected_vector.deselect()
@@ -815,6 +817,8 @@ def best_fit_line(e, root):
         lower_label = get_lower_label(state)
         state.best_fit_line.lower_label = lower_label
         globals.objects.register(state.best_fit_line)
+        globals.sidebar.items.append(state.best_fit_line)
+        globals.sidebar.update()
     if state.best_fit_line:
         state.best_fit_line.fit_points = state.points_for_obj[:]
 
@@ -1271,6 +1275,8 @@ def area(e, root):
         unit_size=globals.axes.unit_size,
     )
     globals.objects.register(a)
+    globals.sidebar.items.append(a)
+    globals.sidebar.update()
 
 
 def length(e, root):
@@ -1398,6 +1404,8 @@ def circular_arc(e, root):
         lower_label = get_lower_label(state)
         arc.lower_label = lower_label
         globals.objects.register(arc)
+        globals.sidebar.items.append(arc)
+        globals.sidebar.update()
 
         state.points_for_obj = []
 
@@ -1429,6 +1437,8 @@ def circumcircular_arc(e, root):
         lower_label = get_lower_label(state)
         arc.lower_label = lower_label
         globals.objects.register(arc)
+        globals.sidebar.items.append(arc)
+        globals.sidebar.update()
 
         state.points_for_obj = []
 
@@ -1445,6 +1455,8 @@ def circular_sector(e, root):
         sector.point_2 = state.points_for_obj[2]
         sector.lower_label = get_lower_label(state)
         globals.objects.register(sector)
+        globals.sidebar.items.append(sector)
+        globals.sidebar.update()
 
         state.points_for_obj = []
 
@@ -1461,6 +1473,8 @@ def circumcircular_sector(e, root):
         sector.point_3 = state.points_for_obj[2]
         sector.lower_label = get_lower_label(state)
         globals.objects.register(sector)
+        globals.sidebar.items.append(sector)
+        globals.sidebar.update()
 
         state.points_for_obj = []
 

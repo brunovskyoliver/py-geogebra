@@ -261,3 +261,21 @@ msgstr "Unable to auth"
 #: py_geogebra/app.py:35
 msgid "Geogebra ale lepsia"
 msgstr "Geogebra but better"
+
+msgid "Osová súmernosť"
+msgstr "Reflect about Line"
+
+msgid "Stredová súmernosť"
+msgstr "Reflect about Point"
+
+msgid "Inverzia"
+msgstr "Reflect about Circle"
+
+msgid "Otočenie"
+msgstr "Rotate around Point"
+
+msgid "Posunutie"
+msgstr "Translate by Vector"
+
+msgid "Homotécia"
+msgstr "Dilate from Point"

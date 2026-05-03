@@ -55,7 +55,13 @@ class Axes:
         axes.update()
         return axes
 
-    def nice_step(self, min_px=50):
+    def _fmt(self, val) -> str:
+        if val == int(val):
+            return str(int(val))
+        s = f"{val:.6g}"
+        return s
+
+    def nice_step(self, min_px=80):
         raw_step = min_px / (self.unit_size * self.scale)
         power = math.floor(math.log10(raw_step))
         base = raw_step / (10**power)
@@ -100,8 +106,8 @@ class Axes:
                     self.canvas.create_text(
                         x,
                         cy + 12,
-                        text=f"{val:.3f}",
-                        font=("Arial", 10),
+                        text=self._fmt(val),
+                        font=("Arial", 13),
                         tags="axes",
                         fill="black",
                     )
@@ -120,10 +126,11 @@ class Axes:
 
                 if abs(val) > 1e-9:
                     self.canvas.create_text(
-                        cx + 15,
+                        cx - 6,
                         y,
-                        text=f"{(val*-1):.3f}",
-                        font=("Arial", 10),
+                        text=self._fmt(val * -1),
+                        font=("Arial", 13),
+                        anchor="e",
                         tags="axes",
                         fill="black",
                     )

@@ -37,7 +37,14 @@ from ..ui.segment import Segment
 from ..ui.segment_with_lenght import Segment_with_length
 from ..ui.semicircle import Semicircle
 from ..ui.slope import Slope
+from ..ui.area import Area
+from ..ui.best_fit_line import Best_fit_line
+from ..ui.circular_arc import Circular_arc
+from ..ui.circular_sector import Circular_sector
+from ..ui.circumcircular_arc import Circumcircular_arc
+from ..ui.circumcircular_sector import Circumcircular_sector
 from ..ui.vector import Vector
+from ..ui.vector_from_point import Vector_from_point
 
 
 class Sidebar:
@@ -489,6 +496,65 @@ class Sidebar:
             return (
                 f"{label} = Angle({', '.join(ctx)})\n"
                 f"{' ' * (len(label) - 1)}= {format_angle_value(item.angle)}"
+            )
+
+        if isinstance(item, Vector_from_point):
+            if item.point_1 and item.point_2:
+                dx = round(item.point_2.pos_x - item.point_1.pos_x, 2)
+                dy = round(item.point_2.pos_y - item.point_1.pos_y, 2)
+                return (
+                    f"{item.lower_label} = Vector({item.point_1.label}, {item.point_2.label})\n"
+                    f"{' ' * (len(item.lower_label) - 1)}= ({dx}, {dy})"
+                )
+
+        if isinstance(item, Circular_arc):
+            if item.center and item.point_1 and item.point_2:
+                return (
+                    f"{item.lower_label}: CircularArc({item.center.label}, {item.point_1.label}, {item.point_2.label})\n"
+                    f"= r = {format_length_value(item.radius)}"
+                )
+
+        if isinstance(item, Circumcircular_arc):
+            if item.point_1 and item.point_2 and item.point_3:
+                return (
+                    f"{item.lower_label}: CircumcircularArc({item.point_1.label}, {item.point_2.label}, {item.point_3.label})\n"
+                    f"= r = {format_length_value(item.radius)}"
+                )
+
+        if isinstance(item, Circular_sector):
+            if item.center and item.point_1 and item.point_2:
+                return (
+                    f"{item.lower_label}: CircularSector({item.center.label}, {item.point_1.label}, {item.point_2.label})\n"
+                    f"= r = {format_length_value(item.radius)}"
+                )
+
+        if isinstance(item, Circumcircular_sector):
+            if item.point_1 and item.point_2 and item.point_3:
+                return (
+                    f"{item.lower_label}: CircumcircularSector({item.point_1.label}, {item.point_2.label}, {item.point_3.label})\n"
+                    f"= r = {format_length_value(item.radius)}"
+                )
+
+        if isinstance(item, Best_fit_line):
+            pts = ", ".join(p.label for p in item.fit_points)
+            if not isinstance(item.prescription, (list, tuple)) or len(item.prescription) != 3:
+                a, b, c = 0, 0, 0
+            else:
+                a, b, c = item.prescription
+            sign_b = "-" if b < 0 else "+"
+            return (
+                f"{item.lower_label}: FitLine({pts})\n"
+                f"= {a}x {sign_b} {abs(b)}y = {c}"
+            )
+
+        if isinstance(item, Area):
+            target_label = (
+                getattr(item.target, "lower_label", None)
+                or getattr(item.target, "label", "?")
+            )
+            return (
+                f"S = Area({target_label})\n"
+                f"  = {format_length_value(item.value)}"
             )
 
         return None

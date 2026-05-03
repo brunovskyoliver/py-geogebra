@@ -131,19 +131,6 @@ def toolbar(root):
     tool_menu_init(
         root,
         bar,
-        def_icon="reflect_about_line",
-        buttons=[
-            {"name": _("Osová súmernosť podľa priamky"), "icon": "reflect_about_line", "tool": "reflect_about_line"},
-            {"name": _("Stredová súmernosť podľa bodu"), "icon": "reflect_about_point", "tool": "reflect_about_point"},
-            {"name": _("Inverzia podľa kružnice"), "icon": "reflect_about_circle", "tool": "reflect_about_circle"},
-            {"name": _("Otočenie okolo bodu"), "icon": "rotate_around_point", "tool": "rotate_around_point"},
-            {"name": _("Posunutie o vektor"), "icon": "translate_by_vector", "tool": "translate_by_vector"},
-            {"name": _("Dilácia z bodu"), "icon": "dilate_from_point", "tool": "dilate_from_point"},
-        ],
-    )
-    tool_menu_init(
-        root,
-        bar,
         def_icon="point",
         buttons=[
             {"name": _("Bod"), "icon": "point"},
@@ -225,6 +212,19 @@ def toolbar(root):
             {"name": _("Vytvoriť zoznam"), "icon": "list"},
             {"name": _("Vzťah"), "icon": "relation"},
             {"name": _("Vyšetrenie priebehu funkcie"), "icon": "function_inspector"},
+        ],
+    )
+    tool_menu_init(
+        root,
+        bar,
+        def_icon="reflect_about_line",
+        buttons=[
+            {"name": _("Osová súmernosť"), "icon": "reflect_about_line"},
+            {"name": _("Stredová súmernosť"), "icon": "reflect_about_point"},
+            {"name": _("Inverzia"), "icon": "reflect_about_circle"},
+            {"name": _("Otočenie"), "icon": "rotate_around_point"},
+            {"name": _("Posunutie"), "icon": "translate_by_vector"},
+            {"name": _("Homotécia"), "icon": "dilate_from_point"},
         ],
     )
     state.selected_tool = "arrow"
