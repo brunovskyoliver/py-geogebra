@@ -433,6 +433,17 @@ class TestUtils(unittest.TestCase):
 
         self.assertEqual(text, "Kružnica(A, Úsečka(B, C))")
 
+    def test_sidebar_language_refresh_redraws_item_text(self):
+        sidebar = Sidebar.__new__(Sidebar)
+        sidebar.selected_item = object()
+        sidebar.dialog = None
+        sidebar.editor_frame = None
+        sidebar.update = MagicMock()
+
+        Sidebar._refresh_editor_texts(sidebar)
+
+        sidebar.update.assert_called_once_with()
+
     @patch("py_geogebra.tools.utils.g")
     def test_delete_object_removes_attached_dependents_and_label_object(self, mock_g):
         class FakeObjects:

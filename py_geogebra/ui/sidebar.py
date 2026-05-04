@@ -118,6 +118,8 @@ class Sidebar:
         self.editor_frame = None
 
     def _refresh_editor_texts(self):
+        self.update()
+
         if self.selected_item is None:
             self.context_var.set(_("Select an object"))
 
