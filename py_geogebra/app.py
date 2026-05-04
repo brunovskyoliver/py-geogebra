@@ -22,7 +22,7 @@ def run_flask():
     try:
         app.run(host=host, port=port, debug=False, use_reloader=False)
     except OSError as e:
-        globals.logger.warning(f"Flask helper server failed to start: {e}")
+        globals.logger.warning(f"Flask not running!!: {e}")
 
 
 def run_app(args):
