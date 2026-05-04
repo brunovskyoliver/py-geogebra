@@ -1,6 +1,5 @@
 import math
 import tkinter as tk
-from typing_extensions import Set
 
 from py_geogebra import state
 from py_geogebra.tools.utils import find_blank_point_at_position, get_lower_label
