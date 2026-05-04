@@ -164,11 +164,22 @@ class Objects:
         response = requests.get(f"http://127.0.0.1:5000/api/scene/{name}")
         response.raise_for_status()
         data = response.json()
-        root.lift()
-        cmd = ["osascript", "-e", 'tell application "Python" to activate']
-        subprocess.run(cmd)
 
-        self.load_from_dict(root, data)
+        def load_on_tk_thread():
+            root.lift()
+            cmd = ["osascript", "-e", 'tell application "Python" to activate']
+            try:
+                subprocess.run(
+                    cmd,
+                    stdout=subprocess.DEVNULL,
+                    stderr=subprocess.DEVNULL,
+                    timeout=1,
+                )
+            except (OSError, subprocess.SubprocessError):
+                pass
+            self.load_from_dict(root, data)
+
+        root.after(0, load_on_tk_thread)
 
 
     def load_from_dict(self, root, data: dict):

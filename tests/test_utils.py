@@ -30,6 +30,7 @@ from py_geogebra.ui.point import Point
 from py_geogebra.ui.regular_polygon import Regular_polygon
 from py_geogebra.ui.segment import Segment
 from py_geogebra.ui.sidebar import Sidebar
+from py_geogebra.tools.objects import Objects
 
 
 def _(text):
@@ -443,6 +444,27 @@ class TestUtils(unittest.TestCase):
         Sidebar._refresh_editor_texts(sidebar)
 
         sidebar.update.assert_called_once_with()
+
+    @patch("py_geogebra.tools.objects.subprocess.run")
+    @patch("py_geogebra.tools.objects.requests.get")
+    def test_load_scene_from_server_schedules_load_on_tk_thread(self, mock_get, mock_run):
+        objects = Objects.__new__(Objects)
+        objects.load_from_dict = MagicMock()
+        scene_data = {"objects": []}
+
+        response = MagicMock()
+        response.json.return_value = scene_data
+        mock_get.return_value = response
+
+        root = MagicMock()
+        root.after.side_effect = lambda _delay, callback: callback()
+
+        objects.load_scene_from_server(root, "p")
+
+        mock_get.assert_called_once_with("http://127.0.0.1:5000/api/scene/p")
+        root.after.assert_called_once()
+        mock_run.assert_called_once()
+        objects.load_from_dict.assert_called_once_with(root, scene_data)
 
     @patch("py_geogebra.tools.utils.g")
     def test_delete_object_removes_attached_dependents_and_label_object(self, mock_g):
