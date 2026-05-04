@@ -2,6 +2,7 @@ import math
 import tkinter as tk
 from tkinter import colorchooser
 from tkinter import font as tkfont
+from tkinter import ttk
 
 from .. import globals, state
 from ..tools.utils import (
@@ -84,22 +85,27 @@ class Sidebar:
         if getattr(globals, "widgets", None) is not None:
             globals.widgets.register(self._refresh_editor_texts)
 
+    def _configure_editor_styles(self):
+        self.style = ttk.Style(self.root)
+        self.style.configure("Properties.TButton", font=self.font, padding=(10, 4))
+
     def _ensure_dialog(self):
         if self.dialog is not None and self.dialog.winfo_exists():
             return
 
+        self._configure_editor_styles()
         self.dialog = tk.Toplevel(self.root)
         self.dialog.title(_("Properties"))
-        self.dialog.configure(bg="#f6f6f6")
+        self.dialog.configure(bg="#ffffff")
         self.dialog.resizable(False, False)
         self.dialog.transient(self.root)
         self.dialog.protocol("WM_DELETE_WINDOW", self._close_dialog)
 
         self.editor_frame = tk.Frame(
             self.dialog,
-            bg="#f6f6f6",
-            padx=12,
-            pady=12,
+            bg="#ffffff",
+            padx=18,
+            pady=18,
         )
         self.editor_frame.pack(fill="both", expand=True)
         self._build_editor()
@@ -124,90 +130,108 @@ class Sidebar:
         if self.editor_frame is None:
             return
 
-        self.editor_title.configure(text=_("Properties"))
         self.name_label.configure(text=_("Name"))
-        self.name_apply.configure(text=_("Apply"))
+        self._draw_canvas_button(self.name_apply, _("Apply"))
         self.color_label.configure(text=_("Color"))
-        self.color_button.configure(text=_("Choose..."))
+        self._draw_canvas_button(self.color_button, _("Choose..."))
         self.length_label.configure(text=_("Length decimals"))
         self.angle_label.configure(text=_("Angle decimals"))
 
     def _build_editor(self):
-        label_fg = "#222222"
-        self.editor_title = tk.Label(
+        self.name_label = tk.Label(
             self.editor_frame,
-            text=_("Properties"),
-            bg="#f6f6f6",
-            fg=label_fg,
+            text=_("Name"),
+            bg="#ffffff",
+            fg="#1f2937",
             anchor="w",
             font=self.font,
         )
-        self.editor_title.grid(row=0, column=0, columnspan=3, sticky="ew")
-
-        self.context_label = tk.Label(
+        self.name_entry_shell = tk.Canvas(
             self.editor_frame,
-            textvariable=self.context_var,
-            bg="#f6f6f6",
-            fg="#333333",
-            anchor="w",
-            justify="left",
-            wraplength=180,
+            height=36,
+            width=220,
+            bg="#ffffff",
+            highlightthickness=0,
+            bd=0,
+        )
+        self.name_entry = tk.Entry(
+            self.name_entry_shell,
+            textvariable=self.name_var,
+            bg="#ffffff",
+            fg="#111827",
+            insertbackground="#111827",
+            selectbackground="#dbeafe",
+            selectforeground="#111827",
+            relief="flat",
+            borderwidth=0,
+            highlightthickness=0,
             font=self.font,
         )
-        self.context_label.grid(row=1, column=0, columnspan=3, sticky="ew", pady=(6, 10))
-
-        self.name_label = tk.Label(self.editor_frame, text=_("Name"), bg="#f6f6f6", fg=label_fg, anchor="w", font=self.font)
-        self.name_entry = tk.Entry(self.editor_frame, textvariable=self.name_var, font=self.font)
-        self.name_apply = tk.Button(
+        self.name_entry_window = self.name_entry_shell.create_window(
+            12,
+            18,
+            anchor="w",
+            window=self.name_entry,
+        )
+        self.name_entry_shell.bind("<Configure>", lambda _event: self._draw_name_entry())
+        self.name_entry.bind("<FocusIn>", lambda _event: self._draw_name_entry(focused=True))
+        self.name_entry.bind("<FocusOut>", self._name_entry_focus_out)
+        self.name_apply = self._canvas_button(
             self.editor_frame,
-            text=_("Apply"),
+            _("Apply"),
             command=self.apply_name_change,
-            font=self.font,
         )
         self.name_entry.bind("<Return>", lambda _event: self.apply_name_change())
-        self.name_entry.bind("<FocusOut>", lambda _event: self.apply_name_change())
         self.name_error = tk.Label(
             self.editor_frame,
             textvariable=self.editor_error_var,
-            bg="#f6f6f6",
+            bg="#ffffff",
             fg="#b00020",
             anchor="w",
             justify="left",
-            wraplength=180,
+            wraplength=240,
             font=self.font,
         )
 
-        self.color_label = tk.Label(self.editor_frame, text=_("Color"), bg="#f6f6f6", fg=label_fg, anchor="w", font=self.font)
-        self.color_swatch = tk.Label(
+        self.color_label = tk.Label(
             self.editor_frame,
-            text="      ",
+            text=_("Color"),
+            bg="#ffffff",
+            fg="#1f2937",
+            anchor="w",
+            font=self.font,
+        )
+        self.color_swatch = tk.Frame(
+            self.editor_frame,
             bg="#000000",
             relief="solid",
             borderwidth=1,
+            width=32,
+            height=22,
         )
-        self.color_button = tk.Button(
+        self.color_swatch.grid_propagate(False)
+        self.color_button = self._canvas_button(
             self.editor_frame,
-            text=_("Choose..."),
+            _("Choose..."),
             command=self.choose_color,
-            font=self.font,
         )
 
         self.length_label = tk.Label(
             self.editor_frame,
             text=_("Length decimals"),
-            bg="#f6f6f6",
-            fg=label_fg,
+            bg="#ffffff",
+            fg="#1f2937",
             anchor="w",
             font=self.font,
         )
-        self.length_spinbox = tk.Spinbox(
+        self.length_spinbox = ttk.Spinbox(
             self.editor_frame,
             from_=0,
             to=6,
             width=4,
             textvariable=self.length_decimals_var,
             command=lambda: self.apply_precision_change("length"),
-            font=self.font,
+            style="Properties.TSpinbox",
         )
         self.length_spinbox.bind("<Return>", lambda _event: self.apply_precision_change("length"))
         self.length_spinbox.bind("<FocusOut>", lambda _event: self.apply_precision_change("length"))
@@ -215,39 +239,132 @@ class Sidebar:
         self.angle_label = tk.Label(
             self.editor_frame,
             text=_("Angle decimals"),
-            bg="#f6f6f6",
-            fg=label_fg,
+            bg="#ffffff",
+            fg="#1f2937",
             anchor="w",
             font=self.font,
         )
-        self.angle_spinbox = tk.Spinbox(
+        self.angle_spinbox = ttk.Spinbox(
             self.editor_frame,
             from_=0,
             to=6,
             width=4,
             textvariable=self.angle_decimals_var,
             command=lambda: self.apply_precision_change("angle"),
-            font=self.font,
+            style="Properties.TSpinbox",
         )
         self.angle_spinbox.bind("<Return>", lambda _event: self.apply_precision_change("angle"))
         self.angle_spinbox.bind("<FocusOut>", lambda _event: self.apply_precision_change("angle"))
 
         self.editor_frame.grid_columnconfigure(1, weight=1)
+        self.editor_frame.grid_columnconfigure(2, weight=0)
         self._layout_name_widgets(show=False)
         self._layout_color_widgets(show=False)
         self._layout_precision_widgets(None)
 
+    def _rounded_rect(self, canvas, x1, y1, x2, y2, radius, **kwargs):
+        points = [
+            x1 + radius, y1,
+            x2 - radius, y1,
+            x2, y1,
+            x2, y1 + radius,
+            x2, y2 - radius,
+            x2, y2,
+            x2 - radius, y2,
+            x1 + radius, y2,
+            x1, y2,
+            x1, y2 - radius,
+            x1, y1 + radius,
+            x1, y1,
+        ]
+        return canvas.create_polygon(points, smooth=True, **kwargs)
+
+    def _canvas_button(self, parent, text, command):
+        button = tk.Canvas(
+            parent,
+            width=128,
+            height=34,
+            bg="#ffffff",
+            highlightthickness=0,
+            bd=0,
+            cursor="hand2",
+        )
+        button._command = command
+        button._button_text = text
+        button._button_hover = False
+        button.bind("<Configure>", lambda event, b=button: self._draw_canvas_button(b, b._button_text))
+        button.bind("<Enter>", lambda event, b=button: self._set_button_hover(b, True))
+        button.bind("<Leave>", lambda event, b=button: self._set_button_hover(b, False))
+        button.bind("<Button-1>", lambda event, b=button: b._command())
+        self._draw_canvas_button(button, text)
+        return button
+
+    def _set_button_hover(self, button, hover):
+        button._button_hover = hover
+        self._draw_canvas_button(button, button._button_text)
+
+    def _draw_canvas_button(self, button, text):
+        button._button_text = text
+        width = max(button.winfo_width(), 128)
+        height = max(button.winfo_height(), 34)
+        fill = "#f3f6fb" if getattr(button, "_button_hover", False) else "#ffffff"
+        button.delete("button")
+        self._rounded_rect(
+            button,
+            1,
+            1,
+            width - 1,
+            height - 1,
+            10,
+            fill=fill,
+            outline="#cbd5e1",
+            width=1,
+            tags="button",
+        )
+        button.create_text(
+            width / 2,
+            height / 2,
+            text=text,
+            fill="#1f2937",
+            font=self.font,
+            tags="button",
+        )
+
+    def _draw_name_entry(self, focused=False):
+        width = max(self.name_entry_shell.winfo_width(), 220)
+        height = max(self.name_entry_shell.winfo_height(), 36)
+        outline = "#94a3b8" if focused else "#cbd5e1"
+        self.name_entry_shell.delete("entry_background")
+        self._rounded_rect(
+            self.name_entry_shell,
+            1,
+            1,
+            width - 1,
+            height - 1,
+            10,
+            fill="#ffffff",
+            outline=outline,
+            width=1,
+            tags="entry_background",
+        )
+        self.name_entry_shell.tag_lower("entry_background")
+        self.name_entry_shell.itemconfigure(self.name_entry_window, width=max(40, width - 24))
+
+    def _name_entry_focus_out(self, _event):
+        self._draw_name_entry(focused=False)
+        self.apply_name_change()
+
     def _layout_name_widgets(self, show: bool):
-        widgets = (self.name_label, self.name_entry, self.name_apply, self.name_error)
+        widgets = (self.name_label, self.name_entry_shell, self.name_apply, self.name_error)
         if not show:
             for widget in widgets:
                 widget.grid_remove()
             return
 
-        self.name_label.grid(row=2, column=0, sticky="w")
-        self.name_entry.grid(row=2, column=1, sticky="ew", padx=(6, 6))
-        self.name_apply.grid(row=2, column=2, sticky="e")
-        self.name_error.grid(row=3, column=0, columnspan=3, sticky="ew", pady=(4, 0))
+        self.name_label.grid(row=0, column=0, sticky="w", pady=(0, 10))
+        self.name_entry_shell.grid(row=0, column=1, sticky="ew", padx=(12, 10), pady=(0, 10))
+        self.name_apply.grid(row=0, column=2, sticky="e", pady=(0, 10))
+        self.name_error.grid(row=1, column=0, columnspan=3, sticky="ew", pady=(0, 10))
 
     def _layout_color_widgets(self, show: bool):
         widgets = (self.color_label, self.color_swatch, self.color_button)
@@ -256,9 +373,9 @@ class Sidebar:
                 widget.grid_remove()
             return
 
-        self.color_label.grid(row=4, column=0, sticky="w", pady=(10, 0))
-        self.color_swatch.grid(row=4, column=1, sticky="w", padx=(6, 6), pady=(10, 0))
-        self.color_button.grid(row=4, column=2, sticky="e", pady=(10, 0))
+        self.color_label.grid(row=2, column=0, sticky="w", pady=(0, 0))
+        self.color_swatch.grid(row=2, column=1, sticky="w", padx=(12, 10), pady=(0, 0))
+        self.color_button.grid(row=2, column=2, sticky="e", pady=(0, 0))
 
     def _shows_length_precision(self, item) -> bool:
         return isinstance(
@@ -287,17 +404,16 @@ class Sidebar:
         show_angle = item is not None and self._shows_angle_precision(item)
 
         if show_length:
-            self.length_label.grid(row=5, column=0, sticky="w", pady=(10, 4))
-            self.length_spinbox.grid(row=5, column=2, sticky="e", pady=(10, 4))
+            self.length_label.grid(row=3, column=0, columnspan=2, sticky="w", pady=(12, 0))
+            self.length_spinbox.grid(row=3, column=2, sticky="e", pady=(12, 0))
         else:
             self.length_label.grid_remove()
             self.length_spinbox.grid_remove()
 
         if show_angle:
-            angle_row = 6 if show_length else 5
-            angle_pady = 0 if show_length else (10, 0)
-            self.angle_label.grid(row=angle_row, column=0, sticky="w", pady=angle_pady)
-            self.angle_spinbox.grid(row=angle_row, column=2, sticky="e", pady=angle_pady)
+            angle_row = 4 if show_length else 3
+            self.angle_label.grid(row=angle_row, column=0, columnspan=2, sticky="w", pady=(12, 0))
+            self.angle_spinbox.grid(row=angle_row, column=2, sticky="e", pady=(12, 0))
         else:
             self.angle_label.grid_remove()
             self.angle_spinbox.grid_remove()
@@ -352,13 +468,41 @@ class Sidebar:
         new_size = max(10, int(self.base_font_size * scale))
         self.font.configure(size=new_size)
         if self.dialog is not None and self.dialog.winfo_exists():
-            self.context_label.configure(wraplength=max(180, new_width + 60))
-            self.name_error.configure(wraplength=max(180, new_width + 60))
+            self.name_error.configure(wraplength=max(240, new_width + 60))
             self._configure_widget_fonts(self.editor_frame)
 
     def _sync_precision_controls(self):
         self.length_decimals_var.set(str(getattr(state, "length_decimal_places", 2)))
         self.angle_decimals_var.set(str(getattr(state, "angle_decimal_places", 2)))
+
+    def _constructor_name(self, name: str) -> str:
+        names = {
+            "Angle": _("Angle"),
+            "AngleBisector": _("AngleBisector"),
+            "Area": _("Area"),
+            "Circle": _("Circle"),
+            "CircularArc": _("CircularArc"),
+            "CircularSector": _("CircularSector"),
+            "CircumcircularArc": _("CircumcircularArc"),
+            "CircumcircularSector": _("CircumcircularSector"),
+            "Distance": _("Distance"),
+            "FitLine": _("FitLine"),
+            "Line": _("Line"),
+            "ParallelLine": _("ParallelLine"),
+            "PerpendicularBisector": _("PerpendicularBisector"),
+            "PerpendicularLine": _("PerpendicularLine"),
+            "Polygon": _("Polygon"),
+            "Polyline": _("Polyline"),
+            "Ray": _("Ray"),
+            "Segment": _("Segment"),
+            "Semicircle": _("Semicircle"),
+            "Slope": _("Slope"),
+            "Vector": _("Vector"),
+        }
+        return names.get(name, name)
+
+    def _constructor(self, name: str, *args) -> str:
+        return f"{self._constructor_name(name)}({', '.join(str(arg) for arg in args)})"
 
     def _format_line_equation(self, item, constructor_name: str) -> str:
         if not isinstance(item.prescription, (list, tuple)) or len(item.prescription) != 3:
@@ -379,8 +523,8 @@ class Sidebar:
         sign_y = "+" if item.center.pos_y < 0 else "-"
         return (
             f"{item.lower_label}: {constructor_name}\n"
-            f"= (x {sign_x} {format_number(abs(item.center.pos_x))}){squared} + "
-            f"(y {sign_y} {format_number(abs(item.center.pos_y))}){squared} = {format_number(item.radius**2)})"
+            f"= (x {sign_x} {format_length_value(abs(item.center.pos_x))}){squared} + "
+            f"(y {sign_y} {format_length_value(abs(item.center.pos_y))}){squared} = {format_length_value(item.radius**2)}"
         )
 
     def _item_text(self, item) -> str | None:
@@ -388,23 +532,23 @@ class Sidebar:
             return f"{item.label} = ({format_number(item.pos_x)}, {format_number(item.pos_y)})"
 
         if isinstance(item, Line):
-            return self._format_line_equation(item, f"Line({item.point_1.label}, {item.point_2.label})")
+            return self._format_line_equation(item, self._constructor("Line", item.point_1.label, item.point_2.label))
 
         if isinstance(item, Segment):
             return (
-                f"{item.lower_label} = Segment({item.point_1.label}, {item.point_2.label})\n"
+                f"{item.lower_label} = {self._constructor('Segment', item.point_1.label, item.point_2.label)}\n"
                 f"{' ' * (len(item.lower_label) - 1)}= {format_length_value(item.length)}"
             )
 
         if isinstance(item, Segment_with_length):
             return (
-                f"{item.lower_label} = Segment({item.point_1.label}, {item.point_2.label})\n"
+                f"{item.lower_label} = {self._constructor('Segment', item.point_1.label, item.point_2.label)}\n"
                 f"{' ' * (len(item.lower_label) - 1)}= {format_length_value(item.length)}"
             )
 
         if isinstance(item, Length):
             return (
-                f"{item.lower_label} = Distance({item.point_1.label}, {item.point_2.label})\n"
+                f"{item.lower_label} = {self._constructor('Distance', item.point_1.label, item.point_2.label)}\n"
                 f"{' ' * (len(item.lower_label) - 1)}= {format_length_value(item.value)}"
             )
 
@@ -420,28 +564,28 @@ class Sidebar:
                 )
             )
             return (
-                f"{item.lower_label} = Slope({target_label})\n"
+                f"{item.lower_label} = {self._constructor('Slope', target_label)}\n"
                 f"{' ' * (len(item.lower_label) - 1)}= {item.display_value}"
             )
 
         if isinstance(item, Ray):
-            return self._format_line_equation(item, f"Ray({item.point_1.label}, {item.point_2.label})")
+            return self._format_line_equation(item, self._constructor("Ray", item.point_1.label, item.point_2.label))
 
         if isinstance(item, Vector):
             return (
-                f"{item.lower_label} = Vector({item.point_1.label}, {item.point_2.label})\n"
+                f"{item.lower_label} = {self._constructor('Vector', item.point_1.label, item.point_2.label)}\n"
                 f"{' ' * (len(item.lower_label) - 1)}= {format_length_value(item.length)}"
             )
 
         if isinstance(item, Polyline):
             return (
-                f"{item.lower_label} = Polyline({', '.join(p.label for p in item.line_points)})\n"
+                f"{item.lower_label} = {self._constructor('Polyline', *(p.label for p in item.line_points))}\n"
                 f"{' ' * (len(item.lower_label) - 1)}= {format_length_value(item.length)}"
             )
 
         if isinstance(item, Polygon):
             return (
-                f"{item.lower_label} = Polygon({', '.join(p.label for p in item.line_points)})\n"
+                f"{item.lower_label} = {self._constructor('Polygon', *(p.label for p in item.line_points))}\n"
                 f"{' ' * (len(item.lower_label) - 1)}= {format_length_value(item.length)}"
             )
 
@@ -449,14 +593,14 @@ class Sidebar:
             ctx = [p.label for p in item.line_points[:2]]
             ctx.append(str(item.num_points))
             return (
-                f"{item.lower_label} = Polygon({', '.join(ctx)})\n"
+                f"{item.lower_label} = {self._constructor('Polygon', *ctx)}\n"
                 f"{' ' * (len(item.lower_label) - 1)}= {format_length_value(item.length)}"
             )
 
         if isinstance(item, Perpendicular_bisector):
             return self._format_line_equation(
                 item,
-                f"PerpendicularBisector({item.point_1.label}, {item.point_2.label})",
+                self._constructor("PerpendicularBisector", item.point_1.label, item.point_2.label),
             )
 
         if isinstance(item, Perpendicular_line):
@@ -466,7 +610,7 @@ class Sidebar:
                 else (getattr(item, "parent_line_label", None) or "?")
             )
             point_label = item.point_1.label if item.point_1 else "?"
-            return self._format_line_equation(item, f"PerpendicularLine({point_label}, {parent_label})")
+            return self._format_line_equation(item, self._constructor("PerpendicularLine", point_label, parent_label))
 
         if isinstance(item, Parallel_line):
             parent_label = (
@@ -475,49 +619,53 @@ class Sidebar:
                 else (getattr(item, "parent_line_label", None) or "?")
             )
             point_label = item.point_1.label if item.point_1 else "?"
-            return self._format_line_equation(item, f"Line({point_label}, {parent_label})")
+            return self._format_line_equation(item, self._constructor("ParallelLine", point_label, parent_label))
 
         if isinstance(item, Angle_bisector):
             return self._format_line_equation(
                 item,
-                f"AngleBisector({item.angle_point_1.label}, {item.point_1.label}, {item.angle_point_2.label})",
+                self._constructor("AngleBisector", item.angle_point_1.label, item.point_1.label, item.angle_point_2.label),
             )
 
         if isinstance(item, Semicircle):
             return (
-                f"{item.lower_label}: Semicircle({item.point_1.label}, {item.point_2.label})\n"
+                f"{item.lower_label}: {self._constructor('Semicircle', item.point_1.label, item.point_2.label)}\n"
                 f"= {format_length_value(item.radius * math.pi)}"
             )
 
         if isinstance(item, Circle_center_point):
             return self._format_circle_equation(
                 item,
-                f"Circle({item.center.label}, {item.point_2.label})",
+                self._constructor("Circle", item.center.label, item.point_2.label),
             )
 
         if isinstance(item, Circle_center_radius):
             return self._format_circle_equation(
                 item,
-                f"Circle({item.center.label}, {format_length_value(item.radius)})",
+                self._constructor("Circle", item.center.label, format_length_value(item.radius)),
             )
 
         if isinstance(item, Circle_3_points):
             return self._format_circle_equation(
                 item,
-                f"Circle({item.point_1.label}, {item.point_2.label}, {item.point_3.label})",
+                self._constructor("Circle", item.point_1.label, item.point_2.label, item.point_3.label),
             )
 
         if isinstance(item, Compass):
             return self._format_circle_equation(
                 item,
-                f"Circle({item.center.label}, Segment({item.r_point_1.label}, {item.r_point_2.label}))",
+                self._constructor(
+                    "Circle",
+                    item.center.label,
+                    self._constructor("Segment", item.r_point_1.label, item.r_point_2.label),
+                ),
             )
 
         if isinstance(item, Angle):
             ctx = [item.point_1.label, item.anchor.label, item.point_2.label]
             label = item.label or "a"
             return (
-                f"{label} = Angle({', '.join(ctx)})\n"
+                f"{label} = {self._constructor('Angle', *ctx)}\n"
                 f"{' ' * (len(label) - 1)}= {format_angle_value(item.angle)}"
             )
 
@@ -526,35 +674,35 @@ class Sidebar:
                 dx = round(item.point_2.pos_x - item.point_1.pos_x, 2)
                 dy = round(item.point_2.pos_y - item.point_1.pos_y, 2)
                 return (
-                    f"{item.lower_label} = Vector({item.point_1.label}, {item.point_2.label})\n"
+                    f"{item.lower_label} = {self._constructor('Vector', item.point_1.label, item.point_2.label)}\n"
                     f"{' ' * (len(item.lower_label) - 1)}= ({dx}, {dy})"
                 )
 
         if isinstance(item, Circular_arc):
             if item.center and item.point_1 and item.point_2:
                 return (
-                    f"{item.lower_label}: CircularArc({item.center.label}, {item.point_1.label}, {item.point_2.label})\n"
+                    f"{item.lower_label}: {self._constructor('CircularArc', item.center.label, item.point_1.label, item.point_2.label)}\n"
                     f"= r = {format_length_value(item.radius)}"
                 )
 
         if isinstance(item, Circumcircular_arc):
             if item.point_1 and item.point_2 and item.point_3:
                 return (
-                    f"{item.lower_label}: CircumcircularArc({item.point_1.label}, {item.point_2.label}, {item.point_3.label})\n"
+                    f"{item.lower_label}: {self._constructor('CircumcircularArc', item.point_1.label, item.point_2.label, item.point_3.label)}\n"
                     f"= r = {format_length_value(item.radius)}"
                 )
 
         if isinstance(item, Circular_sector):
             if item.center and item.point_1 and item.point_2:
                 return (
-                    f"{item.lower_label}: CircularSector({item.center.label}, {item.point_1.label}, {item.point_2.label})\n"
+                    f"{item.lower_label}: {self._constructor('CircularSector', item.center.label, item.point_1.label, item.point_2.label)}\n"
                     f"= r = {format_length_value(item.radius)}"
                 )
 
         if isinstance(item, Circumcircular_sector):
             if item.point_1 and item.point_2 and item.point_3:
                 return (
-                    f"{item.lower_label}: CircumcircularSector({item.point_1.label}, {item.point_2.label}, {item.point_3.label})\n"
+                    f"{item.lower_label}: {self._constructor('CircumcircularSector', item.point_1.label, item.point_2.label, item.point_3.label)}\n"
                     f"= r = {format_length_value(item.radius)}"
                 )
 
@@ -566,7 +714,7 @@ class Sidebar:
                 a, b, c = item.prescription
             sign_b = "-" if b < 0 else "+"
             return (
-                f"{item.lower_label}: FitLine({pts})\n"
+                f"{item.lower_label}: {self._constructor('FitLine', pts)}\n"
                 f"= {a}x {sign_b} {abs(b)}y = {c}"
             )
 
@@ -576,7 +724,7 @@ class Sidebar:
                 or getattr(item.target, "label", "?")
             )
             return (
-                f"S = Area({target_label})\n"
+                f"S = {self._constructor('Area', target_label)}\n"
                 f"  = {format_length_value(item.value)}"
             )
 

@@ -3,6 +3,7 @@ from unittest.mock import MagicMock, patch
 import math
 from types import SimpleNamespace
 import builtins
+from py_geogebra import state
 from py_geogebra.tools.utils import (
     delete_object,
     find_circle_at_position,
@@ -24,6 +25,7 @@ from py_geogebra.tools.utils import (
 )
 from py_geogebra.ui.length import Length
 from py_geogebra.ui.angle import Angle
+from py_geogebra.ui.circle_center_radius import Circle_center_radius
 from py_geogebra.ui.point import Point
 from py_geogebra.ui.regular_polygon import Regular_polygon
 from py_geogebra.ui.segment import Segment
@@ -387,6 +389,49 @@ class TestUtils(unittest.TestCase):
         self.assertFalse(Sidebar._shows_angle_precision(sidebar, segment))
         self.assertFalse(Sidebar._shows_length_precision(sidebar, angle))
         self.assertTrue(Sidebar._shows_angle_precision(sidebar, angle))
+
+    def test_sidebar_circle_equation_uses_length_precision_without_extra_paren(self):
+        sidebar = Sidebar.__new__(Sidebar)
+        center = SimpleNamespace(pos_x=13.8, pos_y=0.774, label="A")
+        circle = Circle_center_radius.__new__(Circle_center_radius)
+        circle.lower_label = "a"
+        circle.center = center
+        circle.radius = 10.9294
+
+        old_places = state.length_decimal_places
+        try:
+            state.length_decimal_places = 1
+            text = Sidebar._format_circle_equation(sidebar, circle, "Circle(A, 10.9)")
+        finally:
+            state.length_decimal_places = old_places
+
+        self.assertIn("(x - 13.8)²", text)
+        self.assertIn("(y - 0.8)²", text)
+        self.assertIn("= 119.5", text)
+        self.assertFalse(text.endswith(")"))
+
+    def test_sidebar_constructor_names_are_translated(self):
+        sidebar = Sidebar.__new__(Sidebar)
+        original_gettext = builtins._
+
+        def translate(text):
+            return {
+                "Circle": "Kružnica",
+                "Segment": "Úsečka",
+            }.get(text, text)
+
+        try:
+            builtins._ = translate
+            text = Sidebar._constructor(
+                sidebar,
+                "Circle",
+                "A",
+                Sidebar._constructor(sidebar, "Segment", "B", "C"),
+            )
+        finally:
+            builtins._ = original_gettext
+
+        self.assertEqual(text, "Kružnica(A, Úsečka(B, C))")
 
     @patch("py_geogebra.tools.utils.g")
     def test_delete_object_removes_attached_dependents_and_label_object(self, mock_g):

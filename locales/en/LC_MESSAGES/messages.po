@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: py-geogebra 0.1.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-05-04 19:33+0200\n"
+"POT-Creation-Date: 2026-05-04 19:58+0200\n"
 "PO-Revision-Date: 2025-09-13 23:35+0200\n"
 "Last-Translator: Automatically generated\n"
 "Language-Team: none\n"
@@ -17,40 +17,123 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-#: py_geogebra/ui/sidebar.py:70 py_geogebra/ui/sidebar.py:116
-#: py_geogebra/ui/sidebar.py:311
+#: py_geogebra/ui/sidebar.py:71 py_geogebra/ui/sidebar.py:122
+#: py_geogebra/ui/sidebar.py:427
 msgid "Select an object"
 msgstr "Select an object"
 
-#: py_geogebra/ui/sidebar.py:92 py_geogebra/ui/sidebar.py:119
-#: py_geogebra/ui/sidebar.py:127 py_geogebra/ui/sidebar.py:139
-#: py_geogebra/ui/sidebar.py:611
+#: py_geogebra/ui/sidebar.py:98 py_geogebra/ui/sidebar.py:125
+#: py_geogebra/ui/sidebar.py:759
 msgid "Properties"
 msgstr "Properties"
 
-#: py_geogebra/ui/sidebar.py:128 py_geogebra/ui/sidebar.py:159
+#: py_geogebra/ui/sidebar.py:133 py_geogebra/ui/sidebar.py:143
 msgid "Name"
 msgstr "Name"
 
-#: py_geogebra/ui/sidebar.py:129 py_geogebra/ui/sidebar.py:163
+#: py_geogebra/ui/sidebar.py:134 py_geogebra/ui/sidebar.py:181
 msgid "Apply"
 msgstr "Apply"
 
-#: py_geogebra/ui/sidebar.py:130 py_geogebra/ui/sidebar.py:180
+#: py_geogebra/ui/sidebar.py:135 py_geogebra/ui/sidebar.py:198
 msgid "Color"
 msgstr "Color"
 
-#: py_geogebra/ui/sidebar.py:131 py_geogebra/ui/sidebar.py:190
+#: py_geogebra/ui/sidebar.py:136 py_geogebra/ui/sidebar.py:215
 msgid "Choose..."
 msgstr "Choose..."
 
-#: py_geogebra/ui/sidebar.py:132 py_geogebra/ui/sidebar.py:197
+#: py_geogebra/ui/sidebar.py:137 py_geogebra/ui/sidebar.py:221
 msgid "Length decimals"
 msgstr "Length decimals"
 
-#: py_geogebra/ui/sidebar.py:133 py_geogebra/ui/sidebar.py:217
+#: py_geogebra/ui/sidebar.py:138 py_geogebra/ui/sidebar.py:241
 msgid "Angle decimals"
 msgstr "Angle decimals"
+
+#: py_geogebra/ui/sidebar.py:480
+msgid "Angle"
+msgstr "Angle"
+
+#: py_geogebra/ui/sidebar.py:481
+msgid "AngleBisector"
+msgstr "AngleBisector"
+
+#: py_geogebra/ui/sidebar.py:482
+msgid "Area"
+msgstr "Area"
+
+#: py_geogebra/ui/sidebar.py:483
+msgid "Circle"
+msgstr "Circle"
+
+#: py_geogebra/ui/sidebar.py:484
+msgid "CircularArc"
+msgstr "CircularArc"
+
+#: py_geogebra/ui/sidebar.py:485
+msgid "CircularSector"
+msgstr "CircularSector"
+
+#: py_geogebra/ui/sidebar.py:486
+msgid "CircumcircularArc"
+msgstr "CircumcircularArc"
+
+#: py_geogebra/ui/sidebar.py:487
+msgid "CircumcircularSector"
+msgstr "CircumcircularSector"
+
+#: py_geogebra/ui/sidebar.py:488
+msgid "Distance"
+msgstr "Distance"
+
+#: py_geogebra/ui/sidebar.py:489
+msgid "FitLine"
+msgstr "FitLine"
+
+#: py_geogebra/ui/sidebar.py:490
+msgid "Line"
+msgstr "Line"
+
+#: py_geogebra/ui/sidebar.py:491
+msgid "ParallelLine"
+msgstr "ParallelLine"
+
+#: py_geogebra/ui/sidebar.py:492
+msgid "PerpendicularBisector"
+msgstr "PerpendicularBisector"
+
+#: py_geogebra/ui/sidebar.py:493
+msgid "PerpendicularLine"
+msgstr "PerpendicularLine"
+
+#: py_geogebra/ui/sidebar.py:494
+msgid "Polygon"
+msgstr "Polygon"
+
+#: py_geogebra/ui/sidebar.py:495
+msgid "Polyline"
+msgstr "Polyline"
+
+#: py_geogebra/ui/sidebar.py:496
+msgid "Ray"
+msgstr "Ray"
+
+#: py_geogebra/ui/sidebar.py:497
+msgid "Segment"
+msgstr "Segment"
+
+#: py_geogebra/ui/sidebar.py:498
+msgid "Semicircle"
+msgstr "Semicircle"
+
+#: py_geogebra/ui/sidebar.py:499
+msgid "Slope"
+msgstr "Slope"
+
+#: py_geogebra/ui/sidebar.py:500
+msgid "Vector"
+msgstr "Vector"
 
 #: py_geogebra/ui/menu_bar.py:37
 msgid "FPS Test"
