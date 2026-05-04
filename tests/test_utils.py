@@ -2,6 +2,7 @@ import unittest
 from unittest.mock import MagicMock, patch
 import math
 from types import SimpleNamespace
+import builtins
 from py_geogebra.tools.utils import (
     delete_object,
     find_circle_at_position,
@@ -27,6 +28,13 @@ from py_geogebra.ui.point import Point
 from py_geogebra.ui.regular_polygon import Regular_polygon
 from py_geogebra.ui.segment import Segment
 from py_geogebra.ui.sidebar import Sidebar
+
+
+def _(text):
+    return text
+
+
+builtins._ = _
 
 
 class TestUtils(unittest.TestCase):

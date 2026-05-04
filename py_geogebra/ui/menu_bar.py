@@ -1,11 +1,19 @@
 import tkinter as tk
 import time
+import webbrowser
 
 from py_geogebra import state
 from ..tools.language import change_lang
 from ..tools.check_version import handle_version
 from .dialogs import ask_for_update, open_from_file, save_file, save_db, load_db
 from .. import globals
+
+
+HELP_URL = "https://geogebra.github.io/docs/manual/en/"
+
+
+def open_help():
+    webbrowser.open(HELP_URL)
 
 
 def run_fps_test(root):
@@ -25,7 +33,9 @@ def run_fps_test(root):
         else:
             fps = frames / 2
             print(f"Average FPS over 2s: {fps:.1f}")
-            tk.messagebox.showinfo("FPS Test", f"Average FPS: {fps:.1f}")
+            tk.messagebox.showinfo(
+                _("FPS Test"), _("Average FPS: {fps:.1f}").format(fps=fps)
+            )
 
     draw()
 
@@ -63,11 +73,23 @@ def menu(root, widgets):
     )
     language_selection = tk.Menu(menu_bar, tearoff=0)
     menu_bar.add_cascade(label=_("Language"), menu=language_selection)
-    language_selection.add_command(
-        label="Slovenský", command=lambda: change_lang("sk", widgets)
+    language_cascade_index = menu_bar.index("end")
+    widgets.register(
+        lambda: menu_bar.entryconfig(language_cascade_index, label=_("Language"))
     )
     language_selection.add_command(
-        label="Anglický", command=lambda: change_lang("en", widgets)
+        label=_("Slovenský"), command=lambda: change_lang("sk", widgets)
+    )
+    slovak_index = language_selection.index("end")
+    widgets.register(
+        lambda: language_selection.entryconfig(slovak_index, label=_("Slovenský"))
+    )
+    language_selection.add_command(
+        label=_("Anglický"), command=lambda: change_lang("en", widgets)
+    )
+    english_index = language_selection.index("end")
+    widgets.register(
+        lambda: language_selection.entryconfig(english_index, label=_("Anglický"))
     )
     more_selection = tk.Menu(menu_bar, tearoff=0)
     menu_bar.add_cascade(label=_("Viac"), menu=more_selection)
@@ -83,4 +105,12 @@ def menu(root, widgets):
     )
 
     more_selection.add_command(label=_("Test FPS"), command=lambda: run_fps_test(root))
+    test_fps_index = more_selection.index("end")
+    widgets.register(
+        lambda: more_selection.entryconfig(test_fps_index, label=_("Test FPS"))
+    )
+
+    more_selection.add_command(label=_("Help"), command=open_help)
+    help_index = more_selection.index("end")
+    widgets.register(lambda: more_selection.entryconfig(help_index, label=_("Help")))
     return menu_bar

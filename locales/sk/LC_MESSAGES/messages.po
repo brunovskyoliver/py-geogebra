@@ -5,9 +5,9 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: PACKAGE VERSION\n"
+"Project-Id-Version: py-geogebra 0.1.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-10-28 20:14+0100\n"
+"POT-Creation-Date: 2026-05-04 19:33+0200\n"
 "PO-Revision-Date: 2025-09-13 23:35+0200\n"
 "Last-Translator: Automatically generated\n"
 "Language-Team: none\n"
@@ -17,196 +17,308 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=3; plural=(n==1) ? 0 : (n>=2 && n<=4) ? 1 : 2;\n"
 
-#: py_geogebra/ui/menu_bar.py:37 py_geogebra/ui/menu_bar.py:40
+#: py_geogebra/ui/sidebar.py:70 py_geogebra/ui/sidebar.py:116
+#: py_geogebra/ui/sidebar.py:311
+msgid "Select an object"
+msgstr "Vyber objekt"
+
+#: py_geogebra/ui/sidebar.py:92 py_geogebra/ui/sidebar.py:119
+#: py_geogebra/ui/sidebar.py:127 py_geogebra/ui/sidebar.py:139
+#: py_geogebra/ui/sidebar.py:611
+msgid "Properties"
+msgstr "Vlastnosti"
+
+#: py_geogebra/ui/sidebar.py:128 py_geogebra/ui/sidebar.py:159
+msgid "Name"
+msgstr "Názov"
+
+#: py_geogebra/ui/sidebar.py:129 py_geogebra/ui/sidebar.py:163
+msgid "Apply"
+msgstr "Použiť"
+
+#: py_geogebra/ui/sidebar.py:130 py_geogebra/ui/sidebar.py:180
+msgid "Color"
+msgstr "Farba"
+
+#: py_geogebra/ui/sidebar.py:131 py_geogebra/ui/sidebar.py:190
+msgid "Choose..."
+msgstr "Vybrať..."
+
+#: py_geogebra/ui/sidebar.py:132 py_geogebra/ui/sidebar.py:197
+msgid "Length decimals"
+msgstr "Desatinné miesta dĺžky"
+
+#: py_geogebra/ui/sidebar.py:133 py_geogebra/ui/sidebar.py:217
+msgid "Angle decimals"
+msgstr "Desatinné miesta uhla"
+
+#: py_geogebra/ui/menu_bar.py:37
+msgid "FPS Test"
+msgstr "Test FPS"
+
+#: py_geogebra/ui/menu_bar.py:37
+#, python-brace-format
+msgid "Average FPS: {fps:.1f}"
+msgstr "Priemerné FPS: {fps:.1f}"
+
+#: py_geogebra/ui/menu_bar.py:47 py_geogebra/ui/menu_bar.py:50
 msgid "Súbor"
 msgstr ""
 
-#: py_geogebra/ui/menu_bar.py:43 py_geogebra/ui/menu_bar.py:47
+#: py_geogebra/ui/menu_bar.py:53 py_geogebra/ui/menu_bar.py:57
 msgid "Otvoriť súbor"
 msgstr ""
 
-#: py_geogebra/ui/menu_bar.py:49 py_geogebra/ui/menu_bar.py:52
+#: py_geogebra/ui/menu_bar.py:59 py_geogebra/ui/menu_bar.py:62
 msgid "Uložiť ako"
 msgstr ""
 
-#: py_geogebra/ui/menu_bar.py:54 py_geogebra/ui/menu_bar.py:57
+#: py_geogebra/ui/menu_bar.py:64 py_geogebra/ui/menu_bar.py:67
 msgid "Uložiť do DB"
 msgstr ""
 
-#: py_geogebra/ui/menu_bar.py:59 py_geogebra/ui/menu_bar.py:62
+#: py_geogebra/ui/menu_bar.py:69 py_geogebra/ui/menu_bar.py:72
 msgid "Otvoriť z DB"
 msgstr ""
 
-#: py_geogebra/ui/menu_bar.py:65
+#: py_geogebra/ui/menu_bar.py:75 py_geogebra/ui/menu_bar.py:78
 msgid "Language"
-msgstr ""
+msgstr "Jazyk"
 
-#: py_geogebra/ui/menu_bar.py:73 py_geogebra/ui/menu_bar.py:75
+#: py_geogebra/ui/menu_bar.py:81 py_geogebra/ui/menu_bar.py:85
+msgid "Slovenský"
+msgstr "Slovenský"
+
+#: py_geogebra/ui/menu_bar.py:88 py_geogebra/ui/menu_bar.py:92
+msgid "Anglický"
+msgstr "Anglický"
+
+#: py_geogebra/ui/menu_bar.py:95 py_geogebra/ui/menu_bar.py:97
 msgid "Viac"
 msgstr ""
 
-#: py_geogebra/ui/menu_bar.py:77 py_geogebra/ui/menu_bar.py:82
+#: py_geogebra/ui/menu_bar.py:99 py_geogebra/ui/menu_bar.py:104
 msgid "Over verziu"
 msgstr ""
 
-#: py_geogebra/ui/menu_bar.py:85
+#: py_geogebra/ui/menu_bar.py:107 py_geogebra/ui/menu_bar.py:110
 msgid "Test FPS"
 msgstr ""
 
-#: py_geogebra/ui/toolbar.py:119
+#: py_geogebra/ui/menu_bar.py:113 py_geogebra/ui/menu_bar.py:115
+msgid "Help"
+msgstr "Pomoc"
+
+#: py_geogebra/ui/toolbar.py:126
 msgid "Pohyb"
 msgstr ""
 
-#: py_geogebra/ui/toolbar.py:120
+#: py_geogebra/ui/toolbar.py:127
 msgid "Voľný tvar"
 msgstr ""
 
-#: py_geogebra/ui/toolbar.py:121
+#: py_geogebra/ui/toolbar.py:128
 msgid "Nástroj pero"
 msgstr ""
 
-#: py_geogebra/ui/toolbar.py:129
+#: py_geogebra/ui/toolbar.py:136
 msgid "Bod"
 msgstr ""
 
-#: py_geogebra/ui/toolbar.py:130
+#: py_geogebra/ui/toolbar.py:137
 msgid "Bod na objekte"
 msgstr ""
 
-#: py_geogebra/ui/toolbar.py:131
+#: py_geogebra/ui/toolbar.py:138
 msgid "Pripojiť / Odpojiť bod"
 msgstr ""
 
-#: py_geogebra/ui/toolbar.py:132
+#: py_geogebra/ui/toolbar.py:139
 msgid "Priesečník"
 msgstr ""
 
-#: py_geogebra/ui/toolbar.py:133
+#: py_geogebra/ui/toolbar.py:140
 msgid "Stred"
 msgstr ""
 
-#: py_geogebra/ui/toolbar.py:134
+#: py_geogebra/ui/toolbar.py:141
 msgid "Komplexné číslo"
 msgstr ""
 
-#: py_geogebra/ui/toolbar.py:135
+#: py_geogebra/ui/toolbar.py:142
 msgid "Extremum"
 msgstr ""
 
-#: py_geogebra/ui/toolbar.py:136
+#: py_geogebra/ui/toolbar.py:143
 msgid "Korene"
 msgstr ""
 
-#: py_geogebra/ui/toolbar.py:144
+#: py_geogebra/ui/toolbar.py:151
 msgid "Priamka"
 msgstr ""
 
-#: py_geogebra/ui/toolbar.py:145
+#: py_geogebra/ui/toolbar.py:152
 msgid "Úsečka"
 msgstr ""
 
-#: py_geogebra/ui/toolbar.py:146
+#: py_geogebra/ui/toolbar.py:153
 msgid "Úsečka s danou dĺžkou"
 msgstr ""
 
-#: py_geogebra/ui/toolbar.py:147
+#: py_geogebra/ui/toolbar.py:154
 msgid "Polpriamka"
 msgstr ""
 
-#: py_geogebra/ui/toolbar.py:148
+#: py_geogebra/ui/toolbar.py:155
 msgid "Zalomená čiara"
 msgstr ""
 
-#: py_geogebra/ui/toolbar.py:149
+#: py_geogebra/ui/toolbar.py:156
 msgid "Vektor"
 msgstr ""
 
-#: py_geogebra/ui/toolbar.py:150
+#: py_geogebra/ui/toolbar.py:157
 msgid "Vektor z bodu"
 msgstr ""
 
-#: py_geogebra/ui/toolbar.py:158
+#: py_geogebra/ui/toolbar.py:165
 msgid "Kolmica"
 msgstr ""
 
-#: py_geogebra/ui/toolbar.py:159
+#: py_geogebra/ui/toolbar.py:166
 msgid "Rovnobežka"
 msgstr ""
 
-#: py_geogebra/ui/toolbar.py:160
+#: py_geogebra/ui/toolbar.py:167
 msgid "Os úsečky"
 msgstr ""
 
-#: py_geogebra/ui/toolbar.py:161
+#: py_geogebra/ui/toolbar.py:168
 msgid "Os uhla"
 msgstr ""
 
-#: py_geogebra/ui/toolbar.py:162
+#: py_geogebra/ui/toolbar.py:169
 msgid "Dotyčnice"
 msgstr ""
 
-#: py_geogebra/ui/toolbar.py:163
+#: py_geogebra/ui/toolbar.py:170
 msgid "Polárna priamka alebo priemer"
 msgstr ""
 
-#: py_geogebra/ui/toolbar.py:164
+#: py_geogebra/ui/toolbar.py:171
 msgid "lineárna regresia"
 msgstr ""
 
-#: py_geogebra/ui/toolbar.py:165
+#: py_geogebra/ui/toolbar.py:172
 msgid "Množina bodov"
 msgstr ""
 
-#: py_geogebra/ui/toolbar.py:173
+#: py_geogebra/ui/toolbar.py:180
 msgid "Mnohouholník"
 msgstr ""
 
-#: py_geogebra/ui/toolbar.py:174
+#: py_geogebra/ui/toolbar.py:181
 msgid "Pravidelný mnohouholník"
 msgstr ""
 
-#: py_geogebra/ui/toolbar.py:175
+#: py_geogebra/ui/toolbar.py:182
 msgid "Pevný mnohouholník"
 msgstr ""
 
-#: py_geogebra/ui/toolbar.py:176
+#: py_geogebra/ui/toolbar.py:183
 msgid "Vektorový mnohouholník"
 msgstr ""
 
-#: py_geogebra/ui/toolbar.py:184
+#: py_geogebra/ui/toolbar.py:191
 msgid "Kružnica daná stredom a bodom"
 msgstr ""
 
-#: py_geogebra/ui/toolbar.py:185
+#: py_geogebra/ui/toolbar.py:192
 msgid "Kružnica daná stredom a polomerom"
 msgstr ""
 
-#: py_geogebra/ui/toolbar.py:186
+#: py_geogebra/ui/toolbar.py:193
 msgid "Kružnica daná polomerom a stredom"
 msgstr ""
 
-#: py_geogebra/ui/toolbar.py:187
+#: py_geogebra/ui/toolbar.py:194
 msgid "Kružnica daná 3 bodmi"
 msgstr ""
 
-#: py_geogebra/ui/toolbar.py:188
+#: py_geogebra/ui/toolbar.py:195
 msgid "Polkružnica s krajnými bodmi"
 msgstr ""
 
-#: py_geogebra/ui/toolbar.py:189
+#: py_geogebra/ui/toolbar.py:196
 msgid "Kružnicový oblúk daný stredom a krajnými bodmi"
 msgstr ""
 
-#: py_geogebra/ui/toolbar.py:190
+#: py_geogebra/ui/toolbar.py:197
 msgid "Kružnicový oblúk daný 3 bodmi"
 msgstr ""
 
-#: py_geogebra/ui/toolbar.py:191
+#: py_geogebra/ui/toolbar.py:198
 msgid "Kruhový výsek daný stredom a krajnými bodmi"
 msgstr ""
 
-#: py_geogebra/ui/toolbar.py:192
+#: py_geogebra/ui/toolbar.py:199
 msgid "Kruhový výsek určený 3 bodmi"
+msgstr ""
+
+#: py_geogebra/ui/toolbar.py:207
+msgid "Uhol"
+msgstr ""
+
+#: py_geogebra/ui/toolbar.py:208
+msgid "Uhol danej veľkosti"
+msgstr ""
+
+#: py_geogebra/ui/toolbar.py:209
+msgid "Vzdialenosť alebo dĺžka"
+msgstr ""
+
+#: py_geogebra/ui/toolbar.py:210
+msgid "Obsah"
+msgstr ""
+
+#: py_geogebra/ui/toolbar.py:211
+msgid "Smernica"
+msgstr ""
+
+#: py_geogebra/ui/toolbar.py:212
+msgid "Vytvoriť zoznam"
+msgstr ""
+
+#: py_geogebra/ui/toolbar.py:213
+msgid "Vzťah"
+msgstr ""
+
+#: py_geogebra/ui/toolbar.py:214
+msgid "Vyšetrenie priebehu funkcie"
+msgstr ""
+
+#: py_geogebra/ui/toolbar.py:222
+msgid "Osová súmernosť"
+msgstr ""
+
+#: py_geogebra/ui/toolbar.py:223
+msgid "Stredová súmernosť"
+msgstr ""
+
+#: py_geogebra/ui/toolbar.py:224
+msgid "Inverzia"
+msgstr ""
+
+#: py_geogebra/ui/toolbar.py:225
+msgid "Otočenie"
+msgstr ""
+
+#: py_geogebra/ui/toolbar.py:226
+msgid "Posunutie"
+msgstr ""
+
+#: py_geogebra/ui/toolbar.py:227
+msgid "Homotécia"
 msgstr ""
 
 #: py_geogebra/ui/dialogs.py:12
@@ -249,14 +361,113 @@ msgstr ""
 msgid "Chyba spojenia s DB"
 msgstr ""
 
-#: py_geogebra/tools/utils.py:472
+#: py_geogebra/tools/utils.py:220
+msgid "This object name cannot be edited."
+msgstr "Názov tohto objektu sa nedá upraviť."
+
+#: py_geogebra/tools/utils.py:224
+msgid "Name cannot be empty."
+msgstr "Názov nemôže byť prázdny."
+
+#: py_geogebra/tools/utils.py:226
+msgid "Use letters only."
+msgstr "Použi iba písmená."
+
+#: py_geogebra/tools/utils.py:235
+#, python-brace-format
+msgid "{name} is already in use."
+msgstr "{name} sa už používa."
+
+#: py_geogebra/tools/utils.py:722
+msgid "Select a line, segment, or ray to reflect about."
+msgstr "Vyber priamku, úsečku alebo polpriamku, podľa ktorej chceš zrkadliť."
+
+#: py_geogebra/tools/utils.py:723
+msgid "Select a point to reflect about."
+msgstr "Vyber bod, podľa ktorého chceš zrkadliť."
+
+#: py_geogebra/tools/utils.py:724
+msgid "Select a circle. This tool is still a placeholder."
+msgstr "Vyber kružnicu. Tento nástroj je zatiaľ len zástupný."
+
+#: py_geogebra/tools/utils.py:725
+msgid "Select a point to rotate around."
+msgstr "Vyber bod, okolo ktorého chceš otáčať."
+
+#: py_geogebra/tools/utils.py:726
+msgid "Select a vector to translate by."
+msgstr "Vyber vektor, podľa ktorého chceš posunúť."
+
+#: py_geogebra/tools/utils.py:727
+msgid "Select a point to dilate from."
+msgstr "Vyber bod, od ktorého chceš robiť homotéciu."
+
+#: py_geogebra/tools/utils.py:728
+msgid "Select a reference object."
+msgstr "Vyber referenčný objekt."
+
+#: py_geogebra/tools/utils.py:733
+msgid "Rotation"
+msgstr "Otočenie"
+
+#: py_geogebra/tools/utils.py:733
+msgid "Angle in degrees"
+msgstr "Uhol v stupňoch"
+
+#: py_geogebra/tools/utils.py:734
+msgid "Dilation"
+msgstr "Homotécia"
+
+#: py_geogebra/tools/utils.py:734
+msgid "Scale factor"
+msgstr "Koeficient zmeny mierky"
+
+#: py_geogebra/tools/utils.py:1486
 msgid "Chyba"
 msgstr ""
 
-#: py_geogebra/tools/utils.py:472
+#: py_geogebra/tools/utils.py:1486
 msgid "Nepodarilo sa authentikovať"
 msgstr ""
 
-#: py_geogebra/app.py:35
+#: py_geogebra/motions/pressing.py:124 py_geogebra/motions/pressing.py:129
+#: py_geogebra/motions/pressing.py:158
+msgid "Transformation"
+msgstr "Transformácia"
+
+#: py_geogebra/motions/pressing.py:130
+msgid ""
+"Reflect about Circle is a placeholder for now and is not implemented yet."
+msgstr "Inverzia je zatiaľ len zástupná a ešte nie je implementovaná."
+
+#: py_geogebra/motions/pressing.py:159
+msgid "This object type is not supported by the selected transformation yet."
+msgstr "Tento typ objektu zatiaľ nie je podporovaný vybranou transformáciou."
+
+#: py_geogebra/motions/pressing.py:530
+msgid "Dĺžka úsečky"
+msgstr ""
+
+#: py_geogebra/motions/pressing.py:531
+msgid "Zadajte dĺžku úsečky (kladné číslo):"
+msgstr ""
+
+#: py_geogebra/motions/pressing.py:894 py_geogebra/motions/pressing.py:895
+msgid "Počet strán"
+msgstr ""
+
+#: py_geogebra/motions/pressing.py:992 py_geogebra/motions/pressing.py:993
+msgid "Polomer"
+msgstr ""
+
+#: py_geogebra/motions/pressing.py:1205
+msgid "Veľkosť uhla"
+msgstr ""
+
+#: py_geogebra/motions/pressing.py:1206
+msgid "Zadajte veľkosť uhla (v stupňoch):"
+msgstr ""
+
+#: py_geogebra/app.py:41
 msgid "Geogebra ale lepsia"
 msgstr ""

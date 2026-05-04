@@ -26,6 +26,9 @@ class MockObjects:
     def register(self, obj):
         self._objects.append(obj)
 
+    def refresh(self):
+        pass
+
 
 class MockGlobals:
     def __init__(self):

@@ -1,6 +1,7 @@
 import unittest
+import builtins
 
-from py_geogebra.tools.transformations import (
+from py_geogebra.tools.utils import (
     dilate_point_from_point,
     get_transform_reference_kind,
     is_transform_tool,
@@ -9,6 +10,13 @@ from py_geogebra.tools.transformations import (
     rotate_point_around_point,
     translate_point_by_vector,
 )
+
+
+def _(text):
+    return text
+
+
+builtins._ = _
 
 
 class TestTransformations(unittest.TestCase):

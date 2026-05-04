@@ -15,7 +15,9 @@ from .. import globals, state
 from ..tools.utils import (
     attach_point,
     center,
+    clear_transform_state,
     create_or_find_point_at_position,
+    create_transformed_copy,
     delete_object,
     deselect_all,
     detach_point,
@@ -29,23 +31,19 @@ from ..tools.utils import (
     find_translation,
     find_translation_circle,
     find_translation_polyline,
+    get_transform_reference_kind,
     get_label,
     get_angle_label,
     get_lower_label,
+    is_transform_tool,
+    is_transformable_source,
+    is_valid_transform_reference,
     screen_to_world,
     select_item,
     set_cursor,
     snap_to_circle,
     snap_to_line,
     snap_to_polyline,
-)
-from ..tools.transformations import (
-    clear_transform_state,
-    create_transformed_copy,
-    get_transform_reference_kind,
-    is_transform_tool,
-    is_transformable_source,
-    is_valid_transform_reference,
     transform_reference_prompt,
     transform_value_prompt,
 )
@@ -123,7 +121,7 @@ def transform_tool_click(e, root):
 
     reference = find_transform_reference_at_position(e, tool_name)
     if reference is None or not is_valid_transform_reference(reference, tool_name):
-        messagebox.showinfo(_("Transformation"), _(transform_reference_prompt(tool_name)))
+        messagebox.showinfo(_("Transformation"), transform_reference_prompt(tool_name))
         return
 
     if tool_name == "reflect_about_circle":
@@ -139,7 +137,7 @@ def transform_tool_click(e, root):
     prompt = transform_value_prompt(tool_name)
     if prompt is not None:
         title, text = prompt
-        numeric_value = simpledialog.askfloat(_(title), _(text), parent=root)
+        numeric_value = simpledialog.askfloat(title, text, parent=root)
         if numeric_value is None:
             clear_transform_state()
             deselect_all()
@@ -529,8 +527,8 @@ def segmnet_with_lenght(e, root):
     p = existing_point or create_or_find_point_at_position(e, root)
 
     length = simpledialog.askfloat(
-        "Dĺžka úsečky",
-        "Zadajte dĺžku úsečky (kladné číslo):",
+        _("Dĺžka úsečky"),
+        _("Zadajte dĺžku úsečky (kladné číslo):"),
         minvalue=0,
     )
     if length is None:
@@ -893,8 +891,8 @@ def regular_polygon(e, root):
 
     if state.current_polygon and len(state.current_polygon.line_points) == 2:
         num_points = simpledialog.askinteger(
-            "pocet stran",
-            "pocet stran",
+            _("Počet strán"),
+            _("Počet strán"),
             minvalue=3,
         )
         if num_points is None:
@@ -991,8 +989,8 @@ def circle_center_radius(e, root):
     p = existing_point or create_or_find_point_at_position(e, root)
 
     radius = simpledialog.askfloat(
-        "radius",
-        "radius",
+        _("Polomer"),
+        _("Polomer"),
         minvalue=0,
     )
     if radius is None:
@@ -1204,8 +1202,8 @@ def angle_with_given_size(e, root):
         return
 
     angle_size = simpledialog.askfloat(
-        "Veľkosť uhla",
-        "Zadajte veľkosť uhla (v stupňoch):",
+        _("Veľkosť uhla"),
+        _("Zadajte veľkosť uhla (v stupňoch):"),
         minvalue=0,
         maxvalue=360,
     )

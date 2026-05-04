@@ -67,7 +67,7 @@ class Sidebar:
         self.font_family = "Calibri, mathsans, sans-serif"
         self.font = tkfont.Font(root=root, family=self.font_family, size=self.base_font_size)
 
-        self.context_var = tk.StringVar(master=root, value="Select an object")
+        self.context_var = tk.StringVar(master=root, value=_("Select an object"))
         self.name_var = tk.StringVar(master=root)
         self.editor_error_var = tk.StringVar(master=root)
         self.length_decimals_var = tk.StringVar(
@@ -81,13 +81,15 @@ class Sidebar:
 
         self._sync_precision_controls()
         self.canvas.bind("<Configure>", self._on_resize)
+        if getattr(globals, "widgets", None) is not None:
+            globals.widgets.register(self._refresh_editor_texts)
 
     def _ensure_dialog(self):
         if self.dialog is not None and self.dialog.winfo_exists():
             return
 
         self.dialog = tk.Toplevel(self.root)
-        self.dialog.title("Properties")
+        self.dialog.title(_("Properties"))
         self.dialog.configure(bg="#f6f6f6")
         self.dialog.resizable(False, False)
         self.dialog.transient(self.root)
@@ -109,11 +111,32 @@ class Sidebar:
         self.dialog = None
         self.editor_frame = None
 
+    def _refresh_editor_texts(self):
+        if self.selected_item is None:
+            self.context_var.set(_("Select an object"))
+
+        if self.dialog is not None and self.dialog.winfo_exists():
+            title = _("Properties")
+            if self.selected_item is not None:
+                title = f"{title} - {self._item_context(self.selected_item)}"
+            self.dialog.title(title)
+
+        if self.editor_frame is None:
+            return
+
+        self.editor_title.configure(text=_("Properties"))
+        self.name_label.configure(text=_("Name"))
+        self.name_apply.configure(text=_("Apply"))
+        self.color_label.configure(text=_("Color"))
+        self.color_button.configure(text=_("Choose..."))
+        self.length_label.configure(text=_("Length decimals"))
+        self.angle_label.configure(text=_("Angle decimals"))
+
     def _build_editor(self):
         label_fg = "#222222"
         self.editor_title = tk.Label(
             self.editor_frame,
-            text="Properties",
+            text=_("Properties"),
             bg="#f6f6f6",
             fg=label_fg,
             anchor="w",
@@ -133,11 +156,11 @@ class Sidebar:
         )
         self.context_label.grid(row=1, column=0, columnspan=3, sticky="ew", pady=(6, 10))
 
-        self.name_label = tk.Label(self.editor_frame, text="Name", bg="#f6f6f6", fg=label_fg, anchor="w", font=self.font)
+        self.name_label = tk.Label(self.editor_frame, text=_("Name"), bg="#f6f6f6", fg=label_fg, anchor="w", font=self.font)
         self.name_entry = tk.Entry(self.editor_frame, textvariable=self.name_var, font=self.font)
         self.name_apply = tk.Button(
             self.editor_frame,
-            text="Apply",
+            text=_("Apply"),
             command=self.apply_name_change,
             font=self.font,
         )
@@ -154,7 +177,7 @@ class Sidebar:
             font=self.font,
         )
 
-        self.color_label = tk.Label(self.editor_frame, text="Color", bg="#f6f6f6", fg=label_fg, anchor="w", font=self.font)
+        self.color_label = tk.Label(self.editor_frame, text=_("Color"), bg="#f6f6f6", fg=label_fg, anchor="w", font=self.font)
         self.color_swatch = tk.Label(
             self.editor_frame,
             text="      ",
@@ -164,14 +187,14 @@ class Sidebar:
         )
         self.color_button = tk.Button(
             self.editor_frame,
-            text="Choose...",
+            text=_("Choose..."),
             command=self.choose_color,
             font=self.font,
         )
 
         self.length_label = tk.Label(
             self.editor_frame,
-            text="Length decimals",
+            text=_("Length decimals"),
             bg="#f6f6f6",
             fg=label_fg,
             anchor="w",
@@ -191,7 +214,7 @@ class Sidebar:
 
         self.angle_label = tk.Label(
             self.editor_frame,
-            text="Angle decimals",
+            text=_("Angle decimals"),
             bg="#f6f6f6",
             fg=label_fg,
             anchor="w",
@@ -285,7 +308,7 @@ class Sidebar:
 
         if item is None:
             self.editor_error_var.set("")
-            self.context_var.set("Select an object")
+            self.context_var.set(_("Select an object"))
             self.name_var.set("")
             self._close_dialog()
             return
@@ -585,7 +608,7 @@ class Sidebar:
         self.dialog.deiconify()
         self.dialog.lift()
         self.dialog.focus_force()
-        self.dialog.title(f"Properties - {self._item_context(item)}")
+        self.dialog.title(f"{_('Properties')} - {self._item_context(item)}")
 
     def apply_name_change(self):
         item = self.selected_item
